@@ -2,8 +2,12 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 import Login from "./routes/Login";
 import Feed from "./routes/Feed";
+import Maps from "./routes/Map";
+import Search from "./routes/Search";
+import MyPage from "./routes/Mypage";
 import { useRecoilValue } from "recoil";
 import { isUserAtom } from "./atoms";
+import Upload from "./routes/Upload";
 
 function Router() {
   const userToken = useRecoilValue(isUserAtom);
@@ -14,10 +18,10 @@ function Router() {
   return (
     <Routes>
       <Route path="/" element={<Feed />}></Route>
-      {/* <Route path="/:coinID" element={<Coin />}>
-          <Route path="chart" element={<Chart />} />
-          <Route path="price" element={<Price />} />
-        </Route> */}
+      <Route path="/search" element={<Search />}></Route>
+      <Route path="/map" element={<Maps />}></Route>
+      <Route path="/mypage" element={<MyPage />}></Route>
+      <Route path="/upload" element={<Upload />}></Route>
     </Routes>
   );
 }

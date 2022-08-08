@@ -26,7 +26,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
-    background-color: #F5F5F5;
+    //background-color: #F5F5F5;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -36,6 +36,7 @@ footer, header, hgroup, menu, nav, section {
 body {
 	line-height: 1;
 	color: #455AE4;
+	font-size: 1.8rem;
 }
 ol, ul {
 	list-style: none;
@@ -51,6 +52,14 @@ q:before, q:after {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}
+body{
+	margin-left: 15vh;
+	margin-right:15vh;
+	@media screen and (max-width: 1000px) {
+		margin-left: 5vh;
+		margin-right:5vh;
+  }
 }
 `;
 

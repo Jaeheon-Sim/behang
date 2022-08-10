@@ -35,8 +35,10 @@ footer, header, hgroup, menu, nav, section {
 }
 body {
 	line-height: 1;
-	color: #455AE4;
+	color: black;
 	font-size: 1.8rem;
+	background-color: rgba(69, 90, 228,0.3) ;
+	color: white;
 }
 ol, ul {
 	list-style: none;
@@ -54,12 +56,12 @@ table {
 	border-spacing: 0;
 }
 body{
-	margin-left: 15vh;
-	margin-right:15vh;
-	@media screen and (max-width: 1000px) {
+	margin-left: 3vh;
+	margin-right:3vh;
+	/* @media screen and (max-width: 1000px) {
 		margin-left: 5vh;
 		margin-right:5vh;
-  }
+  } */
 }
 `;
 

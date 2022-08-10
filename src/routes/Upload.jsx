@@ -1,8 +1,10 @@
 import Header from "../format/Header";
-import Navbar from "../format/Navbar";
+
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import Modal from "react-modal";
+import { useState } from "react";
 import {
   isParkAtom,
   isInsideAtom,
@@ -105,6 +107,18 @@ const FileInput = styled.label`
 const Input = styled.input`
   display: none;
 `;
+
+const LocationModal = styled(Modal)`
+  width: 80%;
+  height: 80%;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+`;
+
 export default function Upload() {
   const setPark = useSetRecoilState(isParkAtom);
   const isPark = useRecoilValue(isParkAtom);
@@ -118,14 +132,14 @@ export default function Upload() {
   const isPublic = useRecoilValue(isPublicAtom);
   const setSome = useSetRecoilState(isSomeAtom);
   const isSome = useRecoilValue(isSomeAtom);
-
+  const [isModalOpen, setModalOpen] = useState(false);
   return (
     <>
       <Helmet>
         <title>upload</title>
       </Helmet>
       <Header />
-      <Navbar />
+
       <Container>
         <ImgTab>
           <FileInput htmlFor="file-input">사진 선택</FileInput>
@@ -181,9 +195,18 @@ export default function Upload() {
         </Tab>
         <Tab>
           <Box>
-            <LocationBtn>등록 장소 선택</LocationBtn>
+            <LocationBtn onClick={() => setModalOpen((current) => !current)}>
+              등록장소 선택
+            </LocationBtn>
           </Box>
         </Tab>
+
+        <LocationModal
+          isOpen={isModalOpen}
+          onRequestClose={() => setModalOpen(false)}
+        >
+          hi
+        </LocationModal>
       </Container>
     </>
   );

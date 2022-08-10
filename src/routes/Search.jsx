@@ -1,5 +1,5 @@
 import Header from "../format/Header";
-import Navbar from "../format/Navbar";
+
 import { Helmet } from "react-helmet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap } from "@fortawesome/free-solid-svg-icons";
@@ -41,7 +41,7 @@ const TagsBox = styled.div`
   width: 90%;
 `;
 const Tag = styled.button`
-  width: 30vh;
+  width: 300px;
   height: 3.54vh;
   border-radius: 20px;
   border: none;
@@ -51,7 +51,8 @@ const Tag = styled.button`
   }
   //background-color: $(props) =>;
   color: white;
-  padding: 0 5px 0 5px;
+
+  margin: 0 5px 0 5px;
 `;
 const ListTab = styled.div`
   font-size: 1rem;
@@ -109,11 +110,12 @@ export default function Search() {
         <title>search</title>
       </Helmet>
       <Header />
-      <Navbar />
-      <SearchTab>
-        <FontAwesomeIcon icon={faMap} />
-        <SearchInput placeholder="원하는 여행지를 검색하세요!" />
-      </SearchTab>
+      <form>
+        <SearchTab>
+          <FontAwesomeIcon icon={faMap} />
+          <SearchInput placeholder="원하는 여행지를 검색하세요!" />
+        </SearchTab>
+      </form>
       <TagTab>
         <TagsBox>
           <Tag isActive={isPark} onClick={() => setPark((current) => !current)}>

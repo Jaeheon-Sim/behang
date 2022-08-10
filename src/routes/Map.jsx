@@ -1,7 +1,7 @@
 import Header from "../format/Header";
-import Navbar from "../format/Navbar";
+
 import { Helmet } from "react-helmet";
-import { KAKAO_JSKEY } from "../KakaoKey";
+import { KAKAO_JSKEY } from "../Key";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
@@ -29,37 +29,39 @@ export default function Maps() {
     isLoading: true,
   });
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setState((prev) => ({
-            ...prev,
-            center: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-            isLoading: false,
-          }));
-        },
-        (err) => {
-          setState((prev) => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }));
-        }
-      );
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setState((prev) => ({
-        ...prev,
-        errMsg: "geolocation을 사용할수 없어요..",
-        isLoading: false,
-      }));
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (navigator.geolocation) {
+  //     // GeoLocation을 이용해서 접속 위치를 얻어옵니다
+
+  //     navigator.geolocation.getCurrentPosition(
+  //       (position) => {
+  //         setState((prev) => ({
+  //           ...prev,
+  //           center: {
+  //             lat: position.coords.latitude, // 위도
+  //             lng: position.coords.longitude, // 경도
+  //           },
+  //           isLoading: false,
+  //         }));
+  //       },
+
+  //       (err) => {
+  //         setState((prev) => ({
+  //           ...prev,
+  //           errMsg: err.message,
+  //           isLoading: false,
+  //         }));
+  //       }
+  //     );
+  //   } else {
+  //     // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
+  //     setState((prev) => ({
+  //       ...prev,
+  //       errMsg: "geolocation을 사용할수 없어요..",
+  //       isLoading: false,
+  //     }));
+  //   }
+  // }, []);
 
   const Mapp = () => {
     return (
@@ -83,7 +85,6 @@ export default function Maps() {
         <title>Map</title>
       </Helmet>
       <Header />
-      <Navbar />
       <Container>
         <Title>sdㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ</Title>
         <MapBox>

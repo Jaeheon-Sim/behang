@@ -2,17 +2,20 @@ import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import logo from "../images/logo.png";
 import kakaologin from "../images/kakao_login_medium_wide.png";
+import axios from "axios";
+import Feed from "../routes/Feed";
 import {
   Link,
+  useNavigate,
   Outlet,
   useLocation,
-  useNavigate,
   useParams,
 } from "react-router-dom";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import { isUserAtom } from "../atoms";
 import { useEffect } from "react";
-import { CLIENT_ID, REDIRECT_URI } from "../KakaoKey";
+import { CLIENT_ID, REDIRECT_URI } from "../Key";
+import Auth from "../Auth";
 
 const Container = styled.div`
   padding: 0px 20px;
@@ -46,7 +49,7 @@ const GuestLoginTab = styled(Tab)`
   margin-top: 50px;
   border-bottom: 2.5px solid;
   display: inline-block;
-  color: black;
+  color: #000000;
 `;
 
 const Links = styled(Link)`
@@ -54,47 +57,25 @@ const Links = styled(Link)`
 `;
 
 export default function Login() {
+  const userToken = useRecoilValue(isUserAtom);
+  const navigate = useNavigate();
   const setUser = useSetRecoilState(isUserAtom);
   // kakao login
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
-  const location = useLocation();
-  const AUTHORIZE_CODE = location.search.split("=")[1];
-
-  const navigate = useNavigate();
-
-  const kakaoLogin = () => {};
-
-  // const getKakaoToken = () => {
-  //   fetch(`https://kakao.com/oauth/token`, {
-  //     method: "POST",
-  //     headers: { "Content-Type": `application/x-www-form-urlencoded` },
-  //     body: `grant_type=authorization_code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&code=${AUTHORIZE_CODE}`,
-  //   })
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       if (data.access_token) {
-  //         console.log(data.access_token);
-  //         navigate("/");
-  //       } else {
-  //         console.log("NO");
-  //         navigate("/");
-  //       }
-  //     });
-  // };
 
   const onClick = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
-  const guestOnClick = () => {
-    setUser(true);
-  };
+
+  if (userToken) {
+    return <Feed />;
+  }
 
   return (
     <>
       <Helmet>
         <title>Login</title>
       </Helmet>
-
       <Container>
         <LoginButton>
           <Img src={logo} alt="no" />
@@ -108,9 +89,7 @@ export default function Login() {
 
         <LoginTab>
           <GuestLoginTab>
-            <Links to={`/`} onClick={guestOnClick}>
-              로그인없이 입장
-            </Links>
+            <Links to={`/feed`}>로그인없이 입장</Links>
           </GuestLoginTab>
         </LoginTab>
         {/* <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>

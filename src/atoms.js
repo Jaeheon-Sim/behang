@@ -38,3 +38,27 @@ export const isPetAtom = atom({
   key: "isPet",
   default: false,
 });
+
+export const isXAtom = atom({
+  key: "isX",
+  default: 128.6922646449,
+});
+
+export const isYAtom = atom({
+  key: "isY",
+  default: 35.9910080699,
+});
+
+export const isUserIDAtom = atom({
+  key: "isUserID",
+  default: "",
+});
+
+export const isNickNameAtom = atom({
+  key: "isNickNameID",
+  default: "",
+});
+export const isProfileImgAtom = atom({
+  key: "isImg",
+  default: "",
+});

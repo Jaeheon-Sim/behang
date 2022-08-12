@@ -4,7 +4,7 @@ import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Link, Outlet, useLocation, useParams } from "react-router-dom";
 import styled from "styled-components";
-
+import { motion } from "framer-motion";
 import { faHouse } from "@fortawesome/free-solid-svg-icons";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
@@ -22,7 +22,7 @@ const Head = styled.div`
   font-size: 25px;
 `;
 
-const HeaderBox = styled.div``;
+const HeaderBox = styled(motion.div)``;
 
 const HeaderTab = styled.div`
   display: flex;
@@ -95,40 +95,40 @@ export default function Header() {
         <div>
           <HeaderTab>
             <HeaderImg src={logo} alt="no" />
-            <HeaderTitle>sadfsdf</HeaderTitle>
+            <HeaderTitle>비 행</HeaderTitle>
           </HeaderTab>
         </div>
         <NavContainer>
           <NavTab>
-            <HeaderBox>
-              <NavLink to={"/"}>
+            <HeaderBox whileHover={{ scale: 1.5 }}>
+              <NavLink to={"/feed"}>
                 <Icon icon={faHouse} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox>
+            <HeaderBox whileHover={{ scale: 1.5 }}>
               <NavLink to={"/search"}>
                 <Icon icon={faLocationDot} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox>
+            <HeaderBox whileHover={{ scale: 1.5 }}>
               <NavLink to={"/map"}>
                 <Icon icon={faFlag} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox>
+            <HeaderBox whileHover={{ scale: 1.5 }}>
               <NavLink to={"/mypage"}>
                 <Icon icon={faUser} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox>
+            <HeaderBox whileHover={{ scale: 1.5 }}>
               {isUser ? (
                 // <DDD>
                 <NavLink to={"/upload"}>

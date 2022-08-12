@@ -1,5 +1,5 @@
 import Header from "../format/Header";
-
+import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import { useRecoilValue, useSetRecoilState } from "recoil";
@@ -13,11 +13,20 @@ import {
   isPublicAtom,
   isSomeAtom,
   isUserAtom,
+  isImgAtom,
 } from "../atoms";
 
-const Container = styled.div`
-  font-size: 10px;
-  color: teal;
+const Container = styled(motion.div)`
+  width: 85vw;
+  margin: 5vh auto;
+  min-height: 80vh;
+  background-color: white;
+  border-radius: 100px;
+  box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 const Tab = styled.div`
   margin-top: 5vh;
@@ -26,6 +35,7 @@ const Tab = styled.div`
 const ImgTab = styled(Tab)`
   display: flex;
   justify-content: center;
+  align-items: center;
 `;
 const Box = styled.div`
   display: flex;
@@ -39,7 +49,7 @@ const BoxTitle = styled.div`
   font-size: 20px;
   font-weight: bolder;
 `;
-const LocationBtn = styled.div`
+const LocationBtn = styled(motion.div)`
   align-items: center;
   text-align: center;
   display: flex;
@@ -52,6 +62,7 @@ const LocationBtn = styled.div`
   //background-color: $(props) =>;
   color: white;
   padding: 0 5px 0 5px;
+  margin-top: -2vh;
 `;
 const FilterTab = styled.div`
   display: flex;
@@ -59,29 +70,30 @@ const FilterTab = styled.div`
   margin-top: 1.5vh;
   margin-bottom: 1.5vh;
 `;
-const Filter = styled.div`
+const Filter = styled(motion.div)`
   width: 30vh;
   height: 3.54vh;
   border-radius: 20px;
   border: none;
   background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
-  &:hover {
-    background-color: ${(props) => (props.isActive ? "#2f3ea0" : "#aaaaaa")};
-  }
+  /* &:hover {
+    background-color: ${(props) => (props.isActive ? "#3b4ec5" : "#aaaaaa")};
+  } */
   //background-color: $(props) =>;
-  color: white;
-  padding: 0 5px 0 5px;
+
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 20px;
+  margin-right: 20px;
+  font-size: 1.3rem;
+  text-align: center;
 `;
 const FeedImg = styled.div`
-  width: 10vh;
-  width: auto;
-  height: 30vh;
+  width: 40vh;
+  height: 35vh;
   background-color: #d9d9d9;
-  margin: 10px;
+  margin-bottom: -4vh;
   border-radius: 10px;
   display: flex;
   justify-content: center;
@@ -119,6 +131,16 @@ const LocationModal = styled(Modal)`
   bottom: 0;
 `;
 
+const Img = styled.img`
+  width: inherit;
+  height: inherit;
+`;
+
+const Button = styled(motion.button)`
+  margin-left: 100px;
+  height: 30px;
+`;
+
 export default function Upload() {
   const setPark = useSetRecoilState(isParkAtom);
   const isPark = useRecoilValue(isParkAtom);
@@ -133,6 +155,44 @@ export default function Upload() {
   const setSome = useSetRecoilState(isSomeAtom);
   const isSome = useRecoilValue(isSomeAtom);
   const [isModalOpen, setModalOpen] = useState(false);
+  const setImg = useSetRecoilState(isImgAtom);
+  const isImg = useRecoilValue(isImgAtom);
+
+  const upload = (file) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    return new Promise((resolve) => {
+      reader.onload = () => {
+        setImg(reader.result);
+        resolve();
+      };
+    });
+  };
+
+  const filterVari = {
+    hover: (i) => ({
+      backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
+      transition: {
+        duration: 0.2,
+      },
+    }),
+    push: (i) => ({
+      backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
+      transition: {
+        duration: 0.2,
+      },
+    }),
+  };
+
+  const reset = () => {
+    setKids(false);
+    setPet(false);
+    setPublic(false);
+    setSome(false);
+    setImg("");
+    setPark(false);
+    setInside(false);
+  };
   return (
     <>
       <Helmet>
@@ -140,32 +200,67 @@ export default function Upload() {
       </Helmet>
       <Header />
 
-      <Container>
+      <Container initial={{ x: 500, y: -500 }} animate={{ x: 0, y: 0 }}>
         <ImgTab>
-          <FileInput htmlFor="file-input">사진 선택</FileInput>
-          <Input id="file-input" type={"file"} />
+          <AnimatePresence>
+            {isImg === "" ? (
+              <>
+                <FileInput htmlFor="file-input">사진 선택</FileInput>
+                <Input
+                  id="file-input"
+                  type={"file"}
+                  onChange={(e) => {
+                    upload(e.target.files[0]);
+                  }}
+                />
+              </>
+            ) : (
+              <>
+                <FeedImg>
+                  {isImg && <Img src={isImg} alt="올바른 사진을 첨부하세요" />}
+                </FeedImg>
+                <Button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  exit={{ scale: 0 }}
+                  onClick={reset}
+                >
+                  초기화
+                </Button>
+              </>
+            )}
+          </AnimatePresence>
         </ImgTab>
 
         <Tab>
           <Box>
-            <BoxTitle>필터</BoxTitle>
+            <BoxTitle></BoxTitle>
           </Box>
           <FilterTab>
             <Filter
-              isActive={isPark}
+              variants={filterVari}
+              custom={isPark}
+              whileHover="hover"
+              animate="push"
               onClick={() => setPark((current) => !current)}
             >
               편리한 주차
             </Filter>
             <Filter
-              isActive={isPublic}
+              variants={filterVari}
+              custom={isPublic}
+              whileHover="hover"
+              animate="push"
               onClick={() => setPublic((current) => !current)}
             >
               편리한 대중교통
             </Filter>
 
             <Filter
-              isActive={isKids}
+              variants={filterVari}
+              custom={isKids}
+              whileHover="hover"
+              animate="push"
               onClick={() => setKids((current) => !current)}
             >
               아이와 함께
@@ -173,20 +268,29 @@ export default function Upload() {
           </FilterTab>
           <FilterTab>
             <Filter
-              isActive={isInside}
+              variants={filterVari}
+              custom={isInside}
+              whileHover="hover"
+              animate="push"
               onClick={() => setInside((current) => !current)}
             >
               실내
             </Filter>
 
             <Filter
-              isActive={isSome}
+              variants={filterVari}
+              custom={isSome}
+              whileHover="hover"
+              animate="push"
               onClick={() => setSome((current) => !current)}
             >
               연인과 함께
             </Filter>
             <Filter
-              isActive={isPet}
+              variants={filterVari}
+              custom={isPet}
+              whileHover="hover"
+              animate="push"
               onClick={() => setPet((current) => !current)}
             >
               반려견과 함께
@@ -195,7 +299,10 @@ export default function Upload() {
         </Tab>
         <Tab>
           <Box>
-            <LocationBtn onClick={() => setModalOpen((current) => !current)}>
+            <LocationBtn
+              whileHover={{ scale: 1.1 }}
+              onClick={() => setModalOpen((current) => !current)}
+            >
               등록장소 선택
             </LocationBtn>
           </Box>

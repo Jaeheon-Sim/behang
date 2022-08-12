@@ -27,6 +27,7 @@ time, mark, audio, video {
 	font: inherit;
 	vertical-align: baseline;
     //background-color: #F5F5F5;
+	font-family: 'Jua', sans-serif;
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -37,8 +38,9 @@ body {
 	line-height: 1;
 	color: black;
 	font-size: 1.8rem;
-	background-color: rgba(69, 90, 228,0.3) ;
+	background-color: white ;
 	color: white;
+	background:rgba(69, 90, 228,0.8);
 }
 ol, ul {
 	list-style: none;

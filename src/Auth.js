@@ -18,6 +18,7 @@ const Auth = () => {
   const navigate = useNavigate();
   // calllback으로 받은 인가코드
   const code = new URL(window.location.href).searchParams.get("code");
+
   const getProfile = async () => {
     try {
       // Kakao SDK API를 이용해 사용자 정보 획득
@@ -29,8 +30,11 @@ const Auth = () => {
       setID(data.id);
       setNick(data.properties.nickname);
       setProfileImg(data.properties.profile_image);
-    } catch (err) {}
+    } catch (err) {
+      alert(err);
+    }
   };
+
   const getToken = async () => {
     const payload = qs.stringify({
       grant_type: "authorization_code",

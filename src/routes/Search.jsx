@@ -1,5 +1,5 @@
 import Header from "../format/Header";
-
+import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap } from "@fortawesome/free-solid-svg-icons";
@@ -17,7 +17,24 @@ import {
   isUserAtom,
 } from "../atoms";
 
+const Total = styled(motion.div)``;
+
+const Container = styled.div`
+  overflow: hidden;
+  width: 85vw;
+  margin: 5vh auto;
+  background-color: white;
+  min-height: 80vh;
+  border-radius: 100px;
+  box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
+
 const SearchTab = styled.div`
+  margin-top: 4vh;
   display: flex;
   margin-left: 30px;
   align-items: center;
@@ -40,22 +57,22 @@ const TagsBox = styled.div`
   margin-top: 15px;
   width: 90%;
 `;
-const Tag = styled.button`
+const Tag = styled(motion.button)`
   width: 300px;
-  height: 3.54vh;
+
   border-radius: 20px;
   border: none;
-  background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
+  /* background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
   &:hover {
     background-color: ${(props) => (props.isActive ? "#2f3ea0" : "#aaaaaa")};
-  }
+  } */
   //background-color: $(props) =>;
-  color: white;
-
+  font-family: "Jua", sans-serif;
   margin: 0 5px 0 5px;
+  font-size: 1.3rem;
 `;
 const ListTab = styled.div`
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: black;
 `;
 const ListBox = styled.div`
@@ -90,6 +107,22 @@ const HeartCount = styled.span`
 const LocationBox = styled.div``;
 const Distance = styled.span``;
 const Location = styled.span``;
+
+const filterVari = {
+  hover: (i) => ({
+    backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
+    transition: {
+      duration: 0.2,
+    },
+  }),
+  push: (i) => ({
+    backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
+    transition: {
+      duration: 0.2,
+    },
+  }),
+};
+
 export default function Search() {
   const setPark = useSetRecoilState(isParkAtom);
   const isPark = useRecoilValue(isParkAtom);
@@ -109,61 +142,100 @@ export default function Search() {
       <Helmet>
         <title>search</title>
       </Helmet>
+
       <Header />
-      <form>
-        <SearchTab>
-          <FontAwesomeIcon icon={faMap} />
-          <SearchInput placeholder="원하는 여행지를 검색하세요!" />
-        </SearchTab>
-      </form>
-      <TagTab>
-        <TagsBox>
-          <Tag isActive={isPark} onClick={() => setPark((current) => !current)}>
-            편리한 주차
-          </Tag>
-          <Tag
-            isActive={isPublic}
-            onClick={() => setPublic((current) => !current)}
-          >
-            편리한 대중교통
-          </Tag>
-          <Tag isActive={isKids} onClick={() => setKids((current) => !current)}>
-            아이와 함께
-          </Tag>
-        </TagsBox>
-        <TagsBox>
-          <Tag
-            isActive={isInside}
-            onClick={() => setInside((current) => !current)}
-          >
-            실내
-          </Tag>
-          <Tag isActive={isPet} onClick={() => setPet((current) => !current)}>
-            반려 동물과 함께
-          </Tag>
-          <Tag isActive={isSome} onClick={() => setSome((current) => !current)}>
-            연인과 함께
-          </Tag>
-        </TagsBox>
-      </TagTab>
-      <ListTab>
-        <ListBox>
-          <ListImg src="#" />
-          <ListContent>
-            <Place>유정빌</Place>
-            <HearBox>
-              <HeartImg>
-                <FontAwesomeIcon icon={faHeart} />
-              </HeartImg>
-              <HeartCount>1234123</HeartCount>
-            </HearBox>
-            <LocationBox>
-              <Distance>21332.km</Distance>
-              <Location>경대로 7길 59</Location>
-            </LocationBox>
-          </ListContent>
-        </ListBox>
-      </ListTab>
+      <Total
+        initial={{ y: 500 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", duration: 1.4 }}
+      >
+        <Container>
+          <form>
+            <SearchTab>
+              <FontAwesomeIcon icon={faMap} />
+              <SearchInput placeholder="원하는 여행지를 검색하세요!" />
+            </SearchTab>
+          </form>
+          <TagTab>
+            <TagsBox>
+              <Tag
+                variants={filterVari}
+                custom={isPark}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setPark((current) => !current)}
+              >
+                편리한 주차
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={isPublic}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setPublic((current) => !current)}
+              >
+                편리한 대중교통
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={isKids}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setKids((current) => !current)}
+              >
+                아이와 함께
+              </Tag>
+            </TagsBox>
+            <TagsBox>
+              <Tag
+                variants={filterVari}
+                custom={isInside}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setInside((current) => !current)}
+              >
+                실내
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={isPet}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setPet((current) => !current)}
+              >
+                반려 동물과 함께
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={isSome}
+                whileHover="hover"
+                animate="push"
+                onClick={() => setSome((current) => !current)}
+              >
+                연인과 함께
+              </Tag>
+            </TagsBox>
+          </TagTab>
+          <ListTab>
+            <ListBox>
+              <ListImg src="#" />
+              <ListContent>
+                <Place>유정빌</Place>
+                <HearBox>
+                  <HeartImg>
+                    <FontAwesomeIcon icon={faHeart} />
+                  </HeartImg>
+                  <HeartCount>1234123</HeartCount>
+                </HearBox>
+                <LocationBox>
+                  <Distance>21332.km</Distance>
+                  <Location>경대로 7길 59</Location>
+                </LocationBox>
+              </ListContent>
+            </ListBox>
+          </ListTab>
+        </Container>
+      </Total>
     </>
   );
 }

@@ -1,5 +1,5 @@
 import Header from "../format/Header";
-
+import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
@@ -10,9 +10,23 @@ import {
   isProfileImgAtom,
   isUserAtom,
 } from "../atoms";
-import { useNavigate } from "react-router-dom";
+import { useMatch, useNavigate } from "react-router-dom";
+import { CLIENT_ID } from "../Key";
 
-const Container = styled.div``;
+const Total = styled(motion.div)``;
+
+const Container = styled.div`
+  width: 85vw;
+  margin: 5vh auto;
+  min-height: 80vh;
+  background-color: white;
+  border-radius: 100px;
+  box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+`;
 const Title = styled.div`
   display: flex;
   justify-content: center;
@@ -28,24 +42,37 @@ const ImgBox = styled.div`
   width: 300px;
   height: 70%;
   background-color: #d9d9d9;
-
   border-radius: 70%;
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 `;
 const Box = styled.div`
+  margin-top: 40px;
   display: flex;
-  flex-direction: column;
+
   justify-content: center;
   align-items: center;
 `;
+
+const NickTab = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 export default function Mypage() {
   //recoil 값으로 올려야함
   const isUser = useRecoilValue(isUserAtom);
-  const isId = useRecoilValue(isUserIDAtom);
+  const setID = useSetRecoilState(isUserIDAtom);
   const isNick = useRecoilValue(isNickNameAtom);
   const isProfileImg = useRecoilValue(isProfileImgAtom);
+  const setUser = useSetRecoilState(isUserAtom);
+  const setNick = useSetRecoilState(isNickNameAtom);
+  const setProfileImg = useSetRecoilState(isProfileImgAtom);
+  const navigate = useNavigate();
+  const checkpage = useMatch("/mypage");
 
   // const getProfile = async () => {
   //   try {
@@ -65,22 +92,48 @@ export default function Mypage() {
   //   getProfile();
   // }, []);
 
+  const logout = () => {
+    window.Kakao.isInitialized();
+    //window.kakao.Auth.logout();
+    setID("");
+    setNick("");
+    setProfileImg("");
+    setUser(false);
+
+    navigate("/");
+  };
+
   return (
     <>
       <Header />
-      <Container>
-        {isUser ? (
-          <Box>
-            <ImgBox>
-              <Img src={isProfileImg} alt="no"></Img>
-            </ImgBox>
-            <Title>{isNick}</Title>
-            <button>로그아웃</button>
-          </Box>
-        ) : (
-          <Title>로그인 하세요</Title>
-        )}
-      </Container>
+      <Total
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ type: "spring", duration: 0.7 }}
+      >
+        <Container>
+          {isUser ? (
+            <>
+              <Box>
+                <ImgBox>
+                  <Img src={isProfileImg} alt="no image"></Img>
+                </ImgBox>
+                <NickTab>
+                  <Title>{isNick}</Title>
+                  <button>닉네임 변경</button>
+                </NickTab>
+              </Box>
+              <button onClick={logout}>로그아웃</button>
+            </>
+          ) : (
+            <Title>로그인 하세요</Title>
+          )}
+          <div>공지사항</div>
+          <div>서비스 문의</div>
+          <div>버전 정보</div>
+          <div>Contact</div>
+        </Container>
+      </Total>
     </>
   );
 }

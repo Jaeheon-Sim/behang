@@ -80,7 +80,7 @@ const NavTab = styled.div`
 `;
 
 const Icon = styled(FontAwesomeIcon)`
-  color: #ffffff;
+  color: black;
 `;
 
 const Circle = styled.div`

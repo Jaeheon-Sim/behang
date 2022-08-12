@@ -38,10 +38,11 @@ body {
 	line-height: 1;
 	color: black;
 	font-size: 1.8rem;
-	background-color: white ;
-	color: white;
-	background-image: url(https://media.giphy.com/media/t7Qb8655Z1VfBGr5XB/giphy.gif)
+	background-color: white;
 	
+	/* background-image: url(https://media.giphy.com/media/t7Qb8655Z1VfBGr5XB/giphy.gif);    
+	background-repeat : no-repeat;
+	background-size : cover; */
 }
 ol, ul {
 	list-style: none;

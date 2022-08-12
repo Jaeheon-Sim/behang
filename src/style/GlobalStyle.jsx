@@ -40,7 +40,8 @@ body {
 	font-size: 1.8rem;
 	background-color: white ;
 	color: white;
-	background:rgba(69, 90, 228,1);
+	background-image: url(https://media.giphy.com/media/t7Qb8655Z1VfBGr5XB/giphy.gif)
+	
 }
 ol, ul {
 	list-style: none;

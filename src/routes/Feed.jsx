@@ -20,7 +20,7 @@ const Container = styled.div`
 const Wrapper = styled(motion.div)`
   width: 85vw;
   margin: 5vh auto;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.6);
   min-height: 85vh;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -102,9 +102,9 @@ export default function Feed() {
       >
         {isLoading ? (
           <Wrapper
-            initial={{ backgroundColor: "rgb(217, 217, 217)" }}
+            initial={{ backgroundColor: "rgba(255, 255, 255,0.6)" }}
             animate={{
-              backgroundColor: "rgb(120, 119, 119)",
+              backgroundColor: "rgba(120, 119, 119,0.6)",
             }}
             transition={{
               ease: "easeInOut",

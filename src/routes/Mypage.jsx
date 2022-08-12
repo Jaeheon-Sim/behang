@@ -19,7 +19,7 @@ const Container = styled.div`
   width: 85vw;
   margin: 5vh auto;
   min-height: 80vh;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.6);
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
   color: black;

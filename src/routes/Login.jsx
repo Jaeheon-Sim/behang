@@ -23,7 +23,7 @@ const Container = styled(motion.div)`
   margin-top: 10vh;
   margin: 100px auto;
   display: block;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.6);
   height: 80vh;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);

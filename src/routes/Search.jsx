@@ -36,13 +36,14 @@ const Container = styled.div`
 const SearchTab = styled.div`
   margin-top: 4vh;
   display: flex;
-  margin-left: 30px;
+
   align-items: center;
+  justify-content: center;
 `;
 
 const SearchInput = styled.input`
   margin-left: 15px;
-  width: 90%;
+  min-width: 70%;
   height: 25px;
 `;
 
@@ -58,7 +59,7 @@ const TagsBox = styled.div`
   width: 90%;
 `;
 const Tag = styled(motion.button)`
-  width: 300px;
+  width: 40vh;
 
   border-radius: 20px;
   border: none;
@@ -150,12 +151,11 @@ export default function Search() {
         transition={{ type: "spring", duration: 1.4 }}
       >
         <Container>
-          <form>
-            <SearchTab>
-              <FontAwesomeIcon icon={faMap} />
-              <SearchInput placeholder="원하는 여행지를 검색하세요!" />
-            </SearchTab>
-          </form>
+          <SearchTab>
+            <FontAwesomeIcon icon={faMap} />
+            <SearchInput placeholder="원하는 여행지를 검색하세요!" />
+          </SearchTab>
+
           <TagTab>
             <TagsBox>
               <Tag

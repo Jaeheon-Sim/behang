@@ -84,8 +84,8 @@ const Filter = styled(motion.div)`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-left: 20px;
-  margin-right: 20px;
+  margin-left: 15px;
+  margin-right: 15px;
   font-size: 1.3rem;
   text-align: center;
 `;
@@ -193,6 +193,7 @@ export default function Upload() {
     setPark(false);
     setInside(false);
   };
+
   return (
     <>
       <Helmet>

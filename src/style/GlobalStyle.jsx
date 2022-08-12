@@ -40,7 +40,7 @@ body {
 	font-size: 1.8rem;
 	background-color: white ;
 	color: white;
-	background:rgba(69, 90, 228,0.8);
+	background:rgba(69, 90, 228,1);
 }
 ol, ul {
 	list-style: none;
@@ -60,10 +60,9 @@ table {
 body{
 	margin-left: 3vh;
 	margin-right:3vh;
-	/* @media screen and (max-width: 1000px) {
-		margin-left: 5vh;
-		margin-right:5vh;
-  } */
+	@media screen and (min-width: 1000px) {
+		
+  }
 }
 `;
 

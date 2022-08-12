@@ -30,13 +30,13 @@ const Container = styled(motion.div)`
   overflow: hidden;
 `;
 const Tab = styled(motion.div)`
-  margin-top: -20px;
+  margin-top: -40px;
   align-items: center;
   justify-content: center;
   text-align: center;
   border-radius: 5px;
   margin-bottom: 30px;
-  color: black;
+  color: rgba(69, 90, 228, 1);
 `;
 
 const LoginButton = styled(motion.div)`
@@ -47,12 +47,12 @@ const LoginButton = styled(motion.div)`
 `;
 
 const Img = styled(motion.img)`
-  width: 50%;
-  height: 50%;
-  margin-top: 20%;
+  width: 300px;
+  height: 250px;
+  margin-top: 10vh;
 `;
 const LoginTab = styled(Tab)`
-  margin-top: 20px;
+  margin-top: 10px;
 `;
 const GuestLoginTab = styled(Tab)`
   display: inline-block;
@@ -140,12 +140,6 @@ export default function Login() {
             </Links>
           </GuestLoginTab>
         </LoginTab>
-        {/* <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
-        <script>
-          {" "}
-          window.Kakao.init("1c2ed58cf555caa8291d502a8c3bd9f4") function
-          kakaoLogin(){window.Kakao.Auth.login({ scope: "profile_nickname" })}
-        </script> */}
       </Container>
     </>
   );

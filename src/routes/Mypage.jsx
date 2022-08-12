@@ -39,7 +39,7 @@ const Img = styled.img`
 `;
 
 const ImgBox = styled.div`
-  width: 300px;
+  width: 20vh;
   height: 70%;
   background-color: #d9d9d9;
   border-radius: 70%;

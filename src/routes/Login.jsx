@@ -23,7 +23,7 @@ const Container = styled(motion.div)`
   margin-top: 10vh;
   margin: 100px auto;
   display: block;
-  background-color: #f6eeee;
+  background-color: rgb(240, 237, 237, 1);
   height: 80vh;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -86,19 +86,17 @@ export default function Login() {
       <Helmet>
         <title>Login</title>
       </Helmet>
-      <Container transition={{ delayChildren: 0.5, staggerChildren: 0.2 }}>
+      <Container
+        initial={{ backgroundColor: "rgba(240, 237, 237, 1)" }}
+        animate={{ backgroundColor: "rgba(240, 237, 237, 0.5)" }}
+        transition={{ delayChildren: 0.5, staggerChildren: 0.2, duration: 2 }}
+      >
         <LoginButton
           initial={{ scale: 0, y: -100 }}
           animate={{ scale: 1, y: 0 }}
           transition={{ type: "spring", duration: 1.4, bounce: 0.5 }}
         >
-          <Img
-            whileHover={{ scale: 1.3 }}
-            drag
-            dragSnapToOrigin
-            src={logo}
-            alt="no"
-          />
+          <Img drag dragSnapToOrigin src={logo} alt="no" />
         </LoginButton>
         <Tab
           initial={{ scale: 0, y: -10 }}

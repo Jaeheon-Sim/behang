@@ -23,7 +23,7 @@ const Container = styled.div`
   overflow: hidden;
   width: 85vw;
   margin: 5vh auto;
-  background-color: #f6eeee;
+  background-color: #f0eded;
   min-height: 80vh;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);

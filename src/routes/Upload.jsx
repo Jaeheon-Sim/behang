@@ -20,7 +20,7 @@ const Container = styled(motion.div)`
   width: 85vw;
   margin: 5vh auto;
   min-height: 80vh;
-  background-color: rgb(246, 238, 238);
+  background-color: #f0eded;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
   color: black;

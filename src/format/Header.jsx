@@ -100,35 +100,35 @@ export default function Header() {
         </div>
         <NavContainer>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }}>
+            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/feed"}>
                 <Icon icon={faHouse} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }}>
+            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/search"}>
                 <Icon icon={faLocationDot} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }}>
+            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/map"}>
                 <Icon icon={faFlag} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }}>
+            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/mypage"}>
                 <Icon icon={faUser} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }}>
+            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
               {isUser ? (
                 // <DDD>
                 <NavLink to={"/upload"}>

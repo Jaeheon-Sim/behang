@@ -12,14 +12,14 @@ import {
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
 import { CLIENT_ID } from "../Key";
-
+import { request } from "../axios";
 const Total = styled(motion.div)``;
 
 const Container = styled.div`
   width: 85vw;
   margin: 5vh auto;
   min-height: 80vh;
-  background-color: #f6eeee;
+  background-color: #f0eded;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
   color: black;
@@ -48,16 +48,34 @@ const ImgBox = styled.div`
   align-items: center;
   overflow: hidden;
 `;
+
+const LogoutTab = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 2vw;
+`;
+
 const Box = styled.div`
   margin-top: 40px;
   display: flex;
-
   justify-content: center;
   align-items: center;
 `;
 
 const NickTab = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const LogoutBtn = styled(motion.button)`
+  width: 100px;
+  height: 30px;
+`;
+
+const InfoTab = styled(motion.div)`
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
@@ -103,6 +121,29 @@ export default function Mypage() {
     navigate("/");
   };
 
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`http://35.227.155.59:8080/hello`);
+
+      const json = await response.json();
+      console.log(json);
+    })();
+  }, []);
+
+  const test = () => {
+    fetch(`http://35.227.155.59:8080/hello`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({
+        id: "Test",
+        password: "Testing!",
+        user: "재헌이",
+      }),
+    }).then((response) => response.json());
+  };
   return (
     <>
       <Header />
@@ -120,18 +161,22 @@ export default function Mypage() {
                 </ImgBox>
                 <NickTab>
                   <Title>{isNick}</Title>
-                  <button>닉네임 변경</button>
+                  <button onClick={test}>닉네임 변경</button>
                 </NickTab>
               </Box>
-              <button onClick={logout}>로그아웃</button>
+              <LogoutTab>
+                <LogoutBtn onClick={logout}>로그아웃</LogoutBtn>
+              </LogoutTab>
             </>
           ) : (
             <Title>로그인 하세요</Title>
           )}
-          <div>공지사항</div>
-          <div>서비스 문의</div>
-          <div>버전 정보</div>
-          <div>Contact</div>
+          <InfoTab>
+            <div>공지사항</div>
+            <div>서비스 문의</div>
+            <div>버전 정보</div>
+            <div>Contact</div>
+          </InfoTab>
         </Container>
       </Total>
     </>

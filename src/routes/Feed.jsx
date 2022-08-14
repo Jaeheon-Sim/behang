@@ -20,7 +20,7 @@ const Container = styled.div`
 const Wrapper = styled(motion.div)`
   width: 85vw;
   margin: 5vh auto;
-  background-color: #f6eeee;
+  background-color: #f0eded;
   min-height: 85vh;
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
@@ -33,12 +33,14 @@ const Wrapper = styled(motion.div)`
 const FeedBox = styled(motion.div)`
   width: 90%;
   height: 90%;
-  background-color: #d9d9d9;
+  background-color: #ececec;
   margin: 10px;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 0 5px 5px rgba(35, 35, 35, 0.3), 0 10px 10px rgba(0, 0, 0, 0.3);
+  overflow: hiddern;
 `;
 const Img = styled.img`
   width: inherit;
@@ -55,10 +57,34 @@ export default function Feed() {
   const isX = useRecoilValue(isXAtom);
   const setY = useSetRecoilState(isYAtom);
   const isY = useRecoilValue(isYAtom);
-
-  // const { isLoading, data } = useQuery("location", fetchLocations);
   const [data, setCoins] = useState([]);
   const [isLoading, setLoading] = useState(true);
+
+  // const fetchlocations = () => {
+  //   (async () => {
+  //     Locate();
+  //     const response = await fetch(
+  //       `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`
+  //     );
+  //     const json = await response.json();
+  //     return json.response.body.items.item;
+  //   })();
+  // };
+
+  // const { isLoading, isError, data, error } = useQuery(
+  //   "locations",
+  //   fetchlocations,
+  //   {
+  //     refetchOnWindowFocus: false, // react-query는 사용자가 사용하는 윈도우가 다른 곳을 갔다가 다시 화면으로 돌아오면 이 함수를 재실행합니다. 그 재실행 여부 옵션 입니다.
+  //     retry: 0, // 실패시 재호출 몇번 할지
+  //     onSuccess: (data) => {
+  //       console.log(data);
+  //     },
+  //     onError: (e) => {
+  //       console.log(e.message);
+  //     },
+  //   }
+  // );
 
   const Locate = () => {
     if (navigator.geolocation) {
@@ -120,9 +146,20 @@ export default function Feed() {
           <Wrapper>
             <Container>
               {data?.slice(0, 20).map((e) => (
-                <Link to={`/feed/${e.contentid}`}>
-                  <FeedBox key={e.contentid}>
-                    <Img src={e.firstimage} />
+                <Link
+                  key={e.contentid}
+                  to={`/feed/${e.contentid}`}
+                  state={{ location: e }}
+                >
+                  <FeedBox
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.8 }}
+                  >
+                    {e.firstimage === "" ? (
+                      <div>{e.title} 이미지가 없어용 ㅜㅜ</div>
+                    ) : (
+                      <Img src={e.firstimage} />
+                    )}
                   </FeedBox>
                 </Link>
               ))}

@@ -7,6 +7,7 @@ import qs from "qs";
 import { isUserIDAtom, isNickNameAtom, isProfileImgAtom } from "./atoms";
 import { CLIENT_ID, REDIRECT_URI } from "./Key";
 import { useNavigate } from "react-router-dom";
+import { request } from "./api";
 
 const Auth = () => {
   const setUser = useSetRecoilState(isUserAtom);
@@ -35,6 +36,53 @@ const Auth = () => {
     }
   };
 
+  const test = () => {
+    fetch(`https://kauth.kakao.com/oauth/token`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        "Access-Control-Allow-Origin": "http://localhost",
+        "Access-Control-Allow-Credentials": "true",
+      },
+      body: JSON.stringify({
+        grant_type: "authorization_code",
+        client_id: REST_API_KEY,
+        redirect_uri: REDIRECT_URI,
+        code: code,
+        client_secret: CLIENT_SECRET,
+      }),
+    }).then((response) => response.json());
+  };
+
+  // const getToken = async () => {
+  //   const payload = qs.stringify({
+  //     grant_type: "authorization_code",
+  //     client_id: REST_API_KEY,
+  //     redirect_uri: REDIRECT_URI,
+  //     code: code,
+  //     client_secret: CLIENT_SECRET,
+  //   });
+
+  //   try {
+  //     // access token 가져오기
+  //     const res = await axios.post(
+  //       "http://35.227.155.59:8080/v1/social/login/kakao",
+  //       payload
+  //     );
+
+  //     // Kakao Javascript SDK 초기화
+  //     window.Kakao.init(REST_API_KEY);
+  //     // access token 설정
+  //     window.Kakao.Auth.setAccessToken(res.data.access_token);
+  //     setUser(true);
+  //     navigate("/feed");
+  //     getProfile();
+  //   } catch (err) {
+  //     alert(err);
+  //   }
+  // };
+
   const getToken = async () => {
     const payload = qs.stringify({
       grant_type: "authorization_code",
@@ -42,6 +90,9 @@ const Auth = () => {
       redirect_uri: REDIRECT_URI,
       code: code,
       client_secret: CLIENT_SECRET,
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      "Access-Control-Allow-Origin": "http://localhost//3000",
     });
 
     try {
@@ -65,9 +116,15 @@ const Auth = () => {
 
   useEffect(() => {
     getToken();
+
+    //test();
   }, []);
 
-  return null;
+  // useEffect(() => {
+  //   request("post", "/hello", { 1: "hello" }).then;
+  // }, []);
+
+  return <div>wait</div>;
 };
 
 export default Auth;

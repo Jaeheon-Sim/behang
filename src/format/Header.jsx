@@ -20,6 +20,9 @@ const Head = styled.div`
 
   width: 100%;
   font-size: 25px;
+  /* @media screen and (max-width: 500px) {
+    justify-content: space-between;
+  } */
 `;
 
 const HeaderBox = styled(motion.div)``;
@@ -49,6 +52,11 @@ const DDD = styled.div`
   background-color: #d9d9d9;
   border-radius: 20px;
   padding: 5px;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  font-size: 1em;
+  min-width: 80px;
+  min-height: 35px;
   &:hover {
     background-color: #bfbdbd;
   }
@@ -100,35 +108,35 @@ export default function Header() {
         </div>
         <NavContainer>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
+            <HeaderBox whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/feed"}>
                 <Icon icon={faHouse} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
+            <HeaderBox whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/search"}>
                 <Icon icon={faLocationDot} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
+            <HeaderBox whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/map"}>
                 <Icon icon={faFlag} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
+            <HeaderBox whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
               <NavLink to={"/mypage"}>
                 <Icon icon={faUser} />
               </NavLink>
             </HeaderBox>
           </NavTab>
           <NavTab>
-            <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
+            <HeaderBox whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
               {isUser ? (
                 // <DDD>
                 <NavLink to={"/upload"}>

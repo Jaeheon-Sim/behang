@@ -133,9 +133,7 @@ export default function Login() {
               bounce: 0.5,
             }}
           >
-            <Links whileHover={{ scale: 1.5 }} to={`/feed`}>
-              로그인없이 입장
-            </Links>
+            <Links to={`/feed`}>로그인없이 입장</Links>
           </GuestLoginTab>
         </LoginTab>
       </Container>

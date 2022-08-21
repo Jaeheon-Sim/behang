@@ -43,14 +43,19 @@ const FeedBox = styled(motion.div)`
   overflow: hiddern;
 `;
 const Img = styled.img`
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
 `;
 
 const Div = styled.div`
   position: absolute;
   top: 55%;
   left: 45%;
+`;
+
+const Links = styled(Link)`
+  text-decoration: none;
+  color: black;
 `;
 export default function Feed() {
   const setX = useSetRecoilState(isXAtom);
@@ -88,7 +93,6 @@ export default function Feed() {
 
   const Locate = () => {
     if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
       navigator.geolocation.getCurrentPosition(
         (position) => {
           setX(position.coords.latitude); // 위도
@@ -97,7 +101,6 @@ export default function Feed() {
         (err) => {}
       );
     } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
     }
   };
 
@@ -109,6 +112,7 @@ export default function Feed() {
       );
 
       const json = await response.json();
+
       setCoins(json.response.body.items.item);
       setLoading(false);
     })();
@@ -145,24 +149,27 @@ export default function Feed() {
         ) : (
           <Wrapper>
             <Container>
-              {data?.slice(0, 20).map((e) => (
-                <Link
-                  key={e.contentid}
-                  to={`/feed/${e.contentid}`}
-                  state={{ location: e }}
-                >
-                  <FeedBox
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.8 }}
+              {data?.slice(0, 20).map((e) => {
+                console.log(e);
+                return (
+                  <Links
+                    key={e.contentid}
+                    to={`/feed/${e.contentid}`}
+                    state={e}
                   >
-                    {e.firstimage === "" ? (
-                      <div>{e.title} 이미지가 없어용 ㅜㅜ</div>
-                    ) : (
-                      <Img src={e.firstimage} />
-                    )}
-                  </FeedBox>
-                </Link>
-              ))}
+                    <FeedBox
+                      whileHover={{ scale: 1.07 }}
+                      whileTap={{ scale: 0.8 }}
+                    >
+                      {e.firstimage === "" ? (
+                        <div>{e.title} 이미지가 없어용 ㅜㅜ</div>
+                      ) : (
+                        <Img src={e.firstimage} />
+                      )}
+                    </FeedBox>
+                  </Links>
+                );
+              })}
             </Container>
           </Wrapper>
         )}

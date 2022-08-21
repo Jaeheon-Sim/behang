@@ -121,29 +121,19 @@ export default function Mypage() {
     navigate("/");
   };
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch(`http://35.227.155.59:8080/hello`);
-
-      const json = await response.json();
-      console.log(json);
-    })();
-  }, []);
-
   const test = () => {
-    fetch(`http://35.227.155.59:8080/hello`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        id: "Test",
-        password: "Testing!",
-        user: "재헌이",
-      }),
-    }).then((response) => response.json());
+    console.log("test");
   };
+
+  // useEffect(() => {
+  //   (async () => {
+  //     const response = await fetch(`http://35.227.155.59:8080/hello`);
+
+  //     const json = await response.json();
+  //     console.log(json);
+  //   })();
+  // }, []);
+
   return (
     <>
       <Header />
@@ -169,12 +159,23 @@ export default function Mypage() {
               </LogoutTab>
             </>
           ) : (
-            <Title>로그인 하세요</Title>
+            <>
+              <br />
+              <br />
+              <br />
+              <br />
+              <Title>로그인 하세요</Title>
+            </>
           )}
+          <br />
+          <br />
           <InfoTab>
             <div>공지사항</div>
+            <br />
             <div>서비스 문의</div>
+            <br />
             <div>버전 정보</div>
+            <br />
             <div>Contact</div>
           </InfoTab>
         </Container>

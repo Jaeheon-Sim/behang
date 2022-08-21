@@ -2,19 +2,12 @@ import Header from "../format/Header";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
-import { useRecoilValue, useSetRecoilState } from "recoil";
 import Modal from "react-modal";
+import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
-import {
-  isParkAtom,
-  isInsideAtom,
-  isKidsAtom,
-  isPetAtom,
-  isPublicAtom,
-  isSomeAtom,
-  isUserAtom,
-  isImgAtom,
-} from "../atoms";
+import { OPEN_KEY } from "../Key";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -75,7 +68,8 @@ const Filter = styled(motion.div)`
   height: 3.54vh;
   border-radius: 20px;
   border: none;
-  background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
+  /* background-color: ${(props) =>
+    props.isActive ? "#455ae4" : "#d9d9d9"}; */
   /* &:hover {
     background-color: ${(props) => (props.isActive ? "#3b4ec5" : "#aaaaaa")};
   } */
@@ -120,6 +114,14 @@ const Input = styled.input`
   display: none;
 `;
 
+const SearchTab = styled.div`
+  width: 100%;
+  margin-top: 4vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const LocationModal = styled(Modal)`
   width: 80%;
   height: 80%;
@@ -141,22 +143,126 @@ const Button = styled(motion.button)`
   height: 30px;
 `;
 
+const SearchInput = styled.input`
+  margin-left: 5px;
+  margin-right: 15px;
+  width: 100%;
+  height: 3.5vh;
+  &:focus {
+    outline-color: #455ae4;
+  }
+`;
+
+const Icon = styled(FontAwesomeIcon)`
+  cursor: pointer;
+  margin-left: 10px;
+  margin-right: 10px;
+`;
+
+const ListTab = styled.div`
+  font-size: 1.2rem;
+  color: black;
+`;
+const Title = styled(motion.h1)`
+  font-size: 2rem;
+`;
+const ListBox = styled.div`
+  border-bottom: 1px solid grey;
+  display: flex;
+  height: auto;
+`;
+
+const ListImg = styled.img`
+  width: 100px;
+  height: 80px;
+  background-color: grey;
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+`;
+const ListContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin: 8px;
+`;
+
+const Place = styled.div``;
+
+const LocationBox = styled.div``;
+const Distance = styled.span``;
+const Location = styled.span``;
+
+const ModalContainer = styled.div`
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+`;
+
 export default function Upload() {
-  const setPark = useSetRecoilState(isParkAtom);
-  const isPark = useRecoilValue(isParkAtom);
-  const setInside = useSetRecoilState(isInsideAtom);
-  const isInside = useRecoilValue(isInsideAtom);
-  const setKids = useSetRecoilState(isKidsAtom);
-  const isKids = useRecoilValue(isKidsAtom);
-  const setPet = useSetRecoilState(isPetAtom);
-  const isPet = useRecoilValue(isPetAtom);
-  const setPublic = useSetRecoilState(isPublicAtom);
-  const isPublic = useRecoilValue(isPublicAtom);
-  const setSome = useSetRecoilState(isSomeAtom);
-  const isSome = useRecoilValue(isSomeAtom);
+  const [isPark, setPark] = useState(false);
+  const [isInside, setInside] = useState(false);
+  const [isKids, setKids] = useState(false);
+  const [isPet, setPet] = useState(false);
+  const [isPublic, setPublic] = useState(false);
+  const [isSome, setSome] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
-  const setImg = useSetRecoilState(isImgAtom);
-  const isImg = useRecoilValue(isImgAtom);
+  const [isImg, setImg] = useState("");
+  const [isE, setE] = useState(true);
+  const [isSearch, setSearch] = useState("");
+  const [isList, setList] = useState([]);
+  const [isFirst, setFirst] = useState(true);
+  const [isLocate, setLocate] = useState({
+    title: "",
+    addr: "",
+    isOn: false,
+  });
+  const onLocate = (e) => {
+    setLocate((prev) => ({
+      ...prev,
+      title: e.title,
+      addr: e.addr1,
+      isOn: true,
+    }));
+    setModalOpen((prev) => !prev);
+  };
+
+  const onSearch = (e) => {
+    setFirst(false);
+    (async () => {
+      try {
+        const response = await fetch(
+          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=10&MobileApp=test&arrange=P&keyword=${isSearch}`
+        );
+        const json = await response.json();
+        if (json.response.body.items === "") {
+          setE(true);
+
+          setList([]);
+        } else {
+          setE(false);
+          setFirst(false);
+          setList(json.response.body.items.item);
+        }
+      } catch (err) {
+        setE(true);
+        setList([]);
+      }
+    })();
+  };
+
+  const onInput = (e) => {
+    setList([]);
+    setE(false);
+    setSearch(e.target.value);
+  };
 
   const upload = (file) => {
     const reader = new FileReader();
@@ -171,12 +277,17 @@ export default function Upload() {
 
   const filterVari = {
     hover: (i) => ({
+      y: -10,
       backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
       transition: {
         duration: 0.2,
       },
     }),
+    tap: {
+      y: 0,
+    },
     push: (i) => ({
+      y: 0,
       backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
       transition: {
         duration: 0.2,
@@ -192,6 +303,11 @@ export default function Upload() {
     setImg("");
     setPark(false);
     setInside(false);
+    setLocate(() => ({
+      title: "",
+      addr: "",
+      isOn: false,
+    }));
   };
 
   return (
@@ -218,7 +334,7 @@ export default function Upload() {
             ) : (
               <>
                 <FeedImg>
-                  {isImg && <Img src={isImg} alt="올바른 사진을 첨부하세요" />}
+                  {isImg && <Img src={isImg} alt="올바른 파일을 첨부하세요" />}
                 </FeedImg>
                 <Button
                   initial={{ scale: 0 }}
@@ -242,6 +358,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isPark}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setPark((current) => !current)}
             >
@@ -251,6 +368,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isPublic}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setPublic((current) => !current)}
             >
@@ -261,6 +379,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isKids}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setKids((current) => !current)}
             >
@@ -272,6 +391,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isInside}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setInside((current) => !current)}
             >
@@ -282,6 +402,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isSome}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setSome((current) => !current)}
             >
@@ -291,6 +412,7 @@ export default function Upload() {
               variants={filterVari}
               custom={isPet}
               whileHover="hover"
+              whileTap="tap"
               animate="push"
               onClick={() => setPet((current) => !current)}
             >
@@ -302,9 +424,13 @@ export default function Upload() {
           <Box>
             <LocationBtn
               whileHover={{ scale: 1.1 }}
-              onClick={() => setModalOpen((current) => !current)}
+              onClick={() => {
+                setModalOpen((current) => !current);
+                setList([]);
+                setSearch("");
+              }}
             >
-              등록장소 선택
+              {isLocate.isOn ? isLocate.title : "등록장소 선택"}
             </LocationBtn>
           </Box>
         </Tab>
@@ -312,8 +438,97 @@ export default function Upload() {
         <LocationModal
           isOpen={isModalOpen}
           onRequestClose={() => setModalOpen(false)}
+          style={{
+            overlay: {
+              position: "fixed",
+              top: "10%",
+              left: "20%",
+              right: "20%",
+              bottom: "10%",
+              backgroundColor: "rgba(255, 255, 255, 0.75)",
+            },
+            content: {
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "flex-start",
+              position: "absolute",
+
+              //top: "10%",
+              //left: "10%",
+              width: "inherit",
+              height: "inherit",
+              border: "1px solid #ccc",
+              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              overflow: "auto",
+              WebkitOverflowScrolling: "touch",
+              borderRadius: "4px",
+              outline: "none",
+            },
+          }}
         >
-          hi
+          <ModalContainer>
+            <SearchTab>
+              <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+
+              <SearchInput
+                onChange={onInput}
+                value={isSearch}
+                placeholder="등록할 여행지를 검색하세요!"
+                minLength="2"
+              />
+
+              <Icon
+                icon={faX}
+                onClick={() => setModalOpen((current) => !current)}
+              >
+                X
+              </Icon>
+            </SearchTab>
+            <ListTab>
+              {isSearch === "" || isFirst === true ? (
+                <>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <SearchTab>
+                    <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                      검색어를 입력 후 돋보기를 누르세요!
+                    </Title>
+                  </SearchTab>
+                </>
+              ) : isE ? (
+                <>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <SearchTab>
+                    <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                      올바른 검색어를 입력하세요!
+                    </Title>
+                  </SearchTab>
+                </>
+              ) : (
+                isList?.map((e) => (
+                  <ListBox
+                    key={e.contentid}
+                    onClick={() => {
+                      onLocate(e);
+                    }}
+                  >
+                    <ListImg src={e.firstimage} alt="이미지가 없어요" />
+                    <ListContent>
+                      <Place>{e.title}</Place>
+                      <LocationBox>
+                        <Location>{e.addr1}</Location>
+                      </LocationBox>
+                    </ListContent>
+                  </ListBox>
+                ))
+              )}
+            </ListTab>
+          </ModalContainer>
         </LocationModal>
       </Container>
     </>

@@ -1,3 +1,4 @@
+import axios from "axios";
 // const BASE_URL =
 //   //   "http://apis.data.go.kr/B551011/KorService&vQLxgnWbzLDwZWujom7Tfzceh8%2BaYO4P3WUpTf64AZ5hqBMft3fwVOLksClRPAAft%2BUBmbJOj%2Bw44DPdT3ko0g%3D%3D";
 //   `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`;
@@ -32,3 +33,17 @@
 //   console.log("sdafdssdf");
 //   return fetch(`${BASE_URL}/coins`).then((response) => response.json());
 // }
+
+const DOMAIN = "http://35.227.155.59:8080";
+axios.defaults.withCredentials = true;
+export const request = (method, url, data = undefined, download = false) => {
+  let requestConfig = {
+    method: method,
+    url: DOMAIN + url,
+    withCredentials: false,
+    data: data,
+  };
+  requestConfig.responseType = download ? "blob" : undefined;
+
+  return axios(requestConfig);
+};

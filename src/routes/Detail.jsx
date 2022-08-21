@@ -90,11 +90,10 @@ const Icon = styled(FontAwesomeIcon)`
 const HeaderBox = styled(motion.div)``;
 
 export default function Detail() {
-  const {
-    state: { location: sight },
-  } = useLocation();
-
-  const imgArr = [sight.firstimage, sight.firstimage2];
+  const { state } = useLocation();
+  // const state = useLocation();
+  // console.log(state);
+  const imgArr = [state.firstimage, state.firstimage2];
 
   const [visible, setVisible] = useState(1);
   const [back, setBack] = useState(false);
@@ -107,9 +106,6 @@ export default function Detail() {
     setVisible((prev) => (prev == 1 ? imgArr.length : prev - 1));
   };
 
-  console.log(imgArr.length);
-  console.log(imgArr);
-  console.log(sight);
   return (
     <>
       <Helmet>
@@ -123,7 +119,7 @@ export default function Detail() {
         transition={{ type: "spring", duration: 1.4 }}
       >
         <Container>
-          <Title>{sight.title}</Title>
+          <Title>{state.title}</Title>
           <AniTab>
             <LayoutGroup>
               <HeaderBox whileHover={{ scale: 1.5 }} whileTap={{ scale: 0.8 }}>
@@ -154,12 +150,14 @@ export default function Detail() {
           </AniTab>
           <InfoTab>
             <div>
-              {sight.addr1} {sight.addr2}
+              {state.addr1} {state.addr2}
             </div>
-            <div>{sight.tel}</div>
+            <div>{state.tel}</div>
           </InfoTab>
         </Container>
       </Total>
     </>
   );
 }
+
+// http://apis.data.go.kr/B551011/KorService/detailIntro

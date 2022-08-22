@@ -277,6 +277,10 @@ export default function Search() {
                 <br />
                 <br />
                 <br />
+                <br />
+                <br />
+                <br />
+                <br />
                 <SearchTab>
                   <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
                     검색어를 입력 후 돋보기를 누르세요!
@@ -285,6 +289,10 @@ export default function Search() {
               </>
             ) : isE ? (
               <>
+                <br />
+                <br />
+                <br />
+                <br />
                 <br />
                 <br />
                 <br />

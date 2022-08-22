@@ -5,6 +5,7 @@ import styled from "styled-components";
 import Modal from "react-modal";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faX } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { OPEN_KEY } from "../Key";
@@ -116,7 +117,7 @@ const Input = styled.input`
 
 const SearchTab = styled.div`
   width: 100%;
-  margin-top: 4vh;
+  margin-top: 1vh;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -140,12 +141,30 @@ const Img = styled.img`
 
 const Button = styled(motion.button)`
   margin-left: 100px;
-  height: 30px;
+  background-color: #455ae4;
+  color: white;
+  border: none;
+  width: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  padding: 10px;
+
+  border-radius: 10px;
+`;
+
+const BtnTab = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 `;
 
 const SearchInput = styled.input`
   margin-left: 5px;
-  margin-right: 15px;
+  margin-right: 10px;
   width: 100%;
   height: 3.5vh;
   &:focus {
@@ -239,7 +258,7 @@ export default function Upload() {
     (async () => {
       try {
         const response = await fetch(
-          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=10&MobileApp=test&arrange=P&keyword=${isSearch}`
+          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=20&MobileApp=test&arrange=P&keyword=${isSearch}`
         );
         const json = await response.json();
         if (json.response.body.items === "") {
@@ -336,14 +355,35 @@ export default function Upload() {
                 <FeedImg>
                   {isImg && <Img src={isImg} alt="올바른 파일을 첨부하세요" />}
                 </FeedImg>
-                <Button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1, rotateZ: 360 }}
-                  exit={{ scale: 0 }}
-                  onClick={reset}
-                >
-                  초기화
-                </Button>
+                <BtnTab>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -10 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={reset}
+                  >
+                    <div style={{ fontSize: "1.5rem" }}>등록</div>
+                  </Button>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -10 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={reset}
+                    style={{ backgroundColor: "red" }}
+                  >
+                    <FontAwesomeIcon
+                      style={{ fontSize: "1.5rem" }}
+                      icon={faArrowRotateRight}
+                    ></FontAwesomeIcon>
+                    <div style={{ marginLeft: "10px", fontSize: "1.5rem" }}>
+                      초기화
+                    </div>
+                  </Button>
+                </BtnTab>
               </>
             )}
           </AnimatePresence>
@@ -452,13 +492,13 @@ export default function Upload() {
               justifyContent: "center",
               alignItems: "flex-start",
               position: "absolute",
-
+              padding: "10px",
               //top: "10%",
               //left: "10%",
               width: "inherit",
               height: "inherit",
               border: "1px solid #ccc",
-              backgroundColor: "rgba(255, 255, 255, 0.6)",
+              backgroundColor: "rgba(255, 255, 255, 0.8)",
               overflow: "auto",
               WebkitOverflowScrolling: "touch",
               borderRadius: "4px",
@@ -491,6 +531,15 @@ export default function Upload() {
                   <br />
                   <br />
                   <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+
                   <SearchTab>
                     <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
                       검색어를 입력 후 돋보기를 누르세요!
@@ -499,6 +548,14 @@ export default function Upload() {
                 </>
               ) : isE ? (
                 <>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
                   <br />
                   <br />
                   <br />

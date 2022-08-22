@@ -68,9 +68,20 @@ const NickTab = styled.div`
   align-items: center;
 `;
 
-const LogoutBtn = styled(motion.button)`
-  width: 100px;
-  height: 30px;
+const Button = styled(motion.button)`
+  margin-left: 100px;
+  background-color: #455ae4;
+  color: white;
+  border: none;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: lighter;
+  font-size: 1.3rem;
 `;
 
 const InfoTab = styled(motion.div)`
@@ -151,11 +162,29 @@ export default function Mypage() {
                 </ImgBox>
                 <NickTab>
                   <Title>{isNick}</Title>
-                  <button onClick={test}>닉네임 변경</button>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -10 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={test}
+                  >
+                    <div>닉네임 변경</div>
+                  </Button>
                 </NickTab>
               </Box>
               <LogoutTab>
-                <LogoutBtn onClick={logout}>로그아웃</LogoutBtn>
+                <Button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  whileHover={{ y: -10 }}
+                  whileTap={{ y: 0 }}
+                  exit={{ scale: 0 }}
+                  onClick={logout}
+                >
+                  <div>로그아웃</div>
+                </Button>
               </LogoutTab>
             </>
           ) : (

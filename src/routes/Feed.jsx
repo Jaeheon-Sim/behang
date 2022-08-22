@@ -54,6 +54,9 @@ const Div = styled.div`
 `;
 
 const Links = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   text-decoration: none;
   color: black;
 `;
@@ -149,7 +152,7 @@ export default function Feed() {
         ) : (
           <Wrapper>
             <Container>
-              {data?.slice(0, 20).map((e) => {
+              {data?.map((e) => {
                 console.log(e);
                 return (
                   <Links

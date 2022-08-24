@@ -4,16 +4,22 @@ import axios from "axios";
 import { isUserAtom } from "./atoms";
 import { useSetRecoilState } from "recoil";
 import qs from "qs";
-import { isUserIDAtom, isNickNameAtom, isProfileImgAtom } from "./atoms";
+import {
+  isUserIDAtom,
+  isNickNameAtom,
+  isProfileImgAtom,
+  isAcessTokenAtom,
+} from "./atoms";
 import { CLIENT_ID, REDIRECT_URI } from "./Key";
 import { useNavigate } from "react-router-dom";
-import { request } from "./api";
+import { request } from "./axios";
 
 const Auth = () => {
   const setUser = useSetRecoilState(isUserAtom);
   const setID = useSetRecoilState(isUserIDAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
+  const setAcessToken = useSetRecoilState(isAcessTokenAtom);
   const REST_API_KEY = CLIENT_ID;
   const CLIENT_SECRET = "98779abc80d6cbde549b1d3cf5ee583c";
   const navigate = useNavigate();
@@ -37,47 +43,120 @@ const Auth = () => {
   };
 
   const test = () => {
-    fetch(`https://kauth.kakao.com/oauth/token`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "Access-Control-Allow-Origin": "http://localhost",
-        "Access-Control-Allow-Credentials": "true",
-      },
-      body: JSON.stringify({
-        grant_type: "authorization_code",
-        client_id: REST_API_KEY,
-        redirect_uri: REDIRECT_URI,
-        code: code,
-        client_secret: CLIENT_SECRET,
-      }),
-    }).then((response) => response.json());
+    // console.log(code);
+    // (async () => {
+    //   const response = await fetch(
+    //     `http://35.247.33.79:8080/hello
+    //     `
+    //   );
+    //   const json = await response.json();
+    //   console.log(json);
+    // })();
+    // fetch("http://35.247.33.79:8080/hello", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     boardId: 2,
+    //     name: "hansol",
+    //     password: "hansol_password",
+    //   }),
+    // }).then((response) => response.json());
+    // setUser(true);
+    // navigate("/feed");
+    // fetch(`/v1/social/signup/kakao`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify({
+    //     accessToken: code,
+    //   }),
+    // }).then((response) => response.json());
+    // request("post", `/hello`, {})
+    //   .then((res) => {
+    //     alert("request complete!");
+    //     window.location.reload();
+    //   })
+    //   .catch((err) => {
+    //     alert(err);
+    //   });
+    // axios
+    //   .post(
+    //     `http://35.247.33.79:8080/v1/social/signup/kakao`,
+    //     { accessToken: code },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         withCredentials: true,
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // axios
+    //   .post(
+    //     `http://35.247.33.79:8080/hello`,
+    //     { },
+    //     {
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //         withCredentials: true,
+    //         "Access-Control-Allow-Origin": "*",
+    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+    // axios({
+    //   url: "http://35.247.33.79:8080/hello",
+    //   method: "post",
+    //   data: {},
+    // })
+    //   .then(function a(response) {
+    //     console.log(response);
+    //   })
+    //   .catch(function (error) {
+    //     console.log(error);
+    //   });
   };
 
   // const getToken = async () => {
   //   const payload = qs.stringify({
-  //     grant_type: "authorization_code",
-  //     client_id: REST_API_KEY,
-  //     redirect_uri: REDIRECT_URI,
-  //     code: code,
-  //     client_secret: CLIENT_SECRET,
+  //     // grant_type: "authorization_code",
+  //     // client_id: REST_API_KEY,
+  //     // redirect_uri: REDIRECT_URI,
+  //     // code: code,
+  //     // client_secret: CLIENT_SECRET,
+  //     accessToken: code,
   //   });
 
   //   try {
   //     // access token 가져오기
   //     const res = await axios.post(
-  //       "http://35.227.155.59:8080/v1/social/login/kakao",
+  //       "http://35.247.33.79:8080/v1/social/signup/kakao",
   //       payload
   //     );
 
   //     // Kakao Javascript SDK 초기화
-  //     window.Kakao.init(REST_API_KEY);
+  //     // window.Kakao.init(REST_API_KEY);
   //     // access token 설정
-  //     window.Kakao.Auth.setAccessToken(res.data.access_token);
-  //     setUser(true);
-  //     navigate("/feed");
-  //     getProfile();
+  //     // window.Kakao.Auth.setAccessToken(res.data.access_token);
+  //     // setUser(true);
+  //     // navigate("/feed");
+  //     alert(res);
   //   } catch (err) {
   //     alert(err);
   //   }
@@ -90,9 +169,6 @@ const Auth = () => {
       redirect_uri: REDIRECT_URI,
       code: code,
       client_secret: CLIENT_SECRET,
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      "Access-Control-Allow-Origin": "http://localhost//3000",
     });
 
     try {
@@ -103,12 +179,70 @@ const Auth = () => {
       );
 
       // Kakao Javascript SDK 초기화
-      window.Kakao.init(REST_API_KEY);
+      // window.Kakao.init(REST_API_KEY);
       // access token 설정
-      window.Kakao.Auth.setAccessToken(res.data.access_token);
-      setUser(true);
-      navigate("/feed");
-      getProfile();
+      // window.Kakao.Auth.setAccessToken(res.data.access_token);
+      axios
+        .post(
+          `http://35.247.33.79:8080/v1/social/signup/kakao`,
+          { accessToken: res.data.access_token },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              withCredentials: true,
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Methods":
+                "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+            },
+          }
+        )
+        .then((response) => {
+          console.log("회원가입 성공" + response);
+          axios
+            .post(
+              `http://35.247.33.79:8080/v1/social/login/kakao`,
+              { accessToken: res.data.access_token },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  withCredentials: true,
+                  "Access-Control-Allow-Origin": "*",
+                  "Access-Control-Allow-Methods":
+                    "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              setUser(true);
+              //navigate("/feed");
+              //getProfile();
+            });
+        })
+        .catch((err) => {
+          console.log("원래 회원");
+          axios
+            .post(
+              `http://35.247.33.79:8080/v1/social/login/kakao`,
+              { accessToken: res.data.access_token },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  withCredentials: true,
+                  "Access-Control-Allow-Origin": "*",
+                  "Access-Control-Allow-Methods":
+                    "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+                },
+              }
+            )
+            .then((res) => {
+              console.log(res);
+              setUser(true);
+              setAcessToken(res.data.data.accessToken);
+              navigate("/feed");
+              //getProfile();
+            });
+        });
     } catch (err) {
       alert(err);
     }
@@ -116,8 +250,6 @@ const Auth = () => {
 
   useEffect(() => {
     getToken();
-
-    //test();
   }, []);
 
   // useEffect(() => {

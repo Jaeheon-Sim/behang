@@ -8,7 +8,9 @@ import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isXAtom, isYAtom } from "../atoms";
 import { OPEN_KEY } from "../Key";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { request } from "../axios";
 const Total = styled(motion.div)``;
 const Container = styled.div`
   display: grid;
@@ -40,7 +42,7 @@ const FeedBox = styled(motion.div)`
   justify-content: center;
   align-items: center;
   box-shadow: 0 5px 5px rgba(35, 35, 35, 0.3), 0 10px 10px rgba(0, 0, 0, 0.3);
-  overflow: hiddern;
+  overflow: hidden;
 `;
 const Img = styled.img`
   width: 100%;
@@ -109,16 +111,49 @@ export default function Feed() {
 
   useEffect(() => {
     Locate();
-    (async () => {
-      const response = await fetch(
-        `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`
-      );
+    // axios
+    //   .get(
+    //     `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
+    //     { headers: { "Content-Type": "application/json" } }
+    //   )
+    //   .then((response) => {
+    //     console.log(response);
+    //     setCoins(response.data.response.body.items.item);
+    //     setLoading(false);
+    //   });
 
-      const json = await response.json();
+    axios
+      .get(
+        `/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
+        { headers: { "Content-Type": "application/json" } }
+      )
+      .then((response) => {
+        console.log("Wow");
+        setCoins(response.data.response.body.items.item);
+        setLoading(false);
+      });
+    // (async () => {
+    //   const response = await fetch(
+    //     `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`
+    //   );
 
-      setCoins(json.response.body.items.item);
-      setLoading(false);
-    })();
+    //   const json = await response.json();
+
+    //   setCoins(json.response.body.items.item);
+    //   setLoading(false);
+    // })();
+
+    // request(
+    //   "post",
+    //   `/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
+    //   {}
+    // )
+    //   .then((res) => {
+    //     alert("완료");
+    //   })
+    //   .catch((err) => {
+    //     alert(err);
+    //   });
   }, []);
 
   return (
@@ -129,9 +164,9 @@ export default function Feed() {
 
       <Header />
       <Total
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", duration: 1.4 }}
+      // initial={{ scale: 0 }}
+      // animate={{ scale: 1 }}
+      // transition={{ type: "spring", duration: 1.4 }}
       >
         {isLoading ? (
           <Wrapper
@@ -153,7 +188,6 @@ export default function Feed() {
           <Wrapper>
             <Container>
               {data?.map((e) => {
-                console.log(e);
                 return (
                   <Links
                     key={e.contentid}

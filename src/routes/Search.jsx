@@ -121,6 +121,8 @@ const LocationBox = styled.div``;
 const Distance = styled.span``;
 const Location = styled.span``;
 
+const IconDiv = styled(motion.div)``;
+
 const Icon = styled(FontAwesomeIcon)`
   cursor: pointer;
 `;
@@ -195,7 +197,9 @@ export default function Search() {
       >
         <Container>
           <SearchTab>
-            <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+            <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
+              <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+            </IconDiv>
             <SearchInput
               onChange={onInput}
               value={isSearch}

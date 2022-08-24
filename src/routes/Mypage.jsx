@@ -34,8 +34,8 @@ const Title = styled.div`
 `;
 
 const Img = styled.img`
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
 `;
 
 const ImgBox = styled.div`
@@ -56,6 +56,7 @@ const LogoutTab = styled.div`
 `;
 
 const Box = styled.div`
+  width: 100%;
   margin-top: 40px;
   display: flex;
   justify-content: center;
@@ -84,12 +85,29 @@ const Button = styled(motion.button)`
   font-size: 1.3rem;
 `;
 
+const Btn = styled(Button)`
+  margin-left: 0px;
+`;
+
 const InfoTab = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 `;
+
+const Div = styled(motion.div)`
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+const MotionVar = {
+  hover: { y: -5 },
+  tap: { y: 0 },
+};
 
 export default function Mypage() {
   //recoil 값으로 올려야함
@@ -157,28 +175,30 @@ export default function Mypage() {
           {isUser ? (
             <>
               <Box>
-                <ImgBox>
-                  <Img src={isProfileImg} alt="no image"></Img>
-                </ImgBox>
-                <NickTab>
-                  <Title>{isNick}</Title>
-                  <Button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -10 }}
-                    whileTap={{ y: 0 }}
-                    exit={{ scale: 0 }}
-                    onClick={test}
-                  >
-                    <div>닉네임 변경</div>
-                  </Button>
-                </NickTab>
+                <Div>
+                  <ImgBox>
+                    <Img src={isProfileImg} alt="no image"></Img>
+                  </ImgBox>
+                  <NickTab>
+                    <Title>{isNick}</Title>
+                    <Btn
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotateZ: 360 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      exit={{ scale: 0 }}
+                      onClick={test}
+                    >
+                      <div>닉네임 변경</div>
+                    </Btn>
+                  </NickTab>
+                </Div>
               </Box>
               <LogoutTab>
                 <Button
                   initial={{ scale: 0 }}
                   animate={{ scale: 1, rotateZ: 360 }}
-                  whileHover={{ y: -10 }}
+                  whileHover={{ y: -5 }}
                   whileTap={{ y: 0 }}
                   exit={{ scale: 0 }}
                   onClick={logout}
@@ -199,13 +219,26 @@ export default function Mypage() {
           <br />
           <br />
           <InfoTab>
-            <div>공지사항</div>
+            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              공지사항
+            </Div>
             <br />
-            <div>서비스 문의</div>
+            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              서비스 문의
+            </Div>
             <br />
-            <div>버전 정보</div>
+            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              약관 및 정책
+            </Div>
             <br />
-            <div>Contact</div>
+            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              버전 정보
+            </Div>
+            <br />
+            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              Contact
+            </Div>
+            <br />
           </InfoTab>
         </Container>
       </Total>

@@ -215,6 +215,7 @@ const LocationBox = styled.div``;
 const Distance = styled.span``;
 const Location = styled.span``;
 
+const IconDiv = styled(motion.div)``;
 const ModalContainer = styled.div`
   width: 100%;
   height: 100%;
@@ -296,7 +297,7 @@ export default function Upload() {
 
   const filterVari = {
     hover: (i) => ({
-      y: -10,
+      y: -5,
       backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
       transition: {
         duration: 0.2,
@@ -359,7 +360,7 @@ export default function Upload() {
                   <Button
                     initial={{ scale: 0 }}
                     animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -10 }}
+                    whileHover={{ y: -5 }}
                     whileTap={{ y: 0 }}
                     exit={{ scale: 0 }}
                     onClick={reset}
@@ -369,7 +370,7 @@ export default function Upload() {
                   <Button
                     initial={{ scale: 0 }}
                     animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -10 }}
+                    whileHover={{ y: -5 }}
                     whileTap={{ y: 0 }}
                     exit={{ scale: 0 }}
                     onClick={reset}
@@ -508,7 +509,9 @@ export default function Upload() {
         >
           <ModalContainer>
             <SearchTab>
-              <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+              <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
+                <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+              </IconDiv>
 
               <SearchInput
                 onChange={onInput}
@@ -516,13 +519,14 @@ export default function Upload() {
                 placeholder="등록할 여행지를 검색하세요!"
                 minLength="2"
               />
-
-              <Icon
-                icon={faX}
-                onClick={() => setModalOpen((current) => !current)}
-              >
-                X
-              </Icon>
+              <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
+                <Icon
+                  icon={faX}
+                  onClick={() => setModalOpen((current) => !current)}
+                >
+                  X
+                </Icon>
+              </IconDiv>
             </SearchTab>
             <ListTab>
               {isSearch === "" || isFirst === true ? (

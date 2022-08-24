@@ -22,7 +22,10 @@ const Container = styled(motion.div)`
   width: 80vw;
   margin-top: 10vh;
   margin: 100px auto;
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: rgb(240, 237, 237, 1);
   height: 80vh;
   border-radius: 100px;

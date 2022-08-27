@@ -8,7 +8,7 @@ import {
   isUserIDAtom,
   isNickNameAtom,
   isProfileImgAtom,
-  isAcessTokenAtom,
+  isAccessTokenAtom,
 } from "./atoms";
 import { CLIENT_ID, REDIRECT_URI } from "./Key";
 import { useNavigate } from "react-router-dom";
@@ -19,7 +19,7 @@ const Auth = () => {
   const setID = useSetRecoilState(isUserIDAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
-  const setAcessToken = useSetRecoilState(isAcessTokenAtom);
+  const setAccessToken = useSetRecoilState(isAccessTokenAtom);
   const REST_API_KEY = CLIENT_ID;
   const CLIENT_SECRET = "98779abc80d6cbde549b1d3cf5ee583c";
   const navigate = useNavigate();
@@ -168,85 +168,125 @@ const Auth = () => {
       client_id: REST_API_KEY,
       redirect_uri: REDIRECT_URI,
       code: code,
-      client_secret: CLIENT_SECRET,
+      // client_secret: CLIENT_SECRET,
     });
 
-    try {
-      // access token 가져오기
-      const res = await axios.post(
-        "https://kauth.kakao.com/oauth/token",
-        payload
-      );
-
-      // Kakao Javascript SDK 초기화
-      // window.Kakao.init(REST_API_KEY);
-      // access token 설정
-      // window.Kakao.Auth.setAccessToken(res.data.access_token);
-      axios
-        .post(
-          `http://35.247.33.79:8080/v1/social/signup/kakao`,
-          { accessToken: res.data.access_token },
-          {
-            headers: {
-              "Content-Type": "application/json",
-              withCredentials: true,
-              "Access-Control-Allow-Origin": "*",
-              "Access-Control-Allow-Methods":
-                "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-            },
-          }
-        )
-        .then((response) => {
-          console.log("회원가입 성공" + response);
-          axios
-            .post(
-              `http://35.247.33.79:8080/v1/social/login/kakao`,
-              { accessToken: res.data.access_token },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  withCredentials: true,
-                  "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Methods":
-                    "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-                },
-              }
-            )
-            .then((res) => {
-              console.log(res);
-              setUser(true);
-              //navigate("/feed");
-              //getProfile();
-            });
-        })
-        .catch((err) => {
-          console.log("원래 회원");
-          axios
-            .post(
-              `http://35.247.33.79:8080/v1/social/login/kakao`,
-              { accessToken: res.data.access_token },
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  withCredentials: true,
-                  "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Methods":
-                    "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-                },
-              }
-            )
-            .then((res) => {
-              console.log(res);
-              setUser(true);
-              setAcessToken(res.data.data.accessToken);
-              navigate("/feed");
-              //getProfile();
-            });
-        });
-    } catch (err) {
-      alert(err);
-    }
+    fetch("https://kauth.kakao.com/oauth/token", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: payload,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        Login(data);
+      });
   };
+
+  const Login = (res) => {
+    const payload = qs.stringify({
+      accessToken: res?.access_token,
+    });
+    fetch(`http://35.247.33.79:80/social/login/kakao`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: payload,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
+
+  // const getToken = () => {
+  //   const payload = qs.stringify({
+  //     grant_type: "authorization_code",
+  //     client_id: REST_API_KEY,
+  //     redirect_uri: REDIRECT_URI,
+  //     code: code,
+  //     client_secret: CLIENT_SECRET,
+  //   });
+
+  //   try {
+  //     // access token 가져오기
+  //     const res = axios.get("https://kauth.kakao.com/oauth/token", payload);
+
+  //     //Kakao Javascript SDK 초기화
+  //     // window.Kakao.init(REST_API_KEY);
+  //     //access token 설정
+  //     // window.Kakao.Auth.setAccessToken(res.data.access_token);
+  //     axios
+  //       .post(
+  //         `http://35.247.33.79/social/signup/kakao`,
+  //         { accessToken: res?.data?.access_token },
+  //         {
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             withCredentials: true,
+  //             "Access-Control-Allow-Origin": "*",
+  //             "Access-Control-Allow-Methods":
+  //               "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //           },
+  //         }
+  //       )
+  //       .then((response) => {
+  //         console.log("회원가입 성공" + response);
+  //         axios
+  //           .post(
+  //             `http://35.247.33.79/social/login/kakao`,
+  //             { accessToken: res.data.access_token },
+  //             {
+  //               headers: {
+  //                 "Content-Type": "application/json",
+  //                 withCredentials: true,
+  //                 "Access-Control-Allow-Origin": "*",
+  //                 "Access-Control-Allow-Methods":
+  //                   "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //               },
+  //             }
+  //           )
+  //           .then((res) => {
+  //             console.log(res);
+  //             setUser(true);
+  //             //navigate("/feed");
+  //             //getProfile();
+  //           });
+  //       })
+  //       .catch((err) => {
+  //         if (err.code !== "") {
+  //           console.log("원래 회원");
+  //           axios
+  //             .post(
+  //               `http://35.247.33.79/social/login/kakao`,
+  //               { accessToken: res.data.access_token },
+  //               {
+  //                 headers: {
+  //                   "Content-Type": "application/json",
+  //                   withCredentials: true,
+  //                   "Access-Control-Allow-Origin": "*",
+  //                   "Access-Control-Allow-Methods":
+  //                     "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //                 },
+  //               }
+  //             )
+  //             .then((complete) => {
+  //               console.log(complete);
+  //               setUser(true);
+  //               setAccessToken(complete.data.data.accessToken);
+  //               navigate("/feed");
+  //               //getProfile();
+  //             });
+  //         } else {
+  //           console.log(err);
+  //         }
+  //       });
+  //   } catch (err) {
+  //     alert(err);
+  //   }
+  // };
 
   useEffect(() => {
     getToken();

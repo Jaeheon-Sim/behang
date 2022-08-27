@@ -2,15 +2,15 @@ import styled from "styled-components";
 import { Helmet } from "react-helmet";
 import Header from "../format/Header";
 import { motion } from "framer-motion";
-import { useQuery } from "react-query";
 import { fetchLocations } from "../api";
 import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { isXAtom, isYAtom } from "../atoms";
+import { isXAtom, isYAtom, isAccessTokenAtom } from "../atoms";
 import { OPEN_KEY } from "../Key";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { request } from "../axios";
+import { useInView } from "react-intersection-observer";
+
 const Total = styled(motion.div)``;
 const Container = styled.div`
   display: grid;
@@ -67,9 +67,11 @@ export default function Feed() {
   const isX = useRecoilValue(isXAtom);
   const setY = useSetRecoilState(isYAtom);
   const isY = useRecoilValue(isYAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const [data, setCoins] = useState([]);
   const [isLoading, setLoading] = useState(true);
-
+  const [ref, inView] = useInView();
+  const [ispagenum, setPageNum] = useState(10);
   // const fetchlocations = () => {
   //   (async () => {
   //     Locate();
@@ -111,6 +113,7 @@ export default function Feed() {
 
   useEffect(() => {
     Locate();
+    // console.log(inView);
     // axios
     //   .get(
     //     `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
@@ -122,16 +125,49 @@ export default function Feed() {
     //     setLoading(false);
     //   });
 
-    axios
-      .get(
-        `/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
-        { headers: { "Content-Type": "application/json" } }
-      )
-      .then((response) => {
-        console.log("Wow");
-        setCoins(response.data.response.body.items.item);
+    // axios
+    //   .get(
+    //     `/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=10&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`,
+    //     { headers: { "Content-Type": "application/json" } }
+    //   )
+    //   .then((response) => {
+    //     setCoins(response.data.response.body.items.item);
+
+    //     setLoading(false);
+    //   });
+
+    fetch(`http://35.247.33.79:80/posts/feed?page=0&size=10`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        console.log();
+        setCoins(res.list);
+
         setLoading(false);
       });
+
+    // axios
+    //   .get(`http://35.247.33.79:80/posts/feed?page=0&size=10`, {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       withCredentials: false,
+    //       "Access-Control-Allow-Origin": "*",
+    //       "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+    //     },
+    //   })
+    //   .then((response) => {
+    //     console.log(response);
+    //     // setCoins(response.data.response.body.items.item);
+    //     setLoading(false);
+    //   })
+    //   .catch((err) => {
+    //     console.log(isAccessToken);
+    //   });
+
     // (async () => {
     //   const response = await fetch(
     //     `http://apis.data.go.kr/B551011/KorService/locationBasedList?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=100&MobileApp=test&mapX=${isY}&mapY=${isX}&radius=10000`
@@ -155,7 +191,7 @@ export default function Feed() {
     //     alert(err);
     //   });
   }, []);
-
+  console.log(data);
   return (
     <>
       <Helmet>
@@ -189,24 +225,17 @@ export default function Feed() {
             <Container>
               {data?.map((e) => {
                 return (
-                  <Links
-                    key={e.contentid}
-                    to={`/feed/${e.contentid}`}
-                    state={e}
-                  >
+                  <Links key={e.id} to={`/feed/${e.id}`} state={e}>
                     <FeedBox
                       whileHover={{ scale: 1.07 }}
                       whileTap={{ scale: 0.8 }}
                     >
-                      {e.firstimage === "" ? (
-                        <div>{e.title} 이미지가 없어용 ㅜㅜ</div>
-                      ) : (
-                        <Img src={e.firstimage} />
-                      )}
+                      <Img src={"http://35.247.33.79:80/" + e.imageUrl} />
                     </FeedBox>
                   </Links>
                 );
               })}
+              <div ref={ref} />
             </Container>
           </Wrapper>
         )}

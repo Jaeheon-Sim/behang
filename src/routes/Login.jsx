@@ -3,6 +3,7 @@ import styled from "styled-components";
 import logo from "../images/logo.png";
 import kakaologin from "../images/kakao_login_medium_wide.png";
 import axios from "axios";
+import KakaoLogin from "react-kakao-login";
 import { motion } from "framer-motion";
 import Feed from "../routes/Feed";
 import {
@@ -15,8 +16,14 @@ import {
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import { isUserAtom } from "../atoms";
 import { useEffect } from "react";
-import { CLIENT_ID, REDIRECT_URI } from "../Key";
+import { CLIENT_ID, REDIRECT_URI, KAKAO_JSKEY } from "../Key";
 import Auth from "../Auth";
+import {
+  isUserIDAtom,
+  isNickNameAtom,
+  isProfileImgAtom,
+  isAccessTokenAtom,
+} from "../atoms";
 
 const Container = styled(motion.div)`
   width: 80vw;
@@ -72,17 +79,111 @@ const Links = styled(Link)`
 
 export default function Login() {
   const userToken = useRecoilValue(isUserAtom);
-
+  const setUser = useSetRecoilState(isUserAtom);
+  const setAccessToken = useSetRecoilState(isAccessTokenAtom);
+  const navigate = useNavigate();
+  axios.defaults.withCredentials = true;
   // kakao login
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+
+  // const Kakao = () => {
+  //   useEffect(() => {
+  //     if (typeof window !== "undefined") {
+  //       window.Kakao.init(KAKAO_JSKEY);
+  //     }
+  //   }, []);
+
+  //   const signUp = () => {};
+
+  //   return (
+  //     <KakaoLogin
+  //       token={KAKAO_JSKEY}
+  //       onSuccess={(res) => {
+  //         console.log("로그인 성공");
+  //         console.log(res);
+  //         console.log(res?.response?.access_token);
+  //         axios
+  //           .post(
+  //             `http://35.247.33.79:80/social/signup/kakao`,
+  //             { accessToken: res?.response?.access_token },
+  //             {
+  //               headers: {
+  //                 "Content-Type": "application/json",
+  //                 withCredentials: true,
+  //                 "Access-Control-Allow-Origin": "*",
+  //                 "Access-Control-Allow-Methods":
+  //                   "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //               },
+  //             }
+  //           )
+  //           .then((response) => {
+  //             console.log("회원가입 성공" + response);
+  //             axios
+  //               .post(
+  //                 `http://35.247.33.79:80/social/login/kakao`,
+  //                 { accessToken: res?.response?.access_token },
+  //                 {
+  //                   headers: {
+  //                     "Content-Type": "application/json",
+  //                     withCredentials: true,
+  //                     "Access-Control-Allow-Origin": "*",
+  //                     "Access-Control-Allow-Methods":
+  //                       "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //                   },
+  //                 }
+  //               )
+  //               .then((res) => {
+  //                 console.log(res);
+  //                 setUser(true);
+  //                 //navigate("/feed");
+  //                 //getProfile();
+  //               });
+  //           })
+  //           .catch((err) => {
+  //             if (err.code !== "") {
+  //               console.log("원래 회원");
+  //               axios
+  //                 .post(
+  //                   `http://35.247.33.79:80/social/login/kakao`,
+  //                   { accessToken: res?.response?.access_token },
+  //                   {
+  //                     headers: {
+  //                       "Content-Type": "application/json",
+  //                       withCredentials: true,
+  //                       "Access-Control-Allow-Origin": "*",
+  //                       "Access-Control-Allow-Methods":
+  //                         "GET,PUT,POST,DELETE,PATCH,OPTIONS",
+  //                     },
+  //                   }
+  //                 )
+  //                 .then((complete) => {
+  //                   console.log(complete);
+  //                   setUser(true);
+  //                   setAccessToken(complete.data.data.accessToken);
+  //                   navigate("/feed");
+  //                   //getProfile();
+  //                 });
+  //             } else {
+  //               console.log(err);
+  //             }
+  //           });
+  //       }}
+  //       onFail={(err) => console.error("로그인 실패", err)}
+  //       onLogout={(res) => {
+  //         console.log("로그아웃");
+  //         console.log(res);
+  //       }}
+  //       src={kakaologin}
+  //       style={{ display: "flex", justifyContent: "center", border: "none" }}
+  //     >
+  //       <motion.img whileHover={{ y: -10 }} src={kakaologin} alt="no" />
+  //     </KakaoLogin>
+  //   );
+  // };
 
   const onClick = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
-
-  if (userToken) {
-    return <Feed />;
-  }
 
   return (
     <>
@@ -95,9 +196,9 @@ export default function Login() {
         transition={{ delayChildren: 0.5, staggerChildren: 0.2, duration: 2 }}
       >
         <LoginButton
-          initial={{ scale: 0, y: -100 }}
-          animate={{ scale: 1, y: 0 }}
-          transition={{ type: "spring", duration: 1.4, bounce: 0.5 }}
+        // initial={{ scale: 0, y: -100 }}
+        // animate={{ scale: 1, y: 0 }}
+        // transition={{ type: "spring", duration: 1.4, bounce: 0.5 }}
         >
           <Img drag dragSnapToOrigin src={logo} alt="no" />
         </LoginButton>
@@ -122,6 +223,7 @@ export default function Login() {
             onClick={onClick}
           >
             <motion.img whileHover={{ y: -10 }} src={kakaologin} alt="no" />
+            {/* <Kakao /> */}
           </LoginButton>
         </LoginTab>
 

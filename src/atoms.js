@@ -73,7 +73,7 @@ export const isImgAtom = atom({
   default: "",
 });
 
-export const isAcessTokenAtom = atom({
-  key: "acesstoken",
+export const isAccessTokenAtom = atom({
+  key: "accesstoken",
   default: "",
 });

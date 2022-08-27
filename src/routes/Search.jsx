@@ -5,10 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMap } from "@fortawesome/free-solid-svg-icons";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import styled from "styled-components";
 import { useState, useEffect } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { OPEN_KEY } from "../Key";
+import { useInView } from "react-intersection-observer";
 import {
   isParkAtom,
   isInsideAtom,
@@ -20,6 +22,7 @@ import {
 } from "../atoms";
 import { useNavigate } from "react-router-dom";
 import { type } from "@testing-library/user-event/dist/type";
+import SearchResult from "../format/SearchResult";
 
 const Total = styled(motion.div)``;
 const Title = styled(motion.h1)`
@@ -55,48 +58,22 @@ const SearchInput = styled.input`
   }
 `;
 
-const TagTab = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-`;
-const TagsBox = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-top: 15px;
-  width: 90%;
-`;
-const Tag = styled(motion.button)`
-  width: 40vh;
-
-  border-radius: 20px;
-  border: none;
-  /* background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
-  &:hover {
-    background-color: ${(props) => (props.isActive ? "#2f3ea0" : "#aaaaaa")};
-  } */
-  //background-color: $(props) =>;
-  font-family: "Jua", sans-serif;
-  margin: 0 5px 0 5px;
-  font-size: 1.3rem;
-`;
 const ListTab = styled.div`
   font-size: 1.2rem;
   color: black;
 `;
 const ListBox = styled.div`
-  margin: 5px;
-  border-top: 1px solid grey;
+  border-bottom: 1px solid grey;
   display: flex;
   height: auto;
-  margin-top: 15px;
+
   padding: 15px;
 `;
 const ListImg = styled.img`
   width: 100px;
   height: 80px;
   background-color: grey;
-  margin: 5px;
+  margin: 3px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -127,48 +104,60 @@ const Icon = styled(FontAwesomeIcon)`
   cursor: pointer;
 `;
 
-const filterVari = {
-  hover: (i) => ({
-    backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
-    y: -10,
-    transition: {
-      duration: 0.2,
-    },
-  }),
-  tap: {
-    y: 0,
-  },
-  push: (i) => ({
-    backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
-    transition: {
-      duration: 0.2,
-    },
-  }),
-};
+const MoreDiv = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  height: auto;
+  cursor: pointer;
+`;
+
+const RefDiv = styled.div`
+  display: ${(props) => (props.show ? "none" : null)};
+  width: 100px;
+  height: 100px;
+  background-color: white;
+`;
 
 export default function Search() {
   const [isE, setE] = useState(true);
   const [isSearch, setSearch] = useState("");
   const [isFirst, setFirst] = useState(true);
   const [isList, setList] = useState([]);
+  const [isPageNum, setPageNum] = useState(10);
+  const [isDone, setDone] = useState(false);
+
+  const [isLoading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const onSearch = (e) => {
-    setFirst(false);
+  const moreInfo = () => {
+    searchapi();
+  };
+
+  const searchapi = () => {
+    const len = isList.length;
+
     (async () => {
       try {
         const response = await fetch(
-          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=10&MobileApp=test&arrange=P&keyword=${isSearch}`
+          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=${isPageNum}&MobileApp=test&arrange=P&keyword=${isSearch}`
         );
         const json = await response.json();
         if (json.response.body.items === "") {
           setE(true);
-
           setList([]);
         } else {
           setE(false);
           setFirst(false);
+          setLoading(false);
           setList(json.response.body.items.item);
+          setPageNum((prev) => prev + 10);
+          if (len === json.response.body.items.item.length) {
+            setDone(true);
+          }
         }
       } catch (err) {
         setE(true);
@@ -177,12 +166,20 @@ export default function Search() {
     })();
   };
 
+  const onSearch = (e) => {
+    setLoading(true);
+    setPageNum(10);
+    setDone(false);
+    setFirst(false);
+    searchapi();
+  };
+
   const onInput = (e) => {
     setList([]);
     setE(false);
     setSearch(e.target.value);
   };
-
+  console.log(isPageNum);
   return (
     <>
       <Helmet>
@@ -208,72 +205,6 @@ export default function Search() {
             />
           </SearchTab>
 
-          {/* <TagTab>
-            <TagsBox>
-              <Tag
-                variants={filterVari}
-                custom={isPark}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setPark((current) => !current)}
-              >
-                편리한 주차
-              </Tag>
-              <Tag
-                variants={filterVari}
-                custom={isPublic}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setPublic((current) => !current)}
-              >
-                편리한 대중교통
-              </Tag>
-              <Tag
-                variants={filterVari}
-                custom={isKids}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setKids((current) => !current)}
-              >
-                아이와 함께
-              </Tag>
-            </TagsBox>
-            <TagsBox>
-              <Tag
-                variants={filterVari}
-                custom={isInside}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setInside((current) => !current)}
-              >
-                실내
-              </Tag>
-              <Tag
-                variants={filterVari}
-                custom={isPet}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setPet((current) => !current)}
-              >
-                반려 동물과 함께
-              </Tag>
-              <Tag
-                variants={filterVari}
-                custom={isSome}
-                whileHover="hover"
-                whileTap="tap"
-                animate="push"
-                onClick={() => setSome((current) => !current)}
-              >
-                연인과 함께
-              </Tag>
-            </TagsBox>
-          </TagTab> */}
           <ListTab>
             {isSearch === "" || isFirst === true ? (
               <>
@@ -307,33 +238,72 @@ export default function Search() {
                   </Title>
                 </SearchTab>
               </>
+            ) : isLoading ? (
+              <>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <SearchTab>
+                  <Title
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      repeatDelay: 0.5,
+                    }}
+                  >
+                    Loading...
+                  </Title>
+                </SearchTab>
+              </>
             ) : (
-              isList?.map((e) => (
-                <ListBox
-                  key={e.contentid}
-                  onClick={() => {
-                    console.log(e);
-                    navigate(`/feed/${e.contentid}`, {
-                      state: e,
-                    });
-                  }}
-                >
-                  <ListImg src={e.firstimage} alt="이미지가 없어요" />
-                  <ListContent>
-                    <Place>{e.title}</Place>
-                    {/* <HearBox>
+              <>
+                {isList?.map((e) => (
+                  <ListBox
+                    key={e.contentid}
+                    onClick={() => {
+                      console.log(e);
+                      navigate(`/search/${e.contentid}`, {
+                        state: e,
+                      });
+                    }}
+                  >
+                    <ListImg src={e.firstimage} alt="이미지가 없어요" />
+                    <ListContent>
+                      <Place>{e.title}</Place>
+                      {/* <HearBox>
                         <HeartImg>
                           <FontAwesomeIcon icon={faHeart} />
                         </HeartImg>
                         <HeartCount>1234123</HeartCount>
                       </HearBox> */}
-                    <Distance>21332.km </Distance>
-                    <LocationBox>
-                      <Location>{e.addr1}</Location>
-                    </LocationBox>
-                  </ListContent>
-                </ListBox>
-              ))
+                      <Distance>21332.km </Distance>
+                      <LocationBox>
+                        <Location>{e.addr1}</Location>
+                      </LocationBox>
+                    </ListContent>
+                  </ListBox>
+                ))}
+                {!isDone ? (
+                  <MoreDiv
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 1 }}
+                    onClick={moreInfo}
+                  >
+                    <IconDiv style={{ marginRight: "10px" }}>
+                      <Icon icon={faAngleDown} />
+                    </IconDiv>
+                    더보기
+                  </MoreDiv>
+                ) : null}
+              </>
             )}
           </ListTab>
         </Container>

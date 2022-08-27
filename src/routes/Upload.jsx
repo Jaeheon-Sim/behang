@@ -9,6 +9,7 @@ import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { OPEN_KEY } from "../Key";
+import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -239,12 +240,50 @@ export default function Upload() {
   const [isSearch, setSearch] = useState("");
   const [isList, setList] = useState([]);
   const [isFirst, setFirst] = useState(true);
+  const [isDone, setDone] = useState(false);
+  const [isPageNum, setPageNum] = useState(10);
+  const [isLoading, setLoading] = useState(true);
   const [isLocate, setLocate] = useState({
     title: "",
     addr: "",
     isOn: false,
   });
+
+  const moreInfo = () => {
+    searchapi();
+  };
+
+  const searchapi = () => {
+    const len = isList.length;
+
+    (async () => {
+      try {
+        const response = await fetch(
+          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=${isPageNum}&MobileApp=test&arrange=P&keyword=${isSearch}`
+        );
+        const json = await response.json();
+        if (json.response.body.items === "") {
+          setE(true);
+          setList([]);
+        } else {
+          setE(false);
+          setFirst(false);
+          setLoading(false);
+          setList(json.response.body.items.item);
+          setPageNum((prev) => prev + 10);
+          if (len === json.response.body.items.item.length) {
+            setDone(true);
+          }
+        }
+      } catch (err) {
+        setE(true);
+        setList([]);
+      }
+    })();
+  };
+
   const onLocate = (e) => {
+    setPageNum(10);
     setLocate((prev) => ({
       ...prev,
       title: e.title,
@@ -255,27 +294,11 @@ export default function Upload() {
   };
 
   const onSearch = (e) => {
+    setLoading(true);
+    setPageNum(10);
+    setDone(false);
     setFirst(false);
-    (async () => {
-      try {
-        const response = await fetch(
-          `http://apis.data.go.kr/B551011/KorService/searchKeyword?serviceKey=${OPEN_KEY}&_type=json&MobileOS=WIN&numOfRows=20&MobileApp=test&arrange=P&keyword=${isSearch}`
-        );
-        const json = await response.json();
-        if (json.response.body.items === "") {
-          setE(true);
-
-          setList([]);
-        } else {
-          setE(false);
-          setFirst(false);
-          setList(json.response.body.items.item);
-        }
-      } catch (err) {
-        setE(true);
-        setList([]);
-      }
-    })();
+    searchapi();
   };
 
   const onInput = (e) => {
@@ -283,6 +306,17 @@ export default function Upload() {
     setE(false);
     setSearch(e.target.value);
   };
+
+  const MoreDiv = styled(motion.div)`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    height: auto;
+    cursor: pointer;
+  `;
 
   const upload = (file) => {
     const reader = new FileReader();
@@ -329,7 +363,7 @@ export default function Upload() {
       isOn: false,
     }));
   };
-
+  console.log(isPageNum);
   return (
     <>
       <Helmet>
@@ -522,7 +556,10 @@ export default function Upload() {
               <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
                 <Icon
                   icon={faX}
-                  onClick={() => setModalOpen((current) => !current)}
+                  onClick={() => {
+                    setPageNum(10);
+                    setModalOpen((current) => !current);
+                  }}
                 >
                   X
                 </Icon>
@@ -570,23 +607,62 @@ export default function Upload() {
                     </Title>
                   </SearchTab>
                 </>
+              ) : isLoading ? (
+                <>
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <br />
+                  <SearchTab>
+                    <Title
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{
+                        ease: "easeInOut",
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                        repeatDelay: 0.5,
+                      }}
+                    >
+                      Loading...
+                    </Title>
+                  </SearchTab>
+                </>
               ) : (
-                isList?.map((e) => (
-                  <ListBox
-                    key={e.contentid}
-                    onClick={() => {
-                      onLocate(e);
-                    }}
-                  >
-                    <ListImg src={e.firstimage} alt="이미지가 없어요" />
-                    <ListContent>
-                      <Place>{e.title}</Place>
-                      <LocationBox>
-                        <Location>{e.addr1}</Location>
-                      </LocationBox>
-                    </ListContent>
-                  </ListBox>
-                ))
+                <>
+                  {isList?.map((e) => (
+                    <ListBox
+                      key={e.contentid}
+                      onClick={() => {
+                        onLocate(e);
+                      }}
+                    >
+                      <ListImg src={e.firstimage} alt="이미지가 없어요" />
+                      <ListContent>
+                        <Place>{e.title}</Place>
+                        <LocationBox>
+                          <Location>{e.addr1}</Location>
+                        </LocationBox>
+                      </ListContent>
+                    </ListBox>
+                  ))}{" "}
+                  {!isDone ? (
+                    <MoreDiv
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      onClick={moreInfo}
+                    >
+                      <IconDiv style={{ marginRight: "10px" }}>
+                        <Icon icon={faAngleDown} />
+                      </IconDiv>
+                      더보기
+                    </MoreDiv>
+                  ) : null}
+                </>
               )}
             </ListTab>
           </ModalContainer>

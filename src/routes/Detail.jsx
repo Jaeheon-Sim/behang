@@ -59,7 +59,9 @@ const FeedBox = styled(motion.div)`
 `;
 const Img = styled(motion.img)`
   width: 60vh;
-  height: inherit;
+  height: auto;
+  max-height: 477px;
+
   position: absolute;
 `;
 
@@ -69,6 +71,39 @@ const InfoTab = styled(motion.div)`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+`;
+
+const TagTab = styled.div`
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+`;
+const TagsBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  width: 70%;
+  @media screen and (min-width: 1000px) {
+    width: 51%;
+  }
+`;
+const Tag = styled(motion.button)`
+  width: 20vh;
+  @media screen and (min-width: 1000px) {
+    width: 30vh;
+  }
+  border-radius: 20px;
+  border: none;
+  /* background-color: ${(props) => (props.isActive ? "#455ae4" : "#d9d9d9")};
+  &:hover {
+    background-color: ${(props) => (props.isActive ? "#2f3ea0" : "#aaaaaa")};
+  } */
+  //background-color: $(props) =>;
+  font-family: "Jua", sans-serif;
+  margin: 0 5px 0 5px;
+  font-size: 1.3rem;
 `;
 
 const visVar = {
@@ -88,6 +123,25 @@ const Icon = styled(FontAwesomeIcon)`
 `;
 
 const HeaderBox = styled(motion.div)``;
+
+const filterVari = {
+  hover: (i) => ({
+    backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
+    y: -10,
+    transition: {
+      duration: 0.2,
+    },
+  }),
+  tap: {
+    y: 0,
+  },
+  push: (i) => ({
+    backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
+    transition: {
+      duration: 0.2,
+    },
+  }),
+};
 
 export default function Detail() {
   const { state } = useLocation();
@@ -148,12 +202,73 @@ export default function Detail() {
               </HeaderBox>
             </LayoutGroup>
           </AniTab>
+
           <InfoTab>
             <div>
               {state.addr1} {state.addr2}
             </div>
             <div>{state.tel}</div>
           </InfoTab>
+          <TagTab>
+            <TagsBox>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                편리한 주차
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                편리한 대중교통
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                아이와 함께
+              </Tag>
+            </TagsBox>
+            <TagsBox>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                실내
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                반려 동물과 함께
+              </Tag>
+              <Tag
+                variants={filterVari}
+                custom={true}
+                whileHover="hover"
+                whileTap="tap"
+                animate="push"
+              >
+                연인과 함께
+              </Tag>
+            </TagsBox>
+          </TagTab>
         </Container>
       </Total>
     </>

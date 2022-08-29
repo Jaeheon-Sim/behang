@@ -71,7 +71,7 @@ export default function Feed() {
   const [data, setCoins] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [ref, inView] = useInView();
-  const [ispagenum, setPageNum] = useState(10);
+  const [isPageNum, setPageNum] = useState(10);
   // const fetchlocations = () => {
   //   (async () => {
   //     Locate();
@@ -112,7 +112,6 @@ export default function Feed() {
   };
 
   useEffect(() => {
-    Locate();
     // console.log(inView);
     // axios
     //   .get(
@@ -135,8 +134,8 @@ export default function Feed() {
 
     //     setLoading(false);
     //   });
-
-    fetch(`http://35.247.33.79:80/posts/feed?page=0&size=10`, {
+    console.log("update");
+    fetch(`http://35.247.33.79:80/posts/feed?page=0&size=${isPageNum}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -144,9 +143,8 @@ export default function Feed() {
     })
       .then((e) => e.json())
       .then((res) => {
-        console.log();
         setCoins(res.list);
-
+        setPageNum((prev) => prev + 10);
         setLoading(false);
       });
 
@@ -190,8 +188,8 @@ export default function Feed() {
     //   .catch((err) => {
     //     alert(err);
     //   });
-  }, []);
-  console.log(data);
+  }, [inView]);
+
   return (
     <>
       <Helmet>
@@ -230,7 +228,10 @@ export default function Feed() {
                       whileHover={{ scale: 1.07 }}
                       whileTap={{ scale: 0.8 }}
                     >
-                      <Img src={"http://35.247.33.79:80/" + e.imageUrl} />
+                      <Img
+                        alt="오류가 있어요."
+                        src={"http://35.247.33.79:80/" + e.imageUrl}
+                      />
                     </FeedBox>
                   </Links>
                 );

@@ -62,8 +62,9 @@ table {
 body{
 	margin-left: 3vh;
 	margin-right:3vh;
-	@media screen and (min-width: 1000px) {
-		
+	@media screen and (min-width: 2000px) {
+		margin-left: 13vh;
+	margin-right:13vh;
   }
 }
 `;

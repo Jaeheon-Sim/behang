@@ -5,7 +5,8 @@ import { KAKAO_JSKEY } from "../Key";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isUserAtom } from "../atoms";
 const Total = styled(motion.div)``;
 const Container = styled.div`
   width: 85vw;
@@ -45,6 +46,8 @@ const Marker = styled(motion.MapMarker)`
 `;
 
 export default function Maps() {
+  const isUser = useRecoilValue(isUserAtom);
+
   const [state, setState] = useState({
     center: {
       lat: 33.450701,
@@ -117,12 +120,24 @@ export default function Maps() {
         transition={{ type: "spring", duration: 1.4 }}
       >
         <Container>
-          <Title>비.....가 내렸어...</Title>
-          <br />
+          {!isUser ? (
+            <>
+              <br />
+              <br />
+              <br />
+              <br />
+              <Title>로그인을 하시면 더 보여드릴게요!</Title>
+            </>
+          ) : (
+            <>
+              <Title>비.....가 내렸어...</Title>
+              <br />
 
-          <MapBox>
-            <Mapp />
-          </MapBox>
+              <MapBox>
+                <Mapp />
+              </MapBox>
+            </>
+          )}
         </Container>
       </Total>
     </>

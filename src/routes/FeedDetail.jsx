@@ -27,6 +27,8 @@ const Container = styled(motion.div)`
   border-radius: 100px;
   box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
   color: black;
+  padding-top: 2vh;
+  padding-bottom: 2vh;
 `;
 
 const Title = styled.div`
@@ -58,9 +60,10 @@ const FeedBox = styled(motion.div)`
   height: 70%;
 `;
 const Img = styled(motion.img)`
+  margin-top: 10px;
   width: 60vh;
   height: auto;
-  max-height: 477px;
+  max-height: 380px;
 
   position: absolute;
 `;
@@ -75,7 +78,6 @@ const InfoTab = styled(motion.div)`
 
 const TagTab = styled.div`
   display: flex;
-
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -85,13 +87,13 @@ const TagsBox = styled.div`
   justify-content: space-between;
   margin-top: 15px;
   width: 70%;
-  @media screen and (min-width: 1000px) {
+  @media screen and (min-width: 1400px) {
     width: 51%;
   }
 `;
 const Tag = styled(motion.button)`
   width: 20vh;
-  @media screen and (min-width: 1000px) {
+  @media screen and (max-width: 1400px) {
     width: 30vh;
   }
   border-radius: 20px;
@@ -137,6 +139,7 @@ const filterVari = {
   },
   push: (i) => ({
     backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
+    color: i ? "white" : "black",
     transition: {
       duration: 0.2,
     },
@@ -173,10 +176,13 @@ export default function FeedDetail() {
         setData(res.data);
         setImgArr(res.data.imageUrl);
         setLoading(false);
+      })
+      .catch((err) => {
+        alert(err);
       });
   }, []);
   console.log(data);
-  console.log(imgArr);
+
   return (
     <>
       <Helmet>

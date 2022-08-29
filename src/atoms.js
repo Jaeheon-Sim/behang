@@ -71,9 +71,16 @@ export const isProfileImgAtom = atom({
 export const isImgAtom = atom({
   key: "isImg",
   default: "",
+  effects_UNSTABLE: [persistAtom],
 });
 
 export const isAccessTokenAtom = atom({
   key: "accesstoken",
   default: "",
+  effects_UNSTABLE: [persistAtom],
+});
+export const isRefreshTokenAtom = atom({
+  key: "refreshtoken",
+  default: "",
+  effects_UNSTABLE: [persistAtom],
 });

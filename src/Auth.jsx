@@ -1,5 +1,5 @@
 import React from "react";
-import { useEffect, useHistory } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { isUserAtom } from "./atoms";
 import { useSetRecoilState } from "recoil";
@@ -9,12 +9,82 @@ import {
   isNickNameAtom,
   isProfileImgAtom,
   isAccessTokenAtom,
+  isRefreshTokenAtom,
 } from "./atoms";
 import { CLIENT_ID, REDIRECT_URI } from "./Key";
 import { useNavigate } from "react-router-dom";
-import { request } from "./axios";
+import { motion } from "framer-motion";
+import styled from "styled-components";
 
+const Div = styled(motion.div)`
+  justify-content: center;
+  align-items: center;
+  display: flex;
+`;
+const Wrapper = styled(motion.div)`
+  width: 85vw;
+  margin: 5vh auto;
+  background-color: #f0eded;
+  min-height: 85vh;
+  border-radius: 100px;
+  box-shadow: 0 10px 10px rgba(35, 35, 35, 0.3), 0 10px 20px rgba(0, 0, 0, 0.3);
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+const Title = styled(motion.h1)`
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+`;
+
+const Dot = styled(motion.h1)`
+  font-size: 2rem;
+  margin-left: 1px;
+`;
+const boxVariants = {
+  start: {
+    opacity: 1,
+  },
+  end: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.5,
+    },
+  },
+};
+
+const titleVari = {
+  start: {
+    opacity: 0,
+  },
+  end: {
+    opacity: 1,
+    transition: {
+      repeat: Infinity,
+      repeatType: "reverse",
+      duration: 1,
+    },
+  },
+};
+
+const circleVariants = {
+  start: {
+    opacity: 0,
+  },
+  end: {
+    opacity: 1,
+    transition: {
+      repeat: Infinity,
+      repeatType: "reverse",
+      duration: 0.5,
+      repeatDelay: 0.4,
+    },
+  },
+};
 const Auth = () => {
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const setUser = useSetRecoilState(isUserAtom);
   const setID = useSetRecoilState(isUserIDAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
@@ -27,140 +97,24 @@ const Auth = () => {
   const code = new URL(window.location.href).searchParams.get("code");
 
   const getProfile = async () => {
-    try {
-      // Kakao SDK API를 이용해 사용자 정보 획득
-      let data = await window.Kakao.API.request({
-        url: "/v2/user/me",
+    // Kakao SDK API를 이용해 사용자 정보 획득
+
+    fetch(`http://35.247.33.79:80/users/profile/me`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        // setID(data.id);
+        // setNick(data.properties.nickname);
+        // setProfileImg(data.properties.profile_image);
       });
 
-      // 사용자 정보 변수에 저장
-      setID(data.id);
-      setNick(data.properties.nickname);
-      setProfileImg(data.properties.profile_image);
-    } catch (err) {
-      alert(err);
-    }
+    // 사용자 정보 변수에 저장
   };
-
-  const test = () => {
-    // console.log(code);
-    // (async () => {
-    //   const response = await fetch(
-    //     `http://35.247.33.79:8080/hello
-    //     `
-    //   );
-    //   const json = await response.json();
-    //   console.log(json);
-    // })();
-    // fetch("http://35.247.33.79:8080/hello", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     boardId: 2,
-    //     name: "hansol",
-    //     password: "hansol_password",
-    //   }),
-    // }).then((response) => response.json());
-    // setUser(true);
-    // navigate("/feed");
-    // fetch(`/v1/social/signup/kakao`, {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     accessToken: code,
-    //   }),
-    // }).then((response) => response.json());
-    // request("post", `/hello`, {})
-    //   .then((res) => {
-    //     alert("request complete!");
-    //     window.location.reload();
-    //   })
-    //   .catch((err) => {
-    //     alert(err);
-    //   });
-    // axios
-    //   .post(
-    //     `http://35.247.33.79:8080/v1/social/signup/kakao`,
-    //     { accessToken: code },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         withCredentials: true,
-    //         "Access-Control-Allow-Origin": "*",
-    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    // axios
-    //   .post(
-    //     `http://35.247.33.79:8080/hello`,
-    //     { },
-    //     {
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //         withCredentials: true,
-    //         "Access-Control-Allow-Origin": "*",
-    //         "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     console.log(response);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-    // axios({
-    //   url: "http://35.247.33.79:8080/hello",
-    //   method: "post",
-    //   data: {},
-    // })
-    //   .then(function a(response) {
-    //     console.log(response);
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error);
-    //   });
-  };
-
-  // const getToken = async () => {
-  //   const payload = qs.stringify({
-  //     // grant_type: "authorization_code",
-  //     // client_id: REST_API_KEY,
-  //     // redirect_uri: REDIRECT_URI,
-  //     // code: code,
-  //     // client_secret: CLIENT_SECRET,
-  //     accessToken: code,
-  //   });
-
-  //   try {
-  //     // access token 가져오기
-  //     const res = await axios.post(
-  //       "http://35.247.33.79:8080/v1/social/signup/kakao",
-  //       payload
-  //     );
-
-  //     // Kakao Javascript SDK 초기화
-  //     // window.Kakao.init(REST_API_KEY);
-  //     // access token 설정
-  //     // window.Kakao.Auth.setAccessToken(res.data.access_token);
-  //     // setUser(true);
-  //     // navigate("/feed");
-  //     alert(res);
-  //   } catch (err) {
-  //     alert(err);
-  //   }
-  // };
 
   const getToken = async () => {
     const payload = qs.stringify({
@@ -180,113 +134,69 @@ const Auth = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        Login(data);
+        signUp(data);
+      })
+      .catch((err) => alert(err));
+  };
+
+  const signUp = (res) => {
+    fetch(`http://35.247.33.79:80/social/signup/kakao`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: res.access_token,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        if (data.success === true) {
+          login();
+        } else {
+          if (data.msg === "이미 가입된 계정입니다. 로그인을 해주세요") {
+            login(res);
+          } else {
+            alert("에러입니다...");
+            navigate("/");
+          }
+        }
+      })
+      .catch((err) => {
+        alert(err);
+        navigate("/");
       });
   };
 
-  const Login = (res) => {
-    const payload = qs.stringify({
-      accessToken: res?.access_token,
-    });
+  const login = (res) => {
     fetch(`http://35.247.33.79:80/social/login/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: payload,
+      body: JSON.stringify({
+        accessToken: res.access_token,
+      }),
     })
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.success === true) {
+          setUser(true);
+          setAccessToken(data.data.accessToken);
+          console.log(data.data.accessToken);
+          setRefreshToken(data.data.refreshToken);
+          //getProfile();
+          navigate("/feed");
+        } else {
+          alert("오류가 났어요...");
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        console.log(err);
       });
   };
-
-  // const getToken = () => {
-  //   const payload = qs.stringify({
-  //     grant_type: "authorization_code",
-  //     client_id: REST_API_KEY,
-  //     redirect_uri: REDIRECT_URI,
-  //     code: code,
-  //     client_secret: CLIENT_SECRET,
-  //   });
-
-  //   try {
-  //     // access token 가져오기
-  //     const res = axios.get("https://kauth.kakao.com/oauth/token", payload);
-
-  //     //Kakao Javascript SDK 초기화
-  //     // window.Kakao.init(REST_API_KEY);
-  //     //access token 설정
-  //     // window.Kakao.Auth.setAccessToken(res.data.access_token);
-  //     axios
-  //       .post(
-  //         `http://35.247.33.79/social/signup/kakao`,
-  //         { accessToken: res?.data?.access_token },
-  //         {
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             withCredentials: true,
-  //             "Access-Control-Allow-Origin": "*",
-  //             "Access-Control-Allow-Methods":
-  //               "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //           },
-  //         }
-  //       )
-  //       .then((response) => {
-  //         console.log("회원가입 성공" + response);
-  //         axios
-  //           .post(
-  //             `http://35.247.33.79/social/login/kakao`,
-  //             { accessToken: res.data.access_token },
-  //             {
-  //               headers: {
-  //                 "Content-Type": "application/json",
-  //                 withCredentials: true,
-  //                 "Access-Control-Allow-Origin": "*",
-  //                 "Access-Control-Allow-Methods":
-  //                   "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //               },
-  //             }
-  //           )
-  //           .then((res) => {
-  //             console.log(res);
-  //             setUser(true);
-  //             //navigate("/feed");
-  //             //getProfile();
-  //           });
-  //       })
-  //       .catch((err) => {
-  //         if (err.code !== "") {
-  //           console.log("원래 회원");
-  //           axios
-  //             .post(
-  //               `http://35.247.33.79/social/login/kakao`,
-  //               { accessToken: res.data.access_token },
-  //               {
-  //                 headers: {
-  //                   "Content-Type": "application/json",
-  //                   withCredentials: true,
-  //                   "Access-Control-Allow-Origin": "*",
-  //                   "Access-Control-Allow-Methods":
-  //                     "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //                 },
-  //               }
-  //             )
-  //             .then((complete) => {
-  //               console.log(complete);
-  //               setUser(true);
-  //               setAccessToken(complete.data.data.accessToken);
-  //               navigate("/feed");
-  //               //getProfile();
-  //             });
-  //         } else {
-  //           console.log(err);
-  //         }
-  //       });
-  //   } catch (err) {
-  //     alert(err);
-  //   }
-  // };
 
   useEffect(() => {
     getToken();
@@ -296,7 +206,23 @@ const Auth = () => {
   //   request("post", "/hello", { 1: "hello" }).then;
   // }, []);
 
-  return <div>wait</div>;
+  return (
+    <Div>
+      <Wrapper>
+        <Title variants={boxVariants} initial="start" animate="end">
+          <Dot variants={titleVari}>로그인 중</Dot>
+
+          {[".", ".", "."].map((e) => {
+            return (
+              <Dot key={e} variants={circleVariants}>
+                {e}
+              </Dot>
+            );
+          })}
+        </Title>
+      </Wrapper>
+    </Div>
+  );
 };
 
 export default Auth;

@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { OPEN_KEY } from "../Key";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
+import { useRecoilValue } from "recoil";
+import { isUserAtom, isAccessTokenAtom } from "../atoms";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -226,8 +228,20 @@ const ModalContainer = styled.div`
   justify-content: flex-start;
   align-items: center;
 `;
-
+const MoreDiv = styled(motion.div)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: auto;
+  padding-top: 15px;
+  padding-bottom: 5px;
+  height: auto;
+  cursor: pointer;
+`;
 export default function Upload() {
+  const isUser = useRecoilValue(isUserAtom);
+  const isToken = useRecoilValue(isAccessTokenAtom);
+  const [isUploading, setUploading] = useState(false);
   const [isPark, setPark] = useState(false);
   const [isInside, setInside] = useState(false);
   const [isKids, setKids] = useState(false);
@@ -235,6 +249,7 @@ export default function Upload() {
   const [isPublic, setPublic] = useState(false);
   const [isSome, setSome] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [isPrevImg, setPrevImg] = useState("");
   const [isImg, setImg] = useState("");
   const [isE, setE] = useState(true);
   const [isSearch, setSearch] = useState("");
@@ -246,6 +261,10 @@ export default function Upload() {
   const [isLocate, setLocate] = useState({
     title: "",
     addr: "",
+    contentId: 0,
+    mapX: 0,
+    mapY: 0,
+    phoneNumber: "",
     isOn: false,
   });
 
@@ -283,12 +302,17 @@ export default function Upload() {
   };
 
   const onLocate = (e) => {
+    console.log(e);
     setPageNum(10);
     setLocate((prev) => ({
       ...prev,
-      title: e.title,
-      addr: e.addr1,
+      title: String(e.title),
+      addr: String(e.addr1),
       isOn: true,
+      contentId: Number(e.contentid),
+      mapX: Number(e.mapx),
+      mapY: Number(e.mapy),
+      phoneNumber: String(e.tel),
     }));
     setModalOpen((prev) => !prev);
   };
@@ -307,23 +331,12 @@ export default function Upload() {
     setSearch(e.target.value);
   };
 
-  const MoreDiv = styled(motion.div)`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: auto;
-    padding-top: 15px;
-    padding-bottom: 5px;
-    height: auto;
-    cursor: pointer;
-  `;
-
   const upload = (file) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     return new Promise((resolve) => {
       reader.onload = () => {
-        setImg(reader.result);
+        setPrevImg(reader.result);
         resolve();
       };
     });
@@ -343,17 +356,75 @@ export default function Upload() {
     push: (i) => ({
       y: 0,
       backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
+      color: i ? "white" : "black",
       transition: {
         duration: 0.2,
       },
     }),
   };
 
+  const goFile = (event) => {
+    if (isLocate.isOn === false) {
+      alert("모든 정보를 다 입력해주세요!");
+    } else {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append("file", isImg);
+
+      formData.append(
+        "postRequestDto",
+        new Blob(
+          [
+            JSON.stringify({
+              place: {
+                address: isLocate.addr,
+                contentId: isLocate.contentId,
+                mapX: isLocate.mapX,
+                mapY: isLocate.mapY,
+                name: isLocate.title,
+                phoneNumber: isLocate.phoneNumber,
+              },
+              tag: {
+                comfortablePubTransit: isPublic,
+                convenientParking: isPark,
+                indoor: isInside,
+                withChild: isKids,
+                withLover: isSome,
+                withMyDog: isPet,
+              },
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
+
+      fetch(`http://35.247.33.79:80/posts`, {
+        method: "POST",
+        headers: {
+          // "Content-Type": "multipart/form-data",
+          "X-AUTH-TOKEN": isToken,
+        },
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          alert("업로드가 되었습니다.");
+          reset();
+        })
+        .catch((err) => {
+          alert(err);
+          setUploading(false);
+        });
+    }
+  };
+
   const reset = () => {
     setKids(false);
     setPet(false);
+    setUploading(false);
     setPublic(false);
     setSome(false);
+    setPrevImg("");
     setImg("");
     setPark(false);
     setInside(false);
@@ -363,7 +434,7 @@ export default function Upload() {
       isOn: false,
     }));
   };
-  console.log(isPageNum);
+
   return (
     <>
       <Helmet>
@@ -372,301 +443,344 @@ export default function Upload() {
       <Header />
 
       <Container initial={{ x: 500, y: -500 }} animate={{ x: 0, y: 0 }}>
-        <ImgTab>
-          <AnimatePresence>
-            {isImg === "" ? (
-              <>
-                <FileInput htmlFor="file-input">사진 선택</FileInput>
-                <Input
-                  id="file-input"
-                  type={"file"}
-                  onChange={(e) => {
-                    upload(e.target.files[0]);
-                  }}
-                />
-              </>
-            ) : (
-              <>
-                <FeedImg>
-                  {isImg && <Img src={isImg} alt="올바른 파일을 첨부하세요" />}
-                </FeedImg>
-                <BtnTab>
-                  <Button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -5 }}
-                    whileTap={{ y: 0 }}
-                    exit={{ scale: 0 }}
-                    onClick={reset}
+        {isUser ? (
+          !isUploading ? (
+            <>
+              <ImgTab>
+                <AnimatePresence>
+                  {isPrevImg === "" ? (
+                    <>
+                      <FileInput htmlFor="file-input">사진 선택</FileInput>
+                      <Input
+                        id="file-input"
+                        type={"file"}
+                        accept=".jpg, .jpeg, .png"
+                        onChange={(e) => {
+                          upload(e.target.files[0]);
+                          setImg(e.target.files[0]);
+                        }}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <FeedImg>
+                        {isPrevImg && (
+                          <Img src={isPrevImg} alt="올바른 파일을 첨부하세요" />
+                        )}
+                      </FeedImg>
+                      <BtnTab>
+                        <Button
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1, rotateZ: 360 }}
+                          whileHover={{ y: -5 }}
+                          whileTap={{ y: 0 }}
+                          exit={{ scale: 0 }}
+                          onClick={goFile}
+                        >
+                          <div style={{ fontSize: "1.5rem" }}>등록</div>
+                        </Button>
+                        <Button
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1, rotateZ: 360 }}
+                          whileHover={{ y: -5 }}
+                          whileTap={{ y: 0 }}
+                          exit={{ scale: 0 }}
+                          onClick={reset}
+                          style={{ backgroundColor: "red" }}
+                        >
+                          <FontAwesomeIcon
+                            style={{ fontSize: "1.5rem" }}
+                            icon={faArrowRotateRight}
+                          ></FontAwesomeIcon>
+                          <div
+                            style={{ marginLeft: "10px", fontSize: "1.5rem" }}
+                          >
+                            초기화
+                          </div>
+                        </Button>
+                      </BtnTab>
+                    </>
+                  )}
+                </AnimatePresence>
+              </ImgTab>
+
+              <Tab>
+                <Box>
+                  <BoxTitle></BoxTitle>
+                </Box>
+                <FilterTab>
+                  <Filter
+                    variants={filterVari}
+                    custom={isPark}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setPark((current) => !current)}
                   >
-                    <div style={{ fontSize: "1.5rem" }}>등록</div>
-                  </Button>
-                  <Button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -5 }}
-                    whileTap={{ y: 0 }}
-                    exit={{ scale: 0 }}
-                    onClick={reset}
-                    style={{ backgroundColor: "red" }}
+                    편리한 주차
+                  </Filter>
+                  <Filter
+                    variants={filterVari}
+                    custom={isPublic}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setPublic((current) => !current)}
                   >
-                    <FontAwesomeIcon
-                      style={{ fontSize: "1.5rem" }}
-                      icon={faArrowRotateRight}
-                    ></FontAwesomeIcon>
-                    <div style={{ marginLeft: "10px", fontSize: "1.5rem" }}>
-                      초기화
-                    </div>
-                  </Button>
-                </BtnTab>
-              </>
-            )}
-          </AnimatePresence>
-        </ImgTab>
+                    편리한 대중교통
+                  </Filter>
 
-        <Tab>
-          <Box>
-            <BoxTitle></BoxTitle>
-          </Box>
-          <FilterTab>
-            <Filter
-              variants={filterVari}
-              custom={isPark}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setPark((current) => !current)}
-            >
-              편리한 주차
-            </Filter>
-            <Filter
-              variants={filterVari}
-              custom={isPublic}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setPublic((current) => !current)}
-            >
-              편리한 대중교통
-            </Filter>
+                  <Filter
+                    variants={filterVari}
+                    custom={isKids}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setKids((current) => !current)}
+                  >
+                    아이와 함께
+                  </Filter>
+                </FilterTab>
+                <FilterTab>
+                  <Filter
+                    variants={filterVari}
+                    custom={isInside}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setInside((current) => !current)}
+                  >
+                    실내
+                  </Filter>
 
-            <Filter
-              variants={filterVari}
-              custom={isKids}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setKids((current) => !current)}
-            >
-              아이와 함께
-            </Filter>
-          </FilterTab>
-          <FilterTab>
-            <Filter
-              variants={filterVari}
-              custom={isInside}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setInside((current) => !current)}
-            >
-              실내
-            </Filter>
+                  <Filter
+                    variants={filterVari}
+                    custom={isSome}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setSome((current) => !current)}
+                  >
+                    연인과 함께
+                  </Filter>
+                  <Filter
+                    variants={filterVari}
+                    custom={isPet}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setPet((current) => !current)}
+                  >
+                    반려견과 함께
+                  </Filter>
+                </FilterTab>
+              </Tab>
+              <Tab>
+                <Box>
+                  <LocationBtn
+                    whileHover={{ scale: 1.1 }}
+                    onClick={() => {
+                      setModalOpen((current) => !current);
+                      setList([]);
+                      setSearch("");
+                    }}
+                  >
+                    {isLocate.isOn ? isLocate.title : "등록장소 선택"}
+                  </LocationBtn>
+                </Box>
+              </Tab>
 
-            <Filter
-              variants={filterVari}
-              custom={isSome}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setSome((current) => !current)}
-            >
-              연인과 함께
-            </Filter>
-            <Filter
-              variants={filterVari}
-              custom={isPet}
-              whileHover="hover"
-              whileTap="tap"
-              animate="push"
-              onClick={() => setPet((current) => !current)}
-            >
-              반려견과 함께
-            </Filter>
-          </FilterTab>
-        </Tab>
-        <Tab>
-          <Box>
-            <LocationBtn
-              whileHover={{ scale: 1.1 }}
-              onClick={() => {
-                setModalOpen((current) => !current);
-                setList([]);
-                setSearch("");
-              }}
-            >
-              {isLocate.isOn ? isLocate.title : "등록장소 선택"}
-            </LocationBtn>
-          </Box>
-        </Tab>
-
-        <LocationModal
-          isOpen={isModalOpen}
-          onRequestClose={() => setModalOpen(false)}
-          style={{
-            overlay: {
-              position: "fixed",
-              top: "10%",
-              left: "20%",
-              right: "20%",
-              bottom: "10%",
-              backgroundColor: "rgba(255, 255, 255, 0.75)",
-            },
-            content: {
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "flex-start",
-              position: "absolute",
-              padding: "10px",
-              //top: "10%",
-              //left: "10%",
-              width: "inherit",
-              height: "inherit",
-              border: "1px solid #ccc",
-              backgroundColor: "rgba(255, 255, 255, 0.8)",
-              overflow: "auto",
-              WebkitOverflowScrolling: "touch",
-              borderRadius: "4px",
-              outline: "none",
-            },
-          }}
-        >
-          <ModalContainer>
-            <SearchTab>
-              <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
-                <Icon icon={faMagnifyingGlass} onClick={onSearch} />
-              </IconDiv>
-
-              <SearchInput
-                onChange={onInput}
-                value={isSearch}
-                placeholder="등록할 여행지를 검색하세요!"
-                minLength="2"
-              />
-              <IconDiv whileHover={{ scale: 1.3 }} whileTap={{ scale: 1 }}>
-                <Icon
-                  icon={faX}
-                  onClick={() => {
-                    setPageNum(10);
-                    setModalOpen((current) => !current);
-                  }}
-                >
-                  X
-                </Icon>
-              </IconDiv>
-            </SearchTab>
-            <ListTab>
-              {isSearch === "" || isFirst === true ? (
-                <>
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-
+              <LocationModal
+                isOpen={isModalOpen}
+                onRequestClose={() => setModalOpen(false)}
+                style={{
+                  overlay: {
+                    position: "fixed",
+                    top: "10%",
+                    left: "20%",
+                    right: "20%",
+                    bottom: "10%",
+                    backgroundColor: "rgba(255, 255, 255, 0.75)",
+                  },
+                  content: {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "flex-start",
+                    position: "absolute",
+                    padding: "10px",
+                    //top: "10%",
+                    //left: "10%",
+                    width: "inherit",
+                    height: "inherit",
+                    border: "1px solid #ccc",
+                    backgroundColor: "rgba(255, 255, 255, 0.8)",
+                    overflow: "auto",
+                    WebkitOverflowScrolling: "touch",
+                    borderRadius: "4px",
+                    outline: "none",
+                  },
+                }}
+              >
+                <ModalContainer>
                   <SearchTab>
-                    <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                      검색어를 입력 후 돋보기를 누르세요!
-                    </Title>
-                  </SearchTab>
-                </>
-              ) : isE ? (
-                <>
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <SearchTab>
-                    <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                      올바른 검색어를 입력하세요!
-                    </Title>
-                  </SearchTab>
-                </>
-              ) : isLoading ? (
-                <>
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <br />
-                  <SearchTab>
-                    <Title
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{
-                        ease: "easeInOut",
-                        repeat: Infinity,
-                        repeatType: "reverse",
-                        repeatDelay: 0.5,
-                      }}
+                    <IconDiv
+                      whileHover={{ scale: 1.3 }}
+                      whileTap={{ scale: 1 }}
                     >
-                      Loading...
-                    </Title>
+                      <Icon icon={faMagnifyingGlass} onClick={onSearch} />
+                    </IconDiv>
+
+                    <SearchInput
+                      onChange={onInput}
+                      value={isSearch}
+                      placeholder="등록할 여행지를 검색하세요!"
+                      minLength="2"
+                    />
+                    <IconDiv
+                      whileHover={{ scale: 1.3 }}
+                      whileTap={{ scale: 1 }}
+                    >
+                      <Icon
+                        icon={faX}
+                        onClick={() => {
+                          setPageNum(10);
+                          setModalOpen((current) => !current);
+                        }}
+                      >
+                        X
+                      </Icon>
+                    </IconDiv>
                   </SearchTab>
-                </>
-              ) : (
-                <>
-                  {isList?.map((e) => (
-                    <ListBox
-                      key={e.contentid}
-                      onClick={() => {
-                        onLocate(e);
-                      }}
-                    >
-                      <ListImg src={e.firstimage} alt="이미지가 없어요" />
-                      <ListContent>
-                        <Place>{e.title}</Place>
-                        <LocationBox>
-                          <Location>{e.addr1}</Location>
-                        </LocationBox>
-                      </ListContent>
-                    </ListBox>
-                  ))}{" "}
-                  {!isDone ? (
-                    <MoreDiv
-                      whileHover={{ y: -5 }}
-                      whileTap={{ y: 0 }}
-                      onClick={moreInfo}
-                    >
-                      <IconDiv style={{ marginRight: "10px" }}>
-                        <Icon icon={faAngleDown} />
-                      </IconDiv>
-                      더보기
-                    </MoreDiv>
-                  ) : null}
-                </>
-              )}
-            </ListTab>
-          </ModalContainer>
-        </LocationModal>
+                  <ListTab>
+                    {isSearch === "" || isFirst === true ? (
+                      <>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+
+                        <SearchTab>
+                          <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                            검색어를 입력 후 돋보기를 누르세요!
+                          </Title>
+                        </SearchTab>
+                      </>
+                    ) : isE ? (
+                      <>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <SearchTab>
+                          <Title initial={{ scale: 0 }} animate={{ scale: 1 }}>
+                            올바른 검색어를 입력하세요!
+                          </Title>
+                        </SearchTab>
+                      </>
+                    ) : isLoading ? (
+                      <>
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
+                        <SearchTab>
+                          <Title
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{
+                              ease: "easeInOut",
+                              repeat: Infinity,
+                              repeatType: "reverse",
+                              repeatDelay: 0.5,
+                            }}
+                          >
+                            Loading...
+                          </Title>
+                        </SearchTab>
+                      </>
+                    ) : (
+                      <>
+                        {isList?.map((e) => (
+                          <ListBox
+                            key={e.contentid}
+                            onClick={() => {
+                              onLocate(e);
+                            }}
+                          >
+                            <ListImg src={e.firstimage} alt="이미지가 없어요" />
+                            <ListContent>
+                              <Place>{e.title}</Place>
+                              <LocationBox>
+                                <Location>{e.addr1}</Location>
+                              </LocationBox>
+                            </ListContent>
+                          </ListBox>
+                        ))}{" "}
+                        {!isDone ? (
+                          <MoreDiv
+                            whileHover={{ y: -5 }}
+                            whileTap={{ y: 0 }}
+                            onClick={moreInfo}
+                          >
+                            <IconDiv style={{ marginRight: "10px" }}>
+                              <Icon icon={faAngleDown} />
+                            </IconDiv>
+                            더보기
+                          </MoreDiv>
+                        ) : null}
+                      </>
+                    )}
+                  </ListTab>
+                </ModalContainer>
+              </LocationModal>
+            </>
+          ) : (
+            <>
+              <Title
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  duration: 0.5,
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  repeatDelay: 0.5,
+                }}
+                style={{ marginLeft: "46%" }}
+              >
+                업로드 중
+              </Title>
+            </>
+          )
+        ) : (
+          <>
+            <br />
+            <br />
+            <br />
+            <br />
+            <Title>로그인을 하라고요!!</Title>
+          </>
+        )}
       </Container>
     </>
   );

@@ -86,101 +86,6 @@ export default function Login() {
   // kakao login
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
 
-  // const Kakao = () => {
-  //   useEffect(() => {
-  //     if (typeof window !== "undefined") {
-  //       window.Kakao.init(KAKAO_JSKEY);
-  //     }
-  //   }, []);
-
-  //   const signUp = () => {};
-
-  //   return (
-  //     <KakaoLogin
-  //       token={KAKAO_JSKEY}
-  //       onSuccess={(res) => {
-  //         console.log("로그인 성공");
-  //         console.log(res);
-  //         console.log(res?.response?.access_token);
-  //         axios
-  //           .post(
-  //             `http://35.247.33.79:80/social/signup/kakao`,
-  //             { accessToken: res?.response?.access_token },
-  //             {
-  //               headers: {
-  //                 "Content-Type": "application/json",
-  //                 withCredentials: true,
-  //                 "Access-Control-Allow-Origin": "*",
-  //                 "Access-Control-Allow-Methods":
-  //                   "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //               },
-  //             }
-  //           )
-  //           .then((response) => {
-  //             console.log("회원가입 성공" + response);
-  //             axios
-  //               .post(
-  //                 `http://35.247.33.79:80/social/login/kakao`,
-  //                 { accessToken: res?.response?.access_token },
-  //                 {
-  //                   headers: {
-  //                     "Content-Type": "application/json",
-  //                     withCredentials: true,
-  //                     "Access-Control-Allow-Origin": "*",
-  //                     "Access-Control-Allow-Methods":
-  //                       "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //                   },
-  //                 }
-  //               )
-  //               .then((res) => {
-  //                 console.log(res);
-  //                 setUser(true);
-  //                 //navigate("/feed");
-  //                 //getProfile();
-  //               });
-  //           })
-  //           .catch((err) => {
-  //             if (err.code !== "") {
-  //               console.log("원래 회원");
-  //               axios
-  //                 .post(
-  //                   `http://35.247.33.79:80/social/login/kakao`,
-  //                   { accessToken: res?.response?.access_token },
-  //                   {
-  //                     headers: {
-  //                       "Content-Type": "application/json",
-  //                       withCredentials: true,
-  //                       "Access-Control-Allow-Origin": "*",
-  //                       "Access-Control-Allow-Methods":
-  //                         "GET,PUT,POST,DELETE,PATCH,OPTIONS",
-  //                     },
-  //                   }
-  //                 )
-  //                 .then((complete) => {
-  //                   console.log(complete);
-  //                   setUser(true);
-  //                   setAccessToken(complete.data.data.accessToken);
-  //                   navigate("/feed");
-  //                   //getProfile();
-  //                 });
-  //             } else {
-  //               console.log(err);
-  //             }
-  //           });
-  //       }}
-  //       onFail={(err) => console.error("로그인 실패", err)}
-  //       onLogout={(res) => {
-  //         console.log("로그아웃");
-  //         console.log(res);
-  //       }}
-  //       src={kakaologin}
-  //       style={{ display: "flex", justifyContent: "center", border: "none" }}
-  //     >
-  //       <motion.img whileHover={{ y: -10 }} src={kakaologin} alt="no" />
-  //     </KakaoLogin>
-  //   );
-  // };
-
   const onClick = () => {
     window.location.href = KAKAO_AUTH_URL;
   };
@@ -223,7 +128,6 @@ export default function Login() {
             onClick={onClick}
           >
             <motion.img whileHover={{ y: -10 }} src={kakaologin} alt="no" />
-            {/* <Kakao /> */}
           </LoginButton>
         </LoginTab>
 

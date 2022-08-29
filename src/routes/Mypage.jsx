@@ -4,11 +4,13 @@ import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { Link } from "react-router-dom";
 import {
   isUserIDAtom,
   isNickNameAtom,
   isProfileImgAtom,
   isUserAtom,
+  isAccessTokenAtom,
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
 import { CLIENT_ID } from "../Key";
@@ -37,7 +39,39 @@ const Img = styled.img`
   width: 100%;
   height: 100%;
 `;
-
+const Links = styled(Link)`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+`;
+const FeedWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+const FeedContainer = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  @media screen and (min-width: 2000px) {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+  width: 100%;
+  height: 100%;
+`;
+const FeedBox = styled(motion.div)`
+  width: 70%;
+  height: 70%;
+  background-color: #ececec;
+  margin: 5px;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 1px 1px rgba(35, 35, 35, 0.3), 0 1px 1px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+`;
 const ImgBox = styled.div`
   width: 20vh;
   height: 70%;
@@ -119,8 +153,10 @@ export default function Mypage() {
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
   const navigate = useNavigate();
-  const checkpage = useMatch("/mypage");
-
+  const isToken = useRecoilValue(isAccessTokenAtom);
+  const [data, setData] = useState([]);
+  const [isLoading, setLoading] = useState(false);
+  const [isPageNum, setPageNum] = useState(10);
   // const getProfile = async () => {
   //   try {
   //     // Kakao SDK API를 이용해 사용자 정보 획득
@@ -154,14 +190,23 @@ export default function Mypage() {
     console.log("test");
   };
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const response = await fetch(`http://35.227.155.59:8080/hello`);
-
-  //     const json = await response.json();
-  //     console.log(json);
-  //   })();
-  // }, []);
+  useEffect(() => {
+    if (isUser) {
+      fetch(`http://35.247.33.79:80/posts/feed/me?page=0&size=${isPageNum}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": isToken,
+        },
+      })
+        .then((e) => e.json())
+        .then((res) => {
+          setData(res.list);
+          setPageNum((prev) => prev + 10);
+          setLoading(true);
+        });
+    }
+  }, []);
 
   return (
     <>
@@ -173,40 +218,76 @@ export default function Mypage() {
       >
         <Container>
           {isUser ? (
-            <>
+            isLoading ? (
+              <>
+                <Box>
+                  <Div>
+                    <ImgBox>
+                      <Img src={isProfileImg} alt="no image"></Img>
+                    </ImgBox>
+                    <NickTab>
+                      <Title>{isNick}</Title>
+                      <Btn
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1, rotateZ: 360 }}
+                        whileHover={{ y: -5 }}
+                        whileTap={{ y: 0 }}
+                        exit={{ scale: 0 }}
+                        onClick={test}
+                      >
+                        <div>닉네임 변경</div>
+                      </Btn>
+                    </NickTab>
+                  </Div>
+                </Box>
+                <LogoutTab>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={logout}
+                  >
+                    <div>로그아웃</div>
+                  </Button>
+                </LogoutTab>
+                <FeedWrapper>
+                  <FeedContainer>
+                    {data?.map((e) => {
+                      return (
+                        <Links key={e.id} to={`/feed/${e.id}`} state={e}>
+                          <FeedBox
+                            whileHover={{ scale: 1.07 }}
+                            whileTap={{ scale: 0.8 }}
+                          >
+                            <Img
+                              alt="오류가 있어요."
+                              src={"http://35.247.33.79:80/" + e.imageUrl}
+                            />
+                          </FeedBox>
+                        </Links>
+                      );
+                    })}
+                  </FeedContainer>
+                </FeedWrapper>
+              </>
+            ) : (
               <Box>
-                <Div>
-                  <ImgBox>
-                    <Img src={isProfileImg} alt="no image"></Img>
-                  </ImgBox>
-                  <NickTab>
-                    <Title>{isNick}</Title>
-                    <Btn
-                      initial={{ scale: 0 }}
-                      animate={{ scale: 1, rotateZ: 360 }}
-                      whileHover={{ y: -5 }}
-                      whileTap={{ y: 0 }}
-                      exit={{ scale: 0 }}
-                      onClick={test}
-                    >
-                      <div>닉네임 변경</div>
-                    </Btn>
-                  </NickTab>
+                <Div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{
+                    ease: "easeInOut",
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                    repeatDelay: 0.5,
+                  }}
+                >
+                  <div>Loading ...</div>
                 </Div>
               </Box>
-              <LogoutTab>
-                <Button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1, rotateZ: 360 }}
-                  whileHover={{ y: -5 }}
-                  whileTap={{ y: 0 }}
-                  exit={{ scale: 0 }}
-                  onClick={logout}
-                >
-                  <div>로그아웃</div>
-                </Button>
-              </LogoutTab>
-            </>
+            )
           ) : (
             <>
               <br />
@@ -216,6 +297,8 @@ export default function Mypage() {
               <Title>로그인 하세요</Title>
             </>
           )}
+          <br />
+          <br />
           <br />
           <br />
           <InfoTab>
@@ -238,7 +321,6 @@ export default function Mypage() {
             <Div variants={MotionVar} whileHover="hover" whileTap="tap">
               Contact
             </Div>
-            <br />
           </InfoTab>
         </Container>
       </Total>

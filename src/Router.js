@@ -9,6 +9,8 @@ import Upload from "./routes/Upload";
 import Auth from "./Auth";
 import Detail from "./routes/Detail";
 import FeedDetail from "./routes/FeedDetail";
+import Notice from "./routes/Notice";
+import Revise from "./routes/Revise";
 
 function Router() {
   return (
@@ -19,6 +21,8 @@ function Router() {
       <Route path="/search" element={<Search />}></Route>
       <Route path="/map" element={<Maps />}></Route>
       <Route path="/mypage" element={<MyPage />}></Route>
+      <Route path="/feed/revise" element={<Revise />}></Route>
+      <Route path="/notice" element={<Notice />}></Route>
       <Route path="/upload" element={<Upload />}></Route>
       <Route path="/search/:ID" element={<Detail />}></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>

@@ -63,7 +63,9 @@ const Img = styled(motion.img)`
   width: 60vh;
   height: auto;
   max-height: 477px;
-
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
   position: absolute;
 `;
 

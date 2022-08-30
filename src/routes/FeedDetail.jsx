@@ -18,7 +18,11 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import {
+  faAngleRight,
+  faAngleLeft,
+  faList,
+} from "@fortawesome/free-solid-svg-icons";
 import { isAccessTokenAtom, isUserAtom, isUserIDAtom } from "../atoms";
 import { useRecoilValue } from "recoil";
 
@@ -37,6 +41,10 @@ const Container = styled(motion.div)`
   color: black;
   padding-top: 2vh;
   padding-bottom: 2vh;
+`;
+
+const LoadContainer = styled(Container)`
+  justify-content: center;
 `;
 
 const Title = styled.div`
@@ -68,11 +76,14 @@ const FeedBox = styled(motion.div)`
 `;
 const Img = styled(motion.img)`
   margin-top: 10px;
-  width: 60vh;
+  max-width: 60vh;
   height: auto;
   max-height: 380px;
 
   position: absolute;
+  @media screen and (max-width: 500px) {
+    display: none;
+  }
 `;
 
 const InfoTab = styled(motion.div)`
@@ -80,7 +91,7 @@ const InfoTab = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
 `;
 
 const TagTab = styled.div`
@@ -149,6 +160,9 @@ const Button = styled(motion.button)`
   align-items: center;
   padding: 10px;
   border-radius: 10px;
+  height: 4vh;
+  margin-left: 5px;
+  cursor: pointer;
 `;
 const filterVari = {
   hover: (i) => ({
@@ -191,6 +205,8 @@ export default function FeedDetail() {
     setVisible((prev) => (prev == 1 ? imgArr.length : prev - 1));
   };
 
+  const revisePost = () => {};
+
   const deltePost = () => {
     fetch(`http://35.247.33.79:80/posts/${data.postId}`, {
       method: "DELETE",
@@ -209,6 +225,25 @@ export default function FeedDetail() {
       });
   };
 
+  const getImg = (contentId) => {
+    fetch(`http://35.247.33.79:8080/posts/feed/place/${contentId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        res.list.map((e) => {
+          setImgArr((prev) => [e.imageUrl, ...prev]);
+          setLoading(false);
+        });
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
   useEffect(() => {
     fetch(`http://35.247.33.79:80/posts/${state.id}`, {
       method: "GET",
@@ -218,16 +253,16 @@ export default function FeedDetail() {
     })
       .then((e) => e.json())
       .then((res) => {
+        // console.log(res);
         setData(res.data);
-        setImgArr(res.data.imageUrl);
-        setLoading(false);
+        getImg(res.data.place.contentId);
       })
       .catch((err) => {
         alert(err);
       });
   }, []);
-  console.log(data);
-  console.log(isUserId);
+
+  console.log(imgArr);
   return (
     <>
       <Helmet>
@@ -235,13 +270,14 @@ export default function FeedDetail() {
       </Helmet>
 
       <Header />
+
       <Total
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ type: "spring", duration: 1.4 }}
       >
         {isLoading ? (
-          <Container
+          <LoadContainer
             initial={{ backgroundColor: "rgba(255, 255, 255,0.6)" }}
             animate={{
               backgroundColor: "rgba(120, 119, 119,0.6)",
@@ -254,23 +290,36 @@ export default function FeedDetail() {
             }}
             exit={{ backgroundColor: "rgb(217, 217, 217)" }}
           >
-            <Title>Loading...</Title>
-          </Container>
+            <Title style={{ margin: "0 auto" }}>Loading...</Title>
+          </LoadContainer>
         ) : (
           <Container>
             <Title>{data.place.name}</Title>
             <BtnBox>
               {isUserId === data.userProfileDto.userId ? (
-                <Button
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1, rotateZ: 360 }}
-                  whileHover={{ y: -5 }}
-                  whileTap={{ y: 0 }}
-                  exit={{ scale: 0 }}
-                  onClick={deltePost}
-                >
-                  <div>삭제</div>
-                </Button>
+                <>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={revisePost}
+                    style={{ backgroundColor: "#455ae4" }}
+                  >
+                    <div>게시물 수정</div>
+                  </Button>
+                  <Button
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1, rotateZ: 360 }}
+                    whileHover={{ y: -5 }}
+                    whileTap={{ y: 0 }}
+                    exit={{ scale: 0 }}
+                    onClick={deltePost}
+                  >
+                    <div>삭제</div>
+                  </Button>
+                </>
               ) : null}
             </BtnBox>
             <AniTab>
@@ -284,7 +333,7 @@ export default function FeedDetail() {
                 <RelaBox>
                   <AnimatePresence custom={back}>
                     <Img
-                      src={"http://35.247.33.79:80/" + imgArr}
+                      src={"http://35.247.33.79:80/" + imgArr[visible - 1]}
                       custom={back}
                       variants={visVar}
                       initial="entry"
@@ -312,7 +361,9 @@ export default function FeedDetail() {
               <div>
                 {data.place.address} {state.addr2}
               </div>
-              <div>{data.place.phoneNumber}</div>
+              {/* <div style={{ marginTop: "10px" }}>
+                연락처: {data.place.phoneNumber}
+              </div> */}
             </InfoTab>
             <TagTab>
               <TagsBox>

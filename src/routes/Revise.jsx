@@ -238,7 +238,7 @@ const MoreDiv = styled(motion.div)`
   height: auto;
   cursor: pointer;
 `;
-export default function Upload() {
+export default function Revise(data) {
   const isUser = useRecoilValue(isUserAtom);
   const isToken = useRecoilValue(isAccessTokenAtom);
   const [isUploading, setUploading] = useState(false);

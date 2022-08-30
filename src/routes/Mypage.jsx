@@ -4,6 +4,7 @@ import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import React, { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
+import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import {
   isUserIDAtom,
@@ -13,8 +14,8 @@ import {
   isAccessTokenAtom,
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
-import { CLIENT_ID } from "../Key";
-import { request } from "../axios";
+
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Total = styled(motion.div)``;
 
 const Container = styled.div`
@@ -57,12 +58,12 @@ const FeedContainer = styled.div`
   @media screen and (min-width: 2000px) {
     grid-template-columns: 1fr 1fr 1fr 1fr;
   }
-  width: 100%;
+  width: 98%;
   height: 100%;
 `;
 const FeedBox = styled(motion.div)`
-  width: 70%;
-  height: 70%;
+  width: 95%;
+  height: 90%;
   background-color: #ececec;
   margin: 5px;
   border-radius: 10px;
@@ -86,6 +87,7 @@ const ImgBox = styled.div`
 const LogoutTab = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   margin-right: 2vw;
 `;
 
@@ -117,31 +119,25 @@ const Button = styled(motion.button)`
   border-radius: 10px;
   font-weight: lighter;
   font-size: 1.3rem;
+  cursor: pointer;
 `;
 
 const Btn = styled(Button)`
   margin-left: 0px;
 `;
 
-const InfoTab = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-`;
-
 const Div = styled(motion.div)`
   display: flex;
-
   justify-content: center;
   align-items: center;
   width: 100%;
 `;
 
-const MotionVar = {
-  hover: { y: -5 },
-  tap: { y: 0 },
-};
+const Icon = styled(FontAwesomeIcon)`
+  margin-left: 10px;
+
+  cursor: pointer;
+`;
 
 export default function Mypage() {
   //recoil 값으로 올려야함
@@ -180,6 +176,10 @@ export default function Mypage() {
     navigate("/");
   };
 
+  const GoNotice = () => {
+    navigate("/notice");
+  };
+
   const test = () => {
     console.log("test");
   };
@@ -212,40 +212,50 @@ export default function Mypage() {
       >
         <Container>
           {isUser ? (
-            isLoading ? (
-              <>
-                <Box>
-                  <Div>
-                    <ImgBox>
-                      <Img src={isProfileImg} alt="no image"></Img>
-                    </ImgBox>
-                    <NickTab>
-                      <Title>{isNick}</Title>
-                      <Btn
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1, rotateZ: 360 }}
-                        whileHover={{ y: -5 }}
-                        whileTap={{ y: 0 }}
-                        exit={{ scale: 0 }}
-                        onClick={test}
-                      >
-                        <div>닉네임 변경</div>
-                      </Btn>
-                    </NickTab>
-                  </Div>
-                </Box>
-                <LogoutTab>
-                  <Button
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1, rotateZ: 360 }}
-                    whileHover={{ y: -5 }}
-                    whileTap={{ y: 0 }}
-                    exit={{ scale: 0 }}
-                    onClick={logout}
-                  >
-                    <div>로그아웃</div>
-                  </Button>
-                </LogoutTab>
+            <>
+              <Box>
+                <Div>
+                  <ImgBox>
+                    <Img src={isProfileImg} alt="no image"></Img>
+                  </ImgBox>
+                  <NickTab>
+                    <Title>{isNick}</Title>
+                    <Btn
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotateZ: 360 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      exit={{ scale: 0 }}
+                      onClick={test}
+                    >
+                      <div>닉네임 변경</div>
+                    </Btn>
+                  </NickTab>
+                </Div>
+              </Box>
+              <LogoutTab>
+                <Button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  whileHover={{ y: -5 }}
+                  whileTap={{ y: 0 }}
+                  exit={{ scale: 0 }}
+                  onClick={logout}
+                  style={{ backgroundColor: "red" }}
+                >
+                  <div>로그아웃</div>
+                </Button>
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  whileHover={{ y: -5 }}
+                  whileTap={{ y: 0 }}
+                  onClick={GoNotice}
+                >
+                  <Icon icon={faGear}></Icon>
+                </motion.div>
+              </LogoutTab>
+              {isLoading ? (
                 <FeedWrapper>
                   <FeedContainer>
                     {data?.map((e) => {
@@ -265,57 +275,68 @@ export default function Mypage() {
                     })}
                   </FeedContainer>
                 </FeedWrapper>
-              </>
-            ) : (
-              <Box>
-                <Div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+              ) : (
+                <Box>
+                  <Div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{
+                      ease: "easeInOut",
+                      repeat: Infinity,
+                      repeatType: "reverse",
+                      repeatDelay: 0.5,
+                    }}
+                  >
+                    <div>Loading ...</div>
+                  </Div>
+                </Box>
+              )}
+            </>
+          ) : (
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <br />
+              <br />
+              <br />
+              <br />
+              <Title>로그인을 하시면 나의 정보를 볼 수 있어요.</Title>
+              <div
+                style={{
+                  display: "flex",
+
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <br />
+                <br />
+                <br />
+                <br />
+                <h1 style={{ color: "#455ae4" }}>
+                  비행의 정보들을 확인하실래요?
+                </h1>
+                <motion.div
+                  initial={{ y: 0 }}
+                  animate={{ y: -5 }}
                   transition={{
                     ease: "easeInOut",
                     repeat: Infinity,
                     repeatType: "reverse",
                     repeatDelay: 0.5,
                   }}
+                  onClick={GoNotice}
                 >
-                  <div>Loading ...</div>
-                </Div>
-              </Box>
-            )
-          ) : (
-            <>
-              <br />
-              <br />
-              <br />
-              <br />
-              <Title>로그인 하세요</Title>
-            </>
+                  <Icon icon={faGear}></Icon>
+                </motion.div>
+              </div>
+            </div>
           )}
-          <br />
-          <br />
-          <br />
-          <br />
-          <InfoTab>
-            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-              공지사항
-            </Div>
-            <br />
-            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-              서비스 문의
-            </Div>
-            <br />
-            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-              약관 및 정책
-            </Div>
-            <br />
-            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-              버전 정보
-            </Div>
-            <br />
-            <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-              Contact
-            </Div>
-          </InfoTab>
         </Container>
       </Total>
     </>

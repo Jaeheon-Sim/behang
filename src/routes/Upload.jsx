@@ -305,7 +305,7 @@ export default function Upload() {
     console.log(e);
     setPageNum(10);
     setLocate((prev) => ({
-      ...prev,
+      // ...prev,
       title: String(e.title),
       addr: String(e.addr1),
       isOn: true,

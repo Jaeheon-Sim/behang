@@ -154,32 +154,26 @@ export default function Mypage() {
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
   const navigate = useNavigate();
   const isToken = useRecoilValue(isAccessTokenAtom);
+  const setToken = useSetRecoilState(isAccessTokenAtom);
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [isPageNum, setPageNum] = useState(10);
-  // const getProfile = async () => {
-  //   try {
-  //     // Kakao SDK API를 이용해 사용자 정보 획득
-  //     let data = await window.Kakao.API.request({
-  //       url: "/v2/user/me",
-  //     });
-
-  //     // 사용자 정보 변수에 저장
-  //     setID(data.id);
-  //     setNick(data.properties.nickname);
-  //     setProfileImg(data.properties.profile_image);
-  //   } catch (err) {}
-  // };
-
-  // useEffect(() => {
-  //   getProfile();
-  // }, []);
 
   const logout = () => {
-    window.Kakao.isInitialized();
-    //window.kakao.Auth.logout();
+    fetch(`http://35.247.33.79:80/logout`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-AUTH-TOKEN": isToken,
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        console.log(res);
+      });
     setID("");
     setNick("");
+    setToken("");
     setProfileImg("");
     setUser(false);
 

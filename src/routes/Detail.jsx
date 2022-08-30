@@ -20,7 +20,7 @@ const Container = styled(motion.div)`
   margin: 5vh auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background-color: #f0eded;
   min-height: 80vh;
@@ -34,8 +34,8 @@ const Container = styled(motion.div)`
 const Title = styled.div`
   display: flex;
   justify-content: center;
-
-  margin-bottom: 24vh;
+  margin-top: 4vh;
+  margin-bottom: 22vh;
 `;
 
 const AniTab = styled(motion.div)`
@@ -68,7 +68,7 @@ const Img = styled(motion.img)`
 `;
 
 const InfoTab = styled(motion.div)`
-  margin-top: 30vh;
+  margin-top: 26vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -92,7 +92,7 @@ const TagsBox = styled.div`
   }
 `;
 const Tag = styled(motion.button)`
-  width: 20vh;
+  width: 25vh;
   @media screen and (max-width: 1400px) {
     width: 30vh;
   }

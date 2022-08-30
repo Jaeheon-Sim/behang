@@ -2,7 +2,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { isUserAtom } from "./atoms";
-import { useSetRecoilState } from "recoil";
+import { useSetRecoilState, useRecoilValue } from "recoil";
 import qs from "qs";
 import {
   isUserIDAtom,
@@ -89,6 +89,7 @@ const Auth = () => {
   const setID = useSetRecoilState(isUserIDAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const setAccessToken = useSetRecoilState(isAccessTokenAtom);
   const REST_API_KEY = CLIENT_ID;
   const CLIENT_SECRET = "98779abc80d6cbde549b1d3cf5ee583c";
@@ -96,21 +97,21 @@ const Auth = () => {
   // calllback으로 받은 인가코드
   const code = new URL(window.location.href).searchParams.get("code");
 
-  const getProfile = async () => {
+  const getProfile = (token) => {
     // Kakao SDK API를 이용해 사용자 정보 획득
 
     fetch(`http://35.247.33.79:80/users/profile/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "X-AUTH-TOKEN": token,
       },
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
-        // setID(data.id);
-        // setNick(data.properties.nickname);
-        // setProfileImg(data.properties.profile_image);
+        setID(data.data.userId);
+        setNick(data.data.nickName);
+        setProfileImg(data.data.profileImage);
       });
 
     // 사용자 정보 변수에 저장
@@ -184,7 +185,8 @@ const Auth = () => {
         if (data.success === true) {
           setUser(true);
           setAccessToken(data.data.accessToken);
-          console.log(data.data.accessToken);
+          getProfile(data.data.accessToken);
+
           setRefreshToken(data.data.refreshToken);
           //getProfile();
           navigate("/feed");
@@ -211,14 +213,9 @@ const Auth = () => {
       <Wrapper>
         <Title variants={boxVariants} initial="start" animate="end">
           <Dot variants={titleVari}>로그인 중</Dot>
-
-          {[".", ".", "."].map((e) => {
-            return (
-              <Dot key={e} variants={circleVariants}>
-                {e}
-              </Dot>
-            );
-          })}
+          <Dot variants={circleVariants}>.</Dot>
+          <Dot variants={circleVariants}>.</Dot>
+          <Dot variants={circleVariants}>.</Dot>
         </Title>
       </Wrapper>
     </Div>

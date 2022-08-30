@@ -2,7 +2,13 @@ import Header from "../format/Header";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
-import { Link, Outlet, useLocation, useParams } from "react-router-dom";
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import {
   AnimatePresence,
   useMotionValue,
@@ -13,6 +19,8 @@ import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { faAngleRight, faAngleLeft } from "@fortawesome/free-solid-svg-icons";
+import { isAccessTokenAtom, isUserAtom, isUserIDAtom } from "../atoms";
+import { useRecoilValue } from "recoil";
 
 const Total = styled(motion.div)``;
 const Container = styled(motion.div)`
@@ -20,7 +28,7 @@ const Container = styled(motion.div)`
   margin: 5vh auto;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   background-color: #f0eded;
   min-height: 80vh;
@@ -32,10 +40,9 @@ const Container = styled(motion.div)`
 `;
 
 const Title = styled.div`
+  margin-top: 4vh;
   display: flex;
   justify-content: center;
-
-  margin-bottom: 24vh;
 `;
 
 const AniTab = styled(motion.div)`
@@ -69,7 +76,7 @@ const Img = styled(motion.img)`
 `;
 
 const InfoTab = styled(motion.div)`
-  margin-top: 30vh;
+  margin-top: 26vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -82,6 +89,13 @@ const TagTab = styled.div`
   justify-content: center;
   flex-wrap: wrap;
 `;
+const BtnBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 22vh;
+  width: 80%;
+`;
 const TagsBox = styled.div`
   display: flex;
   justify-content: space-between;
@@ -92,7 +106,7 @@ const TagsBox = styled.div`
   }
 `;
 const Tag = styled(motion.button)`
-  width: 20vh;
+  width: 25vh;
   @media screen and (max-width: 1400px) {
     width: 30vh;
   }
@@ -125,7 +139,17 @@ const Icon = styled(FontAwesomeIcon)`
 `;
 
 const HeaderBox = styled(motion.div)``;
-
+const Button = styled(motion.button)`
+  background-color: red;
+  color: white;
+  border: none;
+  font-size: 1.3rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  border-radius: 10px;
+`;
 const filterVari = {
   hover: (i) => ({
     backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
@@ -150,11 +174,14 @@ export default function FeedDetail() {
   const { state } = useLocation();
   // const state = useLocation();
   // console.log(state);
+  const isUserId = useRecoilValue(isUserIDAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const [data, setData] = useState([]);
   const [imgArr, setImgArr] = useState([]);
   const [visible, setVisible] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [back, setBack] = useState(false);
+  const navigate = useNavigate();
   const next = () => {
     setBack(false);
     setVisible((prev) => (prev == imgArr.length ? 1 : prev + 1));
@@ -162,6 +189,24 @@ export default function FeedDetail() {
   const prev = () => {
     setBack(true);
     setVisible((prev) => (prev == 1 ? imgArr.length : prev - 1));
+  };
+
+  const deltePost = () => {
+    fetch(`http://35.247.33.79:80/posts/${data.postId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "X-AUTH-TOKEN": isAccessToken,
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        alert("해당 게시물이 삭제되었습니다.");
+        navigate(-1);
+      })
+      .catch((err) => {
+        alert(err);
+      });
   };
 
   useEffect(() => {
@@ -182,7 +227,7 @@ export default function FeedDetail() {
       });
   }, []);
   console.log(data);
-
+  console.log(isUserId);
   return (
     <>
       <Helmet>
@@ -214,6 +259,20 @@ export default function FeedDetail() {
         ) : (
           <Container>
             <Title>{data.place.name}</Title>
+            <BtnBox>
+              {isUserId === data.userProfileDto.userId ? (
+                <Button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  whileHover={{ y: -5 }}
+                  whileTap={{ y: 0 }}
+                  exit={{ scale: 0 }}
+                  onClick={deltePost}
+                >
+                  <div>삭제</div>
+                </Button>
+              ) : null}
+            </BtnBox>
             <AniTab>
               <LayoutGroup>
                 <HeaderBox

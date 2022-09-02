@@ -272,6 +272,9 @@ export default function Mypage() {
 
   return (
     <>
+      <Helmet>
+        <title>비행 마이페이지</title>
+      </Helmet>
       <Header />
       <Total
         initial={{ opacity: 0 }}

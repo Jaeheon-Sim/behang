@@ -110,7 +110,7 @@ export default function Maps() {
   return (
     <>
       <Helmet>
-        <title>Map</title>
+        <title>비행</title>
       </Helmet>
 
       <Header />

@@ -183,7 +183,7 @@ export default function Search() {
   return (
     <>
       <Helmet>
-        <title>search</title>
+        <title>비행 검색</title>
       </Helmet>
 
       <Header />

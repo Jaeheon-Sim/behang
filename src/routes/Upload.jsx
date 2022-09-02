@@ -487,7 +487,7 @@ export default function Upload() {
   return (
     <>
       <Helmet>
-        <title>upload</title>
+        <title>비행 업로드</title>
       </Helmet>
       <Header />
 

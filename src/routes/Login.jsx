@@ -93,7 +93,7 @@ export default function Login() {
   return (
     <>
       <Helmet>
-        <title>Login</title>
+        <title>비행</title>
       </Helmet>
       <Container
         initial={{ backgroundColor: "rgba(240, 237, 237, 1)" }}

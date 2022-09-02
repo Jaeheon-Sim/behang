@@ -137,7 +137,7 @@ export default function Feed() {
   return (
     <>
       <Helmet>
-        <title>Feed</title>
+        <title>비행 피드</title>
       </Helmet>
 
       <Header />

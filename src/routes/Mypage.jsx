@@ -12,10 +12,12 @@ import {
   isProfileImgAtom,
   isUserAtom,
   isAccessTokenAtom,
+  isRefreshTokenAtom,
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 const Total = styled(motion.div)``;
 
 const Container = styled.div`
@@ -29,6 +31,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  overflow: hidden;
 `;
 const Title = styled.div`
   display: flex;
@@ -74,14 +77,16 @@ const FeedBox = styled(motion.div)`
   overflow: hidden;
 `;
 const ImgBox = styled.div`
-  width: 20vh;
-  height: 70%;
+  width: 23vh;
+  height: 100%;
   background-color: #d9d9d9;
   border-radius: 70%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  margin-bottom: 1vh;
 `;
 
 const LogoutTab = styled.div`
@@ -93,7 +98,8 @@ const LogoutTab = styled.div`
 
 const Box = styled.div`
   width: 100%;
-  margin-top: 40px;
+  margin-top: 3vh;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -103,11 +109,13 @@ const NickTab = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding-left: 3vh;
+  margin-top: 3vh;
 `;
 
 const Button = styled(motion.button)`
   margin-left: 100px;
-  background-color: #455ae4;
+  background-color: #a1a1a1;
   color: white;
   border: none;
   width: auto;
@@ -131,12 +139,24 @@ const Div = styled(motion.div)`
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 70%;
 `;
 
 const Icon = styled(FontAwesomeIcon)`
   margin-left: 10px;
 
   cursor: pointer;
+`;
+
+const ImgDiv = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+`;
+
+const ProfileImg = styled.img`
+  width: 100%;
+  height: 30vh;
 `;
 
 export default function Mypage() {
@@ -148,8 +168,12 @@ export default function Mypage() {
   const setUser = useSetRecoilState(isUserAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
+
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
+
   const navigate = useNavigate();
-  const isToken = useRecoilValue(isAccessTokenAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const setToken = useSetRecoilState(isAccessTokenAtom);
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -160,7 +184,7 @@ export default function Mypage() {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-AUTH-TOKEN": isToken,
+        "X-AUTH-TOKEN": isAccessToken,
       },
     })
       .then((e) => e.json())
@@ -172,7 +196,6 @@ export default function Mypage() {
     setToken("");
     setProfileImg("");
     setUser(false);
-
     navigate("/");
   };
 
@@ -180,8 +203,47 @@ export default function Mypage() {
     navigate("/notice");
   };
 
-  const test = () => {
-    console.log("test");
+  const revise = () => {};
+
+  const reIssue = () => {
+    fetch(`http://35.247.33.79:80/reissue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        console.log(data);
+        setToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+
+        Get(data.data.accessToken);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  const Get = (token) => {
+    fetch(`http://35.247.33.79:80/posts/feed/me?page=0&size=${isPageNum}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "X-AUTH-TOKEN": token,
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        setData(res.list);
+        setPageNum((prev) => prev + 10);
+        setLoading(true);
+      })
+      .catch((err) => alert(err));
   };
 
   useEffect(() => {
@@ -190,15 +252,21 @@ export default function Mypage() {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "X-AUTH-TOKEN": isToken,
+          "X-AUTH-TOKEN": isAccessToken,
         },
       })
         .then((e) => e.json())
         .then((res) => {
-          setData(res.list);
-          setPageNum((prev) => prev + 10);
-          setLoading(true);
-        });
+          if (res.code === -9999) {
+            console.log("reissue");
+            reIssue();
+          } else {
+            setData(res.list);
+            setPageNum((prev) => prev + 10);
+            setLoading(true);
+          }
+        })
+        .catch((err) => alert(err));
     }
   }, []);
 
@@ -214,24 +282,48 @@ export default function Mypage() {
           {isUser ? (
             <>
               <Box>
-                <Div>
-                  <ImgBox>
-                    <Img src={isProfileImg} alt="no image"></Img>
-                  </ImgBox>
-                  <NickTab>
-                    <Title>{isNick}</Title>
+                <ImgDiv>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <ImgBox>
+                      <Img src={isProfileImg} alt="no image"></Img>
+                    </ImgBox>
                     <Btn
                       initial={{ scale: 0 }}
                       animate={{ scale: 1, rotateZ: 360 }}
                       whileHover={{ y: -5 }}
                       whileTap={{ y: 0 }}
                       exit={{ scale: 0 }}
-                      onClick={test}
+                      onClick={revise}
+                    >
+                      <div>사진 변경</div>
+                    </Btn>
+                  </div>
+                  <NickTab>
+                    <div>{isNick}</div>
+                    {/* <Btn
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotateZ: 360 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      exit={{ scale: 0 }}
+                      onClick={revise}
+                      style={{
+                        marginLeft: "2vh",
+                        padding: "3px",
+                        marginBottom: "1px",
+                      }}
                     >
                       <div>닉네임 변경</div>
-                    </Btn>
+                    </Btn> */}
                   </NickTab>
-                </Div>
+                </ImgDiv>
               </Box>
               <LogoutTab>
                 <Button
@@ -245,6 +337,7 @@ export default function Mypage() {
                 >
                   <div>로그아웃</div>
                 </Button>
+
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1, rotateZ: 360 }}
@@ -256,25 +349,43 @@ export default function Mypage() {
                 </motion.div>
               </LogoutTab>
               {isLoading ? (
-                <FeedWrapper>
-                  <FeedContainer>
-                    {data?.map((e) => {
-                      return (
-                        <Links key={e.id} to={`/feed/${e.id}`} state={e}>
-                          <FeedBox
-                            whileHover={{ scale: 1.07 }}
-                            whileTap={{ scale: 0.8 }}
-                          >
-                            <Img
-                              alt="오류가 있어요."
-                              src={"http://35.247.33.79:80/" + e.imageUrl}
-                            />
-                          </FeedBox>
-                        </Links>
-                      );
-                    })}
-                  </FeedContainer>
-                </FeedWrapper>
+                <>
+                  <FeedWrapper>
+                    <FeedContainer>
+                      {data?.map((e) => {
+                        return (
+                          <Links key={e.id} to={`/feed/${e.id}`} state={e}>
+                            <FeedBox
+                              whileHover={{ scale: 1.07 }}
+                              whileTap={{ scale: 0.8 }}
+                            >
+                              <Img
+                                alt="오류가 있어요."
+                                src={"http://35.247.33.79:80/" + e.imageUrl}
+                              />
+                            </FeedBox>
+                          </Links>
+                        );
+                      })}
+                    </FeedContainer>
+                  </FeedWrapper>
+                  {data?.length === 0 ? (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <br />
+                      <br />
+                      <br />
+                      <br />
+                      <Title>비행 하세요.</Title>
+                    </div>
+                  ) : null}
+                </>
               ) : (
                 <Box>
                   <Div

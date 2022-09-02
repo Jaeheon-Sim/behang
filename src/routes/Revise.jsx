@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet";
 import styled from "styled-components";
 import Modal from "react-modal";
+import { useLocation, useNavigate } from "react-router-dom";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { faArrowRotateRight } from "@fortawesome/free-solid-svg-icons";
@@ -10,8 +11,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { OPEN_KEY } from "../Key";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
-import { useRecoilValue } from "recoil";
-import { isUserAtom, isAccessTokenAtom } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isUserAtom, isAccessTokenAtom, isRefreshTokenAtom } from "../atoms";
+import { useEffect } from "react";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -96,26 +98,6 @@ const FeedImg = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
-const FileInput = styled.label`
-  cursor: pointer;
-  background-color: #d9d9d9;
-  border-radius: 15px;
-  padding: 5px;
-  width: 80%;
-  height: 30vh;
-  &:hover {
-    background-color: #bfbdbd;
-  }
-  &:active {
-    background-color: #f5f5f5;
-  }
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-const Input = styled.input`
-  display: none;
 `;
 
 const SearchTab = styled.div`
@@ -239,18 +221,23 @@ const MoreDiv = styled(motion.div)`
   cursor: pointer;
 `;
 export default function Revise(data) {
+  const { state } = useLocation();
+  console.log(state);
   const isUser = useRecoilValue(isUserAtom);
-  const isToken = useRecoilValue(isAccessTokenAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
+  const setAccessToken = useSetRecoilState(isAccessTokenAtom);
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [isUploading, setUploading] = useState(false);
-  const [isPark, setPark] = useState(false);
-  const [isInside, setInside] = useState(false);
-  const [isKids, setKids] = useState(false);
-  const [isPet, setPet] = useState(false);
-  const [isPublic, setPublic] = useState(false);
-  const [isSome, setSome] = useState(false);
+  const [isPark, setPark] = useState(state.tag.convenientParking);
+  const [isInside, setInside] = useState(state.tag.indoor);
+  const [isKids, setKids] = useState(state.tag.withChild);
+  const [isPet, setPet] = useState(state.tag.withMyDog);
+  const [isPublic, setPublic] = useState(state.tag.comfortablePubTransit);
+  const [isSome, setSome] = useState(state.tag.withLover);
   const [isModalOpen, setModalOpen] = useState(false);
-  const [isPrevImg, setPrevImg] = useState("");
-  const [isImg, setImg] = useState("");
+  const navigate = useNavigate();
+  const [isImg, setImg] = useState(state.imageUrl);
   const [isE, setE] = useState(true);
   const [isSearch, setSearch] = useState("");
   const [isList, setList] = useState([]);
@@ -259,13 +246,13 @@ export default function Revise(data) {
   const [isPageNum, setPageNum] = useState(10);
   const [isLoading, setLoading] = useState(true);
   const [isLocate, setLocate] = useState({
-    title: "",
-    addr: "",
-    contentId: 0,
-    mapX: 0,
-    mapY: 0,
-    phoneNumber: "",
-    isOn: false,
+    title: state.place.name,
+    addr: state.place.address,
+    contentId: state.place.contentId,
+    mapX: state.place.mapX,
+    mapY: state.place.mapY,
+    phoneNumber: state.place.phoneNumber,
+    isOn: true,
   });
 
   const moreInfo = () => {
@@ -302,7 +289,7 @@ export default function Revise(data) {
   };
 
   const onLocate = (e) => {
-    console.log(e);
+    // console.log(e);
     setPageNum(10);
     setLocate((prev) => ({
       // ...prev,
@@ -331,17 +318,6 @@ export default function Revise(data) {
     setSearch(e.target.value);
   };
 
-  const upload = (file) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    return new Promise((resolve) => {
-      reader.onload = () => {
-        setPrevImg(reader.result);
-        resolve();
-      };
-    });
-  };
-
   const filterVari = {
     hover: (i) => ({
       y: -5,
@@ -363,69 +339,120 @@ export default function Revise(data) {
     }),
   };
 
-  const goFile = (event) => {
+  const reIssue = () => {
+    fetch(`http://35.247.33.79:80/reissue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        // console.log(data);
+        setAccessToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+        goFile(data.data.accessToken);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  const goFile = (data) => {
+    // console.log(data);
     if (isLocate.isOn === false) {
       alert("모든 정보를 다 입력해주세요!");
     } else {
       setUploading(true);
-      const formData = new FormData();
-      formData.append("file", isImg);
-
-      formData.append(
-        "postRequestDto",
-        new Blob(
-          [
-            JSON.stringify({
-              place: {
-                address: isLocate.addr,
-                contentId: isLocate.contentId,
-                mapX: isLocate.mapX,
-                mapY: isLocate.mapY,
-                name: isLocate.title,
-                phoneNumber: isLocate.phoneNumber,
-              },
-              tag: {
-                comfortablePubTransit: isPublic,
-                convenientParking: isPark,
-                indoor: isInside,
-                withChild: isKids,
-                withLover: isSome,
-                withMyDog: isPet,
-              },
-            }),
-          ],
-          { type: "application/json" }
-        )
-      );
-
-      fetch(`http://35.247.33.79:80/posts`, {
-        method: "POST",
-        headers: {
-          // "Content-Type": "multipart/form-data",
-          "X-AUTH-TOKEN": isToken,
-        },
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          alert("업로드가 되었습니다.");
-          reset();
+      if (data.type === "click") {
+        fetch(`http://35.247.33.79:80/posts/${state.postId}`, {
+          method: "PATCH",
+          headers: {
+            "X-AUTH-TOKEN": isAccessToken,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            place: {
+              address: isLocate.addr,
+              contentId: isLocate.contentId,
+              mapX: isLocate.mapX,
+              mapY: isLocate.mapY,
+              name: isLocate.title,
+              phoneNumber: isLocate.phoneNumber,
+            },
+            tag: {
+              comfortablePubTransit: isPublic,
+              convenientParking: isPark,
+              indoor: isInside,
+              withChild: isKids,
+              withLover: isSome,
+              withMyDog: isPet,
+            },
+          }),
         })
-        .catch((err) => {
-          alert(err);
-          setUploading(false);
-        });
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.code === -9999) {
+              reIssue();
+            } else {
+              console.log(data);
+              alert("수정이 되었습니다.");
+              reset();
+            }
+          })
+          .catch((err) => {
+            alert(err);
+            setUploading(false);
+          });
+      } else {
+        fetch(`http://35.247.33.79:80/posts/${state.postId}`, {
+          method: "PATCH",
+          headers: {
+            "X-AUTH-TOKEN": data,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            place: {
+              address: isLocate.addr,
+              contentId: isLocate.contentId,
+              mapX: isLocate.mapX,
+              mapY: isLocate.mapY,
+              name: isLocate.title,
+              phoneNumber: isLocate.phoneNumber,
+            },
+            tag: {
+              comfortablePubTransit: isPublic,
+              convenientParking: isPark,
+              indoor: isInside,
+              withChild: isKids,
+              withLover: isSome,
+              withMyDog: isPet,
+            },
+          }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            alert("수정이 되었습니다.");
+            navigate(-1);
+          })
+          .catch((err) => {
+            alert(err);
+            setUploading(false);
+          });
+      }
     }
   };
-
   const reset = () => {
     setKids(false);
     setPet(false);
     setUploading(false);
     setPublic(false);
     setSome(false);
-    setPrevImg("");
-    setImg("");
     setPark(false);
     setInside(false);
     setLocate(() => ({
@@ -434,7 +461,7 @@ export default function Revise(data) {
       isOn: false,
     }));
   };
-
+  // useEffect(upload(state.imageUrl), []);
   return (
     <>
       <Helmet>
@@ -448,59 +475,41 @@ export default function Revise(data) {
             <>
               <ImgTab>
                 <AnimatePresence>
-                  {isPrevImg === "" ? (
-                    <>
-                      <FileInput htmlFor="file-input">사진 선택</FileInput>
-                      <Input
-                        id="file-input"
-                        type={"file"}
-                        accept=".jpg, .jpeg, .png"
-                        onChange={(e) => {
-                          upload(e.target.files[0]);
-                          setImg(e.target.files[0]);
-                        }}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <FeedImg>
-                        {isPrevImg && (
-                          <Img src={isPrevImg} alt="올바른 파일을 첨부하세요" />
-                        )}
-                      </FeedImg>
-                      <BtnTab>
-                        <Button
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1, rotateZ: 360 }}
-                          whileHover={{ y: -5 }}
-                          whileTap={{ y: 0 }}
-                          exit={{ scale: 0 }}
-                          onClick={goFile}
-                        >
-                          <div style={{ fontSize: "1.5rem" }}>등록</div>
-                        </Button>
-                        <Button
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1, rotateZ: 360 }}
-                          whileHover={{ y: -5 }}
-                          whileTap={{ y: 0 }}
-                          exit={{ scale: 0 }}
-                          onClick={reset}
-                          style={{ backgroundColor: "red" }}
-                        >
-                          <FontAwesomeIcon
-                            style={{ fontSize: "1.5rem" }}
-                            icon={faArrowRotateRight}
-                          ></FontAwesomeIcon>
-                          <div
-                            style={{ marginLeft: "10px", fontSize: "1.5rem" }}
-                          >
-                            초기화
-                          </div>
-                        </Button>
-                      </BtnTab>
-                    </>
-                  )}
+                  <FeedImg>
+                    <Img
+                      src={"http://35.247.33.79:80/" + isImg}
+                      alt="올바른 파일을 첨부하세요"
+                    />
+                  </FeedImg>
+                  <BtnTab>
+                    <Button
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotateZ: 360 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      exit={{ scale: 0 }}
+                      onClick={goFile}
+                    >
+                      <div style={{ fontSize: "1.5rem" }}>수정</div>
+                    </Button>
+                    <Button
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1, rotateZ: 360 }}
+                      whileHover={{ y: -5 }}
+                      whileTap={{ y: 0 }}
+                      exit={{ scale: 0 }}
+                      onClick={reset}
+                      style={{ backgroundColor: "red" }}
+                    >
+                      <FontAwesomeIcon
+                        style={{ fontSize: "1.5rem" }}
+                        icon={faArrowRotateRight}
+                      ></FontAwesomeIcon>
+                      <div style={{ marginLeft: "10px", fontSize: "1.5rem" }}>
+                        초기화
+                      </div>
+                    </Button>
+                  </BtnTab>
                 </AnimatePresence>
               </ImgTab>
 
@@ -552,17 +561,6 @@ export default function Revise(data) {
                   >
                     실내
                   </Filter>
-
-                  <Filter
-                    variants={filterVari}
-                    custom={isSome}
-                    whileHover="hover"
-                    whileTap="tap"
-                    animate="push"
-                    onClick={() => setSome((current) => !current)}
-                  >
-                    연인과 함께
-                  </Filter>
                   <Filter
                     variants={filterVari}
                     custom={isPet}
@@ -572,6 +570,16 @@ export default function Revise(data) {
                     onClick={() => setPet((current) => !current)}
                   >
                     반려견과 함께
+                  </Filter>
+                  <Filter
+                    variants={filterVari}
+                    custom={isSome}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setSome((current) => !current)}
+                  >
+                    연인과 함께
                   </Filter>
                 </FilterTab>
               </Tab>
@@ -768,7 +776,7 @@ export default function Revise(data) {
                 }}
                 style={{ margin: "0 auto" }}
               >
-                업로드 중
+                수정 중
               </Title>
             </>
           )

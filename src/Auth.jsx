@@ -164,7 +164,7 @@ const Auth = () => {
         }
       })
       .catch((err) => {
-        alert(err);
+        alert("원인 모를 오류입니다...다시 시도하세요!");
         navigate("/");
       });
   };
@@ -191,12 +191,12 @@ const Auth = () => {
           //getProfile();
           navigate("/feed");
         } else {
-          alert("오류가 났어요...");
+          alert("원인 모를 오류입니다...다시 시도하세요!");
           navigate("/");
         }
       })
       .catch((err) => {
-        console.log(err);
+        alert("원인 모를 오류입니다...다시 시도하세요!");
       });
   };
 

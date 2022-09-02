@@ -55,12 +55,28 @@ const Div = styled.div`
   left: 45%;
 `;
 
+const FinalTab = styled(motion.div)`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FinalDiv = styled(motion.div)`
+  height: auto;
+`;
+
 const Links = styled(Link)`
   display: flex;
   justify-content: center;
   align-items: center;
   text-decoration: none;
   color: black;
+`;
+
+const RefDiv = styled.div`
+  ${({ last }) => {
+    return last ? `display: hidden` : null;
+  }}
 `;
 
 export default function Feed() {
@@ -70,6 +86,8 @@ export default function Feed() {
   const isY = useRecoilValue(isYAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const [data, setCoins] = useState([]);
+  const [last, setLast] = useState(false);
+  const [extraLoading, setExtraLoading] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [ref, inView] = useInView();
   const [isPageNum, setPageNum] = useState(10);
@@ -88,6 +106,7 @@ export default function Feed() {
   };
 
   useEffect(() => {
+    setExtraLoading(true);
     Locate();
     console.log(isX, isY);
     fetch(
@@ -105,9 +124,13 @@ export default function Feed() {
     )
       .then((e) => e.json())
       .then((res) => {
+        setExtraLoading(false);
         setCoins(res.list);
         setPageNum((prev) => prev + 10);
         setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
       });
   }, [inView]);
 
@@ -153,8 +176,30 @@ export default function Feed() {
                   </Links>
                 );
               })}
+
               <div ref={ref} />
             </Container>
+            {extraLoading ? (
+              <FinalTab
+                initial={{ backgroundColor: "rgba(255, 255, 255,0.6)" }}
+                animate={{
+                  backgroundColor: "rgba(120, 119, 119,0.6)",
+                }}
+                transition={{
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  repeatDelay: 0.5,
+                }}
+                style={{ width: "100%" }}
+              >
+                <FinalDiv>Loading...</FinalDiv>
+              </FinalTab>
+            ) : (
+              <FinalTab>
+                <FinalDiv>마지막 사진이에요.</FinalDiv>
+              </FinalTab>
+            )}
           </Wrapper>
         )}
       </Total>

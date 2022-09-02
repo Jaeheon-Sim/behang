@@ -10,8 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { OPEN_KEY } from "../Key";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
-import { useRecoilValue } from "recoil";
-import { isUserAtom, isAccessTokenAtom } from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { isUserAtom, isAccessTokenAtom, isRefreshTokenAtom } from "../atoms";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -240,7 +240,10 @@ const MoreDiv = styled(motion.div)`
 `;
 export default function Upload() {
   const isUser = useRecoilValue(isUserAtom);
-  const isToken = useRecoilValue(isAccessTokenAtom);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
+  const setAccessToken = useSetRecoilState(isAccessTokenAtom);
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [isUploading, setUploading] = useState(false);
   const [isPark, setPark] = useState(false);
   const [isInside, setInside] = useState(false);
@@ -363,7 +366,32 @@ export default function Upload() {
     }),
   };
 
-  const goFile = (event) => {
+  const reIssue = () => {
+    console.log("reissue");
+    fetch(`http://35.247.33.79:80/reissue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        console.log(data);
+        setAccessToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+        goFile(data.data.accessToken);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  const goFile = (data) => {
+    console.log(data);
     if (isLocate.isOn === false) {
       alert("모든 정보를 다 입력해주세요!");
     } else {
@@ -397,24 +425,45 @@ export default function Upload() {
           { type: "application/json" }
         )
       );
-
-      fetch(`http://35.247.33.79:80/posts`, {
-        method: "POST",
-        headers: {
-          // "Content-Type": "multipart/form-data",
-          "X-AUTH-TOKEN": isToken,
-        },
-        body: formData,
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          alert("업로드가 되었습니다.");
-          reset();
+      if (data.type === "click") {
+        fetch(`http://35.247.33.79:80/posts`, {
+          method: "POST",
+          headers: {
+            "X-AUTH-TOKEN": isAccessToken,
+          },
+          body: formData,
         })
-        .catch((err) => {
-          alert(err);
-          setUploading(false);
-        });
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.code == -9999) {
+              reIssue();
+            } else {
+              alert("업로드가 되었습니다.");
+              reset();
+            }
+          })
+          .catch((err) => {
+            alert(err);
+            setUploading(false);
+          });
+      } else {
+        fetch(`http://35.247.33.79:80/posts`, {
+          method: "POST",
+          headers: {
+            "X-AUTH-TOKEN": data,
+          },
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            alert("업로드가 되었습니다.");
+            reset();
+          })
+          .catch((err) => {
+            alert(err);
+            setUploading(false);
+          });
+      }
     }
   };
 
@@ -555,16 +604,6 @@ export default function Upload() {
 
                   <Filter
                     variants={filterVari}
-                    custom={isSome}
-                    whileHover="hover"
-                    whileTap="tap"
-                    animate="push"
-                    onClick={() => setSome((current) => !current)}
-                  >
-                    연인과 함께
-                  </Filter>
-                  <Filter
-                    variants={filterVari}
                     custom={isPet}
                     whileHover="hover"
                     whileTap="tap"
@@ -572,6 +611,17 @@ export default function Upload() {
                     onClick={() => setPet((current) => !current)}
                   >
                     반려견과 함께
+                  </Filter>
+
+                  <Filter
+                    variants={filterVari}
+                    custom={isSome}
+                    whileHover="hover"
+                    whileTap="tap"
+                    animate="push"
+                    onClick={() => setSome((current) => !current)}
+                  >
+                    연인과 함께
                   </Filter>
                 </FilterTab>
               </Tab>

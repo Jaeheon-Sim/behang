@@ -23,8 +23,13 @@ import {
   faAngleLeft,
   faList,
 } from "@fortawesome/free-solid-svg-icons";
-import { isAccessTokenAtom, isUserAtom, isUserIDAtom } from "../atoms";
-import { useRecoilValue } from "recoil";
+import {
+  isAccessTokenAtom,
+  isRefreshTokenAtom,
+  isUserAtom,
+  isUserIDAtom,
+} from "../atoms";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 
 const Total = styled(motion.div)``;
 const Container = styled(motion.div)`
@@ -81,6 +86,9 @@ const Img = styled(motion.img)`
   max-height: 380px;
 
   position: absolute;
+  @media screen and (max-height: 7200px) {
+    height: 45vh;
+  }
   @media screen and (max-width: 500px) {
     display: none;
   }
@@ -166,21 +174,12 @@ const Button = styled(motion.button)`
 `;
 const filterVari = {
   hover: (i) => ({
-    backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
-    y: -10,
-    transition: {
-      duration: 0.2,
-    },
+    // backgroundColor: i ? "rgb(59, 78, 197)" : "rgb(170, 170, 170)",
   }),
-  tap: {
-    y: 0,
-  },
+  tap: {},
   push: (i) => ({
     backgroundColor: i ? "rgb(69, 90, 228)" : "rgb(217, 217, 217)",
     color: i ? "white" : "black",
-    transition: {
-      duration: 0.2,
-    },
   }),
 };
 
@@ -190,6 +189,9 @@ export default function FeedDetail() {
   // console.log(state);
   const isUserId = useRecoilValue(isUserIDAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
+  const setToken = useSetRecoilState(isAccessTokenAtom);
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [data, setData] = useState([]);
   const [imgArr, setImgArr] = useState([]);
   const [visible, setVisible] = useState(1);
@@ -198,11 +200,11 @@ export default function FeedDetail() {
   const navigate = useNavigate();
   const next = () => {
     setBack(false);
-    setVisible((prev) => (prev == imgArr.length ? 1 : prev + 1));
+    setVisible((prev) => (prev === imgArr.length ? 1 : prev + 1));
   };
   const prev = () => {
     setBack(true);
-    setVisible((prev) => (prev == 1 ? imgArr.length : prev - 1));
+    setVisible((prev) => (prev === 1 ? imgArr.length : prev - 1));
   };
 
   const revisePost = () => {};
@@ -217,8 +219,12 @@ export default function FeedDetail() {
     })
       .then((e) => e.json())
       .then((res) => {
-        alert("해당 게시물이 삭제되었습니다.");
-        navigate(-1);
+        if (res.code == -9999) {
+          reIssue();
+        } else {
+          alert("해당 게시물이 삭제되었습니다.");
+          navigate(-1);
+        }
       })
       .catch((err) => {
         alert(err);
@@ -234,14 +240,85 @@ export default function FeedDetail() {
     })
       .then((e) => e.json())
       .then((res) => {
+        // console.log(res);
         res.list.map((e) => {
-          setImgArr((prev) => [e.imageUrl, ...prev]);
+          setImgArr((prev) => [...prev, e.imageUrl]);
           setLoading(false);
         });
       })
       .catch((err) => {
         alert(err);
       });
+  };
+
+  const reIssue = () => {
+    fetch(`http://35.247.33.79:80/reissue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        setToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+        report(data.data.accessToken);
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  const report = (data) => {
+    if (data.type === "click") {
+      fetch(`http://35.247.33.79:80/report/${state.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": isAccessToken,
+        },
+        body: JSON.stringify({}),
+      })
+        .then((e) => e.json())
+        .then((res) => {
+          if (res.code === -9999) {
+            reIssue();
+          } else if (res.code === -1016) {
+            alert("이미 신고한 사진이에요. 조금만 기다려 주세요");
+          } else {
+            alert("사진을 검토해볼게요. 감사해요.");
+          }
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else {
+      fetch(`http://35.247.33.79:80/report/${state.id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": data,
+        },
+        body: JSON.stringify({}),
+      })
+        .then((e) => e.json())
+        .then((res) => {
+          if (res.code === -9999) {
+            reIssue();
+          } else if (res.code === -1016) {
+            alert("이미 신고한 사진이에요. 조금만 기다려 주세요");
+          } else {
+            alert("사진을 검토해볼게요. 감사해요.");
+          }
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }
   };
 
   useEffect(() => {
@@ -255,6 +332,7 @@ export default function FeedDetail() {
       .then((res) => {
         // console.log(res);
         setData(res.data);
+        setImgArr((prev) => [...prev, res.data.imageUrl]);
         getImg(res.data.place.contentId);
       })
       .catch((err) => {
@@ -262,7 +340,8 @@ export default function FeedDetail() {
       });
   }, []);
 
-  console.log(imgArr);
+  // console.log(visible);
+
   return (
     <>
       <Helmet>
@@ -304,7 +383,12 @@ export default function FeedDetail() {
                     whileHover={{ y: -5 }}
                     whileTap={{ y: 0 }}
                     exit={{ scale: 0 }}
-                    onClick={revisePost}
+                    onClick={() => {
+                      // console.log(data);
+                      navigate(`/feed/revise/${data.postId}`, {
+                        state: data,
+                      });
+                    }}
                     style={{ backgroundColor: "#455ae4" }}
                   >
                     <div>게시물 수정</div>
@@ -320,7 +404,18 @@ export default function FeedDetail() {
                     <div>삭제</div>
                   </Button>
                 </>
-              ) : null}
+              ) : (
+                <Button
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1, rotateZ: 360 }}
+                  whileHover={{ y: -5 }}
+                  whileTap={{ y: 0 }}
+                  exit={{ scale: 0 }}
+                  onClick={report}
+                >
+                  <div>신고</div>
+                </Button>
+              )}
             </BtnBox>
             <AniTab>
               <LayoutGroup>

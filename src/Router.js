@@ -21,7 +21,7 @@ function Router() {
       <Route path="/search" element={<Search />}></Route>
       <Route path="/map" element={<Maps />}></Route>
       <Route path="/mypage" element={<MyPage />}></Route>
-      <Route path="/feed/revise" element={<Revise />}></Route>
+      <Route path="/feed/revise/:ID" element={<Revise />}></Route>
       <Route path="/notice" element={<Notice />}></Route>
       <Route path="/upload" element={<Upload />}></Route>
       <Route path="/search/:ID" element={<Detail />}></Route>

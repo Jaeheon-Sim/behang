@@ -152,19 +152,47 @@ export default function Detail() {
   const { state } = useLocation();
   // const state = useLocation();
   // console.log(state);
-  const imgArr = [state.firstimage, state.firstimage2];
+  const [imgArr, setImgArr] = useState([]);
 
   const [visible, setVisible] = useState(1);
   const [back, setBack] = useState(false);
   const next = () => {
     setBack(false);
-    setVisible((prev) => (prev == imgArr.length ? 1 : prev + 1));
+    setVisible((prev) => (prev === imgArr.length ? 1 : prev + 1));
   };
   const prev = () => {
     setBack(true);
-    setVisible((prev) => (prev == 1 ? imgArr.length : prev - 1));
+    setVisible((prev) => (prev === 1 ? imgArr.length : prev - 1));
   };
 
+  const getImg = (contentId) => {
+    fetch(`http://35.247.33.79:8080/posts/feed/place/${contentId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((e) => e.json())
+      .then((res) => {
+        console.log(res);
+        if (res.code === -1017) {
+        } else {
+          res.list.map((e) => {
+            setImgArr((prev) => [...prev, e.imageUrl]);
+            // setLoading(false);
+          });
+        }
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
+
+  useEffect(() => {
+    setImgArr((prev) => [...prev, state.firstimage]);
+    getImg(state.contentid);
+  }, []);
+  console.log(imgArr);
   return (
     <>
       <Helmet>
@@ -214,7 +242,7 @@ export default function Detail() {
             </div>
             <div>{state.tel}</div>
           </InfoTab>
-          <TagTab>
+          {/* <TagTab>
             <TagsBox>
               <Tag
                 variants={filterVari}
@@ -273,7 +301,7 @@ export default function Detail() {
                 연인과 함께
               </Tag>
             </TagsBox>
-          </TagTab>
+          </TagTab> */}
         </Container>
       </Total>
     </>

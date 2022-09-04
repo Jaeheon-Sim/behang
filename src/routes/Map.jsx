@@ -130,12 +130,16 @@ export default function Maps() {
             </>
           ) : (
             <>
-              <Title>비.....가 내렸어...</Title>
               <br />
-
-              <MapBox>
+              <br />
+              <br />
+              <br />
+              <Title>서비스 준비중이에요.</Title>
+              <Title> 빠른시일내로 보여드릴게요!</Title>
+              <br />
+              {/* <MapBox>
                 <Mapp />
-              </MapBox>
+              </MapBox> */}
             </>
           )}
         </Container>

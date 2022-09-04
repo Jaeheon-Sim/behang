@@ -8,7 +8,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isXAtom, isYAtom, isAccessTokenAtom } from "../atoms";
 import { OPEN_KEY } from "../Key";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 
 const Total = styled(motion.div)``;
@@ -59,6 +59,8 @@ const FinalTab = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 4vh;
+  /* margin-bottom: 2vh; */
 `;
 
 const FinalDiv = styled(motion.div)`
@@ -91,6 +93,7 @@ export default function Feed() {
   const [isLoading, setLoading] = useState(true);
   const [ref, inView] = useInView();
   const [isPageNum, setPageNum] = useState(10);
+  const navigate = useNavigate();
 
   const Locate = () => {
     if (navigator.geolocation) {
@@ -108,7 +111,7 @@ export default function Feed() {
   useEffect(() => {
     setExtraLoading(true);
     Locate();
-    console.log(isX, isY);
+
     fetch(
       `http://35.247.33.79:80/posts/feed/sort=Distance?page=0&size=${isPageNum}`,
       {
@@ -130,7 +133,8 @@ export default function Feed() {
         setLoading(false);
       })
       .catch((err) => {
-        console.log(err);
+        alert("서버 오류가 있어요...");
+        navigate("/");
       });
   }, [inView]);
 
@@ -181,10 +185,8 @@ export default function Feed() {
             </Container>
             {extraLoading ? (
               <FinalTab
-                initial={{ backgroundColor: "rgba(255, 255, 255,0.6)" }}
-                animate={{
-                  backgroundColor: "rgba(120, 119, 119,0.6)",
-                }}
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
                 transition={{
                   ease: "easeInOut",
                   repeat: Infinity,

@@ -11,6 +11,10 @@ import Detail from "./routes/Detail";
 import FeedDetail from "./routes/FeedDetail";
 import Notice from "./routes/Notice";
 import Revise from "./routes/Revise";
+import Gongi from "./routes/Gongi";
+import Version from "./routes/Version";
+import Terms from "./routes/Terms";
+import Contact from "./routes/Contact";
 
 function Router() {
   return (
@@ -23,6 +27,10 @@ function Router() {
       <Route path="/mypage" element={<MyPage />}></Route>
       <Route path="/feed/revise/:ID" element={<Revise />}></Route>
       <Route path="/notice" element={<Notice />}></Route>
+      <Route path="/notice/gongi" element={<Gongi />} />
+      <Route path="/notice/version" element={<Version />} />
+      <Route path="/notice/terms" element={<Terms />} />
+      <Route path="/notice/contact" element={<Contact />} />
       <Route path="/upload" element={<Upload />}></Route>
       <Route path="/search/:ID" element={<Detail />}></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>

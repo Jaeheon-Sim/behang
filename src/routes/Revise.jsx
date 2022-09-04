@@ -396,12 +396,12 @@ export default function Revise(data) {
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log(data);
             if (data.code === -9999) {
               reIssue();
             } else {
-              console.log(data);
-              alert("수정이 되었습니다.");
-              reset();
+              alert("수정 되었습니다.");
+              navigate(-1);
             }
           })
           .catch((err) => {
@@ -436,8 +436,7 @@ export default function Revise(data) {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
-            alert("수정이 되었습니다.");
+            alert("수정 되었습니다.");
             navigate(-1);
           })
           .catch((err) => {

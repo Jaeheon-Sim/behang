@@ -70,6 +70,7 @@ const MotionVar = {
 export default function Notice() {
   const isUser = useRecoilValue(isUserAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
+
   const [withdraw, setWithdraw] = useState(false);
   const navigate = useNavigate();
   const onWithdraw = () => {
@@ -101,25 +102,51 @@ export default function Notice() {
         <Container>
           {!withdraw ? (
             <InfoTab>
-              <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              <Div
+                onClick={() => {
+                  navigate("/notice/gongi");
+                }}
+                variants={MotionVar}
+                whileHover="hover"
+                whileTap="tap"
+              >
                 공지사항
               </Div>
               <br />
-              <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              <Div
+                onClick={() => {
+                  navigate("/notice/contact");
+                }}
+                variants={MotionVar}
+                whileHover="hover"
+                whileTap="tap"
+              >
                 서비스 문의
               </Div>
               <br />
-              <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              <Div
+                onClick={() => {
+                  navigate("/notice/terms");
+                }}
+                variants={MotionVar}
+                whileHover="hover"
+                whileTap="tap"
+              >
                 약관 및 정책
               </Div>
               <br />
-              <Div variants={MotionVar} whileHover="hover" whileTap="tap">
+              <Div
+                onClick={() => {
+                  navigate("/notice/version");
+                }}
+                variants={MotionVar}
+                whileHover="hover"
+                whileTap="tap"
+              >
                 버전 정보
               </Div>
               <br />
-              <Div variants={MotionVar} whileHover="hover" whileTap="tap">
-                Contact
-              </Div>
+
               {isUser ? (
                 <>
                   <br />

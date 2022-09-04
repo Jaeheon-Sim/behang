@@ -1,7 +1,8 @@
 import React from "react";
 import { useEffect, useState } from "react";
-import axios from "axios";
+
 import { isUserAtom } from "./atoms";
+import logo from "./images/logo.png";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import qs from "qs";
 import {
@@ -15,11 +16,25 @@ import { CLIENT_ID, REDIRECT_URI } from "./Key";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import styled from "styled-components";
+import Header from "./format/Header";
 
 const Div = styled(motion.div)`
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   display: flex;
+  flex-direction: column;
+`;
+const Head = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: auto;
+
+  width: 100%;
+  font-size: 25px;
+  /* @media screen and (max-width: 500px) {
+    justify-content: space-between;
+  } */
 `;
 const Wrapper = styled(motion.div)`
   width: 85vw;
@@ -79,10 +94,27 @@ const circleVariants = {
       repeat: Infinity,
       repeatType: "reverse",
       duration: 0.5,
-      repeatDelay: 0.4,
+      repeatDelay: 0.2,
     },
   },
 };
+
+const HeaderBox = styled(motion.div)``;
+
+const HeaderTab = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-left: -20px;
+`;
+const HeaderImg = styled.img`
+  width: 150px;
+  height: 100px;
+`;
+
+const HeaderTitle = styled.div`
+  margin-left: -35px;
+`;
 const Auth = () => {
   const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const setUser = useSetRecoilState(isUserAtom);
@@ -158,7 +190,7 @@ const Auth = () => {
           if (data.msg === "이미 가입된 계정입니다. 로그인을 해주세요") {
             login(res);
           } else {
-            alert("에러입니다...");
+            alert("원인 모를 오류입니다...다시 시도하세요!");
             navigate("/");
           }
         }
@@ -188,7 +220,7 @@ const Auth = () => {
           getProfile(data.data.accessToken);
 
           setRefreshToken(data.data.refreshToken);
-          //getProfile();
+
           navigate("/feed");
         } else {
           alert("원인 모를 오류입니다...다시 시도하세요!");
@@ -210,6 +242,14 @@ const Auth = () => {
 
   return (
     <Div>
+      <Head>
+        <div>
+          <HeaderTab>
+            <HeaderImg src={logo} alt="no" />
+            <HeaderTitle>비 행</HeaderTitle>
+          </HeaderTab>
+        </div>
+      </Head>
       <Wrapper>
         <Title variants={boxVariants} initial="start" animate="end">
           <Dot variants={titleVari}>로그인 중</Dot>

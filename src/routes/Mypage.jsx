@@ -94,6 +94,7 @@ const LogoutTab = styled.div`
   justify-content: flex-end;
   align-items: center;
   margin-right: 2vw;
+  margin-bottom: 2vh;
 `;
 
 const Box = styled.div`
@@ -150,8 +151,9 @@ const Icon = styled(FontAwesomeIcon)`
 
 const ImgDiv = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: flex-start;
+  width: 90%;
 `;
 
 const ProfileImg = styled.img`

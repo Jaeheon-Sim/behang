@@ -67,6 +67,8 @@ body{
 	margin-right:13vh;
   }
 }
+
+
 `;
 
 export default GlobalStyle;

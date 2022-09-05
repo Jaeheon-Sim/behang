@@ -17,7 +17,8 @@ import {
 } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import {
   faAngleRight,
   faAngleLeft,
@@ -171,6 +172,7 @@ const Button = styled(motion.button)`
   height: 4vh;
   margin-left: 5px;
   cursor: pointer;
+  display: hidden ${(props) => props.first}; //props 활용
 `;
 const filterVari = {
   hover: (i) => ({
@@ -182,6 +184,13 @@ const filterVari = {
     color: i ? "white" : "black",
   }),
 };
+
+const MSwal = styled(Swal)`
+  display: none;
+  /* & + button {
+    background-color: #455ae4;
+  } */
+`;
 
 export default function FeedDetail() {
   const { state } = useLocation();
@@ -197,7 +206,11 @@ export default function FeedDetail() {
   const [visible, setVisible] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [back, setBack] = useState(false);
+  const [isFirst, setFirst] = useState(false);
   const navigate = useNavigate();
+
+  const MySwal = withReactContent(Swal);
+
   const next = () => {
     setBack(false);
     setVisible((prev) => (prev === imgArr.length ? 1 : prev + 1));
@@ -207,9 +220,8 @@ export default function FeedDetail() {
     setVisible((prev) => (prev === 1 ? imgArr.length : prev - 1));
   };
 
-  const revisePost = () => {};
-
   const deltePost = () => {
+    setFirst(true);
     fetch(`http://35.247.33.79:80/posts/${data.postId}`, {
       method: "DELETE",
       headers: {
@@ -222,12 +234,19 @@ export default function FeedDetail() {
         if (res.code == -9999) {
           reIssue();
         } else {
-          alert("해당 게시물이 삭제되었습니다.");
+          MySwal.fire({
+            title: <strong>해당 게시물이 삭제되었습니다.</strong>,
+            icon: "success",
+          });
+
           navigate(-1);
         }
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
@@ -247,7 +266,10 @@ export default function FeedDetail() {
         });
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
@@ -269,11 +291,15 @@ export default function FeedDetail() {
         report(data.data.accessToken);
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
   const report = (data) => {
+    setFirst(true);
     if (data.type === "click") {
       fetch(`http://35.247.33.79:80/report/${state.id}`, {
         method: "POST",
@@ -288,13 +314,22 @@ export default function FeedDetail() {
           if (res.code === -9999) {
             reIssue();
           } else if (res.code === -1016) {
-            alert("이미 신고한 사진이에요. 조금만 기다려 주세요");
+            MySwal.fire({
+              title: <strong>이미 신고한 사진이에요.</strong>,
+              icon: "error",
+            });
           } else {
-            alert("사진을 검토해볼게요. 감사해요.");
+            MySwal.fire({
+              title: <strong>사진을 검토해볼게요. 감사해요.</strong>,
+              icon: "success",
+            });
           }
         })
         .catch((err) => {
-          alert(err);
+          MySwal.fire({
+            title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          });
         });
     } else {
       fetch(`http://35.247.33.79:80/report/${state.id}`, {
@@ -310,13 +345,22 @@ export default function FeedDetail() {
           if (res.code === -9999) {
             reIssue();
           } else if (res.code === -1016) {
-            alert("이미 신고한 사진이에요. 조금만 기다려 주세요");
+            MySwal.fire({
+              title: <strong>이미 신고한 사진이에요.</strong>,
+              icon: "error",
+            });
           } else {
-            alert("사진을 검토해볼게요. 감사해요.");
+            MySwal.fire({
+              title: <strong>사진을 검토해볼게요. 감사해요.</strong>,
+              icon: "success",
+            });
           }
         })
         .catch((err) => {
-          alert(err);
+          MySwal.fire({
+            title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          });
         });
     }
   };
@@ -336,7 +380,10 @@ export default function FeedDetail() {
         getImg(res.data.place.contentId);
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   }, []);
 
@@ -394,10 +441,11 @@ export default function FeedDetail() {
                     <div>게시물 수정</div>
                   </Button>
                   <Button
+                    first={isFirst}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1, rotateZ: 360 }}
                     whileHover={{ y: -5 }}
-                    whileTap={{ y: 0 }}
+                    whileTap={{ y: 0, opacity: 0 }}
                     exit={{ scale: 0 }}
                     onClick={deltePost}
                   >
@@ -406,6 +454,7 @@ export default function FeedDetail() {
                 </>
               ) : (
                 <Button
+                  first={isFirst}
                   initial={{ scale: 0 }}
                   animate={{ scale: 1, rotateZ: 360 }}
                   whileHover={{ y: -5 }}

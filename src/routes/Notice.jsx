@@ -64,6 +64,20 @@ const Btn = styled(motion.div)`
   cursor: pointer;
 `;
 
+const Op = styled.div`
+  margin-top: 2vh;
+  font-size: 1.3rem;
+  color: #5e5e5e;
+`;
+
+const OpDiv = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  margin: 0 auto;
+`;
+
 const MotionVar = {
   hover: { y: -5 },
   tap: { y: 0 },
@@ -92,18 +106,19 @@ export default function Notice() {
     })
       .then((e) => e.json())
       .then((data) => {
+        console.log(data);
         setToken(data.data.accessToken);
         setRefreshToken(data.data.refreshToken);
         onWithdraw(data.data.accessToken);
       })
       .catch((err) => {
-        alert(err);
+        console.log(err);
       });
   };
 
   const onWithdraw = (data) => {
     if (data.type === "click") {
-      fetch(`http://35.247.33.79:80/withdrawal`, {
+      fetch(`http://35.247.33.79:80/social/withdrawal/kakao`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -113,14 +128,19 @@ export default function Notice() {
       })
         .then((e) => e.json())
         .then((data) => {
-          alert("탈퇴가 되었어요. 다시 만나요!");
-          navigate("/");
+          if (data.code === -9999) {
+            console.log(data);
+            // reIssue();
+          } else {
+            alert("탈퇴가 되었어요. 다시 만나요!");
+            navigate("/");
+          }
         })
         .catch((err) => {
           alert(err);
         });
     } else {
-      fetch(`http://35.247.33.79:80/withdrawal`, {
+      fetch(`http://35.247.33.79:80/social/withdrawal/kakao`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -214,6 +234,8 @@ export default function Notice() {
             </InfoTab>
           ) : (
             <>
+              <br />
+              <br />
               <div
                 style={{
                   fontSize: "5rem",
@@ -226,7 +248,7 @@ export default function Notice() {
               <WithDiv>
                 <Btn
                   onClick={onWithdraw}
-                  whileHover={{ scale: 0.0000001 }}
+                  whileHover={{ scale: 1 }}
                   transition={{ duration: 0.5 }}
                 >
                   네
@@ -241,6 +263,13 @@ export default function Notice() {
                   아니요
                 </Btn>
               </WithDiv>
+              <br />
+              <br />
+              <OpDiv>
+                <Op style={{ fontSize: "1.5rem" }}>탈퇴 시 주의사항*</Op>
+                <Op>1. 탈퇴 시 회원님의 모든 데이터가 삭제됩니다.</Op>
+                <Op>2. 탈퇴 직후, 삭제된 회원정보는 복구가 불가능합니다.</Op>
+              </OpDiv>
             </>
           )}
         </Container>

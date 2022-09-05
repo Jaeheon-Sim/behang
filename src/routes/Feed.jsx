@@ -2,12 +2,11 @@ import styled from "styled-components";
 import { Helmet } from "react-helmet";
 import Header from "../format/Header";
 import { motion } from "framer-motion";
-import { fetchLocations } from "../api";
+
 import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isXAtom, isYAtom, isAccessTokenAtom } from "../atoms";
-import { OPEN_KEY } from "../Key";
-import axios from "axios";
+
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useInView } from "react-intersection-observer";
 

@@ -12,6 +12,8 @@ import { OPEN_KEY } from "../Key";
 import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isUserAtom, isAccessTokenAtom, isRefreshTokenAtom } from "../atoms";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -270,6 +272,7 @@ export default function Upload() {
     phoneNumber: "",
     isOn: false,
   });
+  const MySwal = withReactContent(Swal);
 
   const moreInfo = () => {
     searchapi();
@@ -386,14 +389,20 @@ export default function Upload() {
         goFile(data.data.accessToken);
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
   const goFile = (data) => {
     console.log(data);
     if (isLocate.isOn === false) {
-      alert("모든 정보를 다 입력해주세요!");
+      MySwal.fire({
+        title: <strong>모든 정보를 입력해주세요!</strong>,
+        icon: "info",
+      });
     } else {
       setUploading(true);
       const formData = new FormData();
@@ -438,12 +447,19 @@ export default function Upload() {
             if (data.code == -9999) {
               reIssue();
             } else {
-              alert("업로드가 되었습니다.");
+              MySwal.fire({
+                title: <strong>업로드가 되었습니다.</strong>,
+                icon: "success",
+              });
+
               reset();
             }
           })
           .catch((err) => {
-            alert(err);
+            MySwal.fire({
+              title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+              icon: "error",
+            });
             setUploading(false);
           });
       } else {
@@ -456,11 +472,17 @@ export default function Upload() {
         })
           .then((res) => res.json())
           .then((data) => {
-            alert("업로드가 되었습니다.");
+            MySwal.fire({
+              title: <strong>업로드가 되었습니다.</strong>,
+              icon: "success",
+            });
             reset();
           })
           .catch((err) => {
-            alert(err);
+            MySwal.fire({
+              title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+              icon: "error",
+            });
             setUploading(false);
           });
       }
@@ -641,6 +663,7 @@ export default function Upload() {
               </Tab>
 
               <LocationModal
+                ariaHideApp={false}
                 isOpen={isModalOpen}
                 onRequestClose={() => setModalOpen(false)}
                 style={{

@@ -48,7 +48,7 @@ const Wrapper = styled(motion.div)`
   align-items: center;
   justify-content: center;
 `;
-const Title = styled(motion.h1)`
+const Title = styled(motion.div)`
   font-size: 2rem;
   display: flex;
   align-items: center;
@@ -215,7 +215,6 @@ const Auth = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         if (data.success === true) {
           setUser(true);
           setAccessToken(data.data.accessToken);

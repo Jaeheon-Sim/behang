@@ -14,6 +14,8 @@ import { faAngleDown } from "@fortawesome/free-solid-svg-icons";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isUserAtom, isAccessTokenAtom, isRefreshTokenAtom } from "../atoms";
 import { useEffect } from "react";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const Container = styled(motion.div)`
   width: 85vw;
@@ -254,6 +256,7 @@ export default function Revise(data) {
     phoneNumber: state.place.phoneNumber,
     isOn: true,
   });
+  const MySwal = withReactContent(Swal);
 
   const moreInfo = () => {
     searchapi();
@@ -358,14 +361,20 @@ export default function Revise(data) {
         goFile(data.data.accessToken);
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
   const goFile = (data) => {
     // console.log(data);
     if (isLocate.isOn === false) {
-      alert("모든 정보를 다 입력해주세요!");
+      MySwal.fire({
+        title: <strong>모든 정보를 입력해주세요!</strong>,
+        icon: "info",
+      });
     } else {
       setUploading(true);
       if (data.type === "click") {
@@ -400,12 +409,18 @@ export default function Revise(data) {
             if (data.code === -9999) {
               reIssue();
             } else {
-              alert("수정 되었습니다.");
+              MySwal.fire({
+                title: <strong>수정 되었습니다.</strong>,
+                icon: "success",
+              });
               navigate(-1);
             }
           })
           .catch((err) => {
-            alert(err);
+            MySwal.fire({
+              title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+              icon: "error",
+            });
             setUploading(false);
           });
       } else {
@@ -436,11 +451,17 @@ export default function Revise(data) {
         })
           .then((res) => res.json())
           .then((data) => {
-            alert("수정 되었습니다.");
+            MySwal.fire({
+              title: <strong>수정 되었습니다.</strong>,
+              icon: "success",
+            });
             navigate(-1);
           })
           .catch((err) => {
-            alert(err);
+            MySwal.fire({
+              title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+              icon: "error",
+            });
             setUploading(false);
           });
       }
@@ -775,7 +796,7 @@ export default function Revise(data) {
                 }}
                 style={{ margin: "0 auto" }}
               >
-                수정 중
+                수정 중...
               </Title>
             </>
           )

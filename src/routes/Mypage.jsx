@@ -299,7 +299,7 @@ export default function Mypage() {
                     <ImgBox>
                       <Img src={isProfileImg} alt="no image"></Img>
                     </ImgBox>
-                    <Btn
+                    {/* <Btn
                       initial={{ scale: 0 }}
                       animate={{ scale: 1, rotateZ: 360 }}
                       whileHover={{ y: -5 }}
@@ -308,7 +308,7 @@ export default function Mypage() {
                       onClick={revise}
                     >
                       <div>사진 변경</div>
-                    </Btn>
+                    </Btn> */}
                   </div>
                   <NickTab>
                     <div>{isNick}</div>

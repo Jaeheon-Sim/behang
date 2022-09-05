@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-import { isUserAtom } from "./atoms";
+import { isKaKaoTokenAtom, isUserAtom } from "./atoms";
 import logo from "./images/logo.png";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import qs from "qs";
@@ -120,6 +120,7 @@ const Auth = () => {
   const setUser = useSetRecoilState(isUserAtom);
   const setID = useSetRecoilState(isUserIDAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
+  const setKakaoToken = useSetRecoilState(isKaKaoTokenAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const setAccessToken = useSetRecoilState(isAccessTokenAtom);
@@ -167,6 +168,7 @@ const Auth = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        setKakaoToken(data.access_token);
         signUp(data);
       })
       .catch((err) => alert(err));

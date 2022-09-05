@@ -50,9 +50,13 @@ const Img = styled.img`
 `;
 
 const Div = styled.div`
-  position: absolute;
-  top: 55%;
-  left: 45%;
+  /* position: absolute;
+  
+  left: 45%; */
+  /* top: 55%; */
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
 `;
 
 const FinalTab = styled(motion.div)`
@@ -159,6 +163,7 @@ export default function Feed() {
               repeatDelay: 0.5,
             }}
             exit={{ backgroundColor: "rgb(217, 217, 217)" }}
+            style={{ justifyContent: "center" }}
           >
             <Div>Loading...</Div>
           </Wrapper>

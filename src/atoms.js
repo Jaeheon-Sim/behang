@@ -84,3 +84,9 @@ export const isRefreshTokenAtom = atom({
   default: "",
   effects_UNSTABLE: [persistAtom],
 });
+
+export const isKaKaoTokenAtom = atom({
+  key: "kakaotoken",
+  default: "",
+  effects_UNSTABLE: [persistAtom],
+});

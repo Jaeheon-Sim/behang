@@ -127,7 +127,7 @@ const TagsBox = styled.div`
 const Tag = styled(motion.button)`
   width: 25vh;
   @media screen and (max-width: 1400px) {
-    width: 30vh;
+    width: 33vh;
   }
   border-radius: 20px;
   border: none;

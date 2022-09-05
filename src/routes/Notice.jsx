@@ -12,6 +12,8 @@ import {
   isProfileImgAtom,
   isUserAtom,
   isAccessTokenAtom,
+  isRefreshTokenAtom,
+  isKaKaoTokenAtom,
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
 import { CLIENT_ID } from "../Key";
@@ -69,26 +71,72 @@ const MotionVar = {
 
 export default function Notice() {
   const isUser = useRecoilValue(isUserAtom);
+  const isKaKaoToken = useRecoilValue(isKaKaoTokenAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
-
+  const setToken = useSetRecoilState(isAccessTokenAtom);
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [withdraw, setWithdraw] = useState(false);
   const navigate = useNavigate();
-  const onWithdraw = () => {
-    fetch(`http://35.247.33.79:80/withdrawal`, {
+
+  const reIssue = () => {
+    fetch(`http://35.247.33.79:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-AUTH-TOKEN": isAccessToken,
       },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
-        navigate("/");
+        setToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+        onWithdraw(data.data.accessToken);
       })
       .catch((err) => {
         alert(err);
       });
+  };
+
+  const onWithdraw = (data) => {
+    if (data.type === "click") {
+      fetch(`http://35.247.33.79:80/withdrawal`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": isAccessToken,
+        },
+        body: JSON.stringify({ socialAccessToken: isKaKaoToken }),
+      })
+        .then((e) => e.json())
+        .then((data) => {
+          alert("탈퇴가 되었어요. 다시 만나요!");
+          navigate("/");
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    } else {
+      fetch(`http://35.247.33.79:80/withdrawal`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": data,
+        },
+        body: JSON.stringify({ socialAccessToken: isKaKaoToken }),
+      })
+        .then((e) => e.json())
+        .then((data) => {
+          alert("탈퇴가 되었어요. 다시 만나요!");
+          navigate("/");
+        })
+        .catch((err) => {
+          alert(err);
+        });
+    }
   };
 
   return (
@@ -178,7 +226,7 @@ export default function Notice() {
               <WithDiv>
                 <Btn
                   onClick={onWithdraw}
-                  whileHover={{ scale: 0.1 }}
+                  whileHover={{ scale: 0.0000001 }}
                   transition={{ duration: 0.5 }}
                 >
                   네

@@ -286,7 +286,7 @@ export default function Mypage() {
         );
     }
   }, []);
-
+  console.log(isProfileImg);
   return (
     <>
       <Helmet>
@@ -312,7 +312,10 @@ export default function Mypage() {
                     }}
                   >
                     <ImgBox>
-                      <Img src={isProfileImg} alt="no image"></Img>
+                      <Img
+                        src={"http://35.247.33.79:80/" + isProfileImg}
+                        alt="no image"
+                      ></Img>
                     </ImgBox>
                     {/* <Btn
                       initial={{ scale: 0 }}

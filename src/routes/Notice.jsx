@@ -6,6 +6,8 @@ import React, { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { faGear } from "@fortawesome/free-solid-svg-icons";
 import { Link, Navigate } from "react-router-dom";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import {
   isUserIDAtom,
   isNickNameAtom,
@@ -92,7 +94,7 @@ export default function Notice() {
   const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [withdraw, setWithdraw] = useState(false);
   const navigate = useNavigate();
-
+  const MySwal = withReactContent(Swal);
   const reIssue = () => {
     fetch(`http://35.247.33.79:80/reissue`, {
       method: "POST",
@@ -111,9 +113,7 @@ export default function Notice() {
         setRefreshToken(data.data.refreshToken);
         onWithdraw(data.data.accessToken);
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      .catch((err) => {});
   };
 
   const onWithdraw = (data) => {
@@ -150,11 +150,18 @@ export default function Notice() {
       })
         .then((e) => e.json())
         .then((data) => {
-          alert("탈퇴가 되었어요. 다시 만나요!");
+          MySwal.fire({
+            title: <strong>탈퇴가 되었어요. 다시 만나요!</strong>,
+            icon: "error",
+          });
+
           navigate("/");
         })
         .catch((err) => {
-          alert(err);
+          MySwal.fire({
+            title: <strong>원인모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          });
         });
     }
   };

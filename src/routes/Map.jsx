@@ -1,12 +1,14 @@
 import Header from "../format/Header";
 import { AnimatePresence, motion } from "framer-motion";
 import { Helmet } from "react-helmet";
-import { KAKAO_JSKEY } from "../Key";
+import mapImg from "../images/비행 맵.png";
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
+import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isUserAtom } from "../atoms";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Total = styled(motion.div)``;
 const Container = styled.div`
   width: 85vw;
@@ -31,81 +33,37 @@ const Title = styled.div`
   margin-top: 5vh;
 `;
 
-const MapBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
+const MapBox = styled(motion.div)`
+  margin-top: 10px;
+  height: 65vh;
+  width: 560px;
+  background-color: white;
+  overflow: hidden;
+  border-radius: 20px;
+  /* @media screen and (min-width: 1500px) {
+    width: 35%;
+  } */
+  position: relative;
 `;
 
-const Marker = styled(motion.MapMarker)`
-  justify-content: center;
-  align-items: center;
-  display: flex;
+const Img = styled.img`
+  width: 75%;
+  height: 98%;
+  margin: 0 -37.5%;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  position: relative;
+  left: 50%;
+`;
+
+const Flag = styled(FontAwesomeIcon)`
+  color: #ead23b;
 `;
 
 export default function Maps() {
   const isUser = useRecoilValue(isUserAtom);
 
-  const [state, setState] = useState({
-    center: {
-      lat: 33.450701,
-      lng: 126.570667,
-    },
-    errMsg: null,
-    isLoading: true,
-  });
-
-  useEffect(() => {
-    if (navigator.geolocation) {
-      // GeoLocation을 이용해서 접속 위치를 얻어옵니다
-
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setState((prev) => ({
-            ...prev,
-            center: {
-              lat: position.coords.latitude, // 위도
-              lng: position.coords.longitude, // 경도
-            },
-            isLoading: false,
-          }));
-        },
-
-        (err) => {
-          setState((prev) => ({
-            ...prev,
-            errMsg: err.message,
-            isLoading: false,
-          }));
-        }
-      );
-    } else {
-      // HTML5의 GeoLocation을 사용할 수 없을때 마커 표시 위치와 인포윈도우 내용을 설정합니다
-      setState((prev) => ({
-        ...prev,
-        errMsg: "geolocation을 사용할수 없어요..",
-        isLoading: false,
-      }));
-    }
-  }, []);
-
-  const Mapp = () => {
-    return (
-      <Map
-        center={state.center}
-        style={{ width: "90%", height: "500px" }}
-        level={13}
-      >
-        {!state.isLoading && (
-          <MapMarker position={state.center}>
-            {/* <Mark>{state.errMsg ? state.errMsg : "여기 갔음"}</Mark> */}
-          </MapMarker>
-        )}
-      </Map>
-    );
-  };
+  useEffect(() => {}, []);
 
   return (
     <>
@@ -126,17 +84,153 @@ export default function Maps() {
               <br />
               <br />
               <br />
-              <Title>로그인을 하시면 더 보여드릴게요!</Title>
+              <Title>로그인을 하시면 이용이 가능해요!</Title>
             </>
           ) : (
             <>
-              <br />
-              <br />
-              <br />
-              <br />
-              <Title>서비스 준비중이에요.</Title>
-              <Title> 빠른시일내로 보여드릴게요!</Title>
-              <br />
+              <Title>비행 기록</Title>
+              <MapBox>
+                <Img src={mapImg} />
+                <Flag
+                  style={{
+                    position: "relative",
+                    top: "-3.5vh",
+                    left: "30%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "18.5vh",
+                    left: "27%",
+                  }}
+                  icon={faFlag}
+                />
+
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "24.5vh",
+                    left: "27%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "32.5vh",
+                    left: "27%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "24.5vh",
+                    left: "33%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "23.9vh",
+                    left: "40%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "29.5vh",
+                    left: "39%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "35.5vh",
+                    left: "25%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "42.5vh",
+                    left: "23%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "39.5vh",
+                    left: "-2%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "41.5vh",
+                    left: "-14%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "42.5vh",
+                    left: "-28%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "45.5vh",
+                    left: "-10%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "47.5vh",
+                    left: "-23%",
+                  }}
+                  icon={faFlag}
+                />
+
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "52.5vh",
+                    left: "-41%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "53.5vh",
+                    left: "-39%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  style={{
+                    position: "relative",
+                    bottom: "54.5vh",
+                    left: "-26%",
+                  }}
+                  icon={faFlag}
+                />
+              </MapBox>
+
               {/* <MapBox>
                 <Mapp />
               </MapBox> */}

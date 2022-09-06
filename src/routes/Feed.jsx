@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { Helmet } from "react-helmet";
 import Header from "../format/Header";
 import { motion } from "framer-motion";
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { useEffect, useState } from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isXAtom, isYAtom, isAccessTokenAtom } from "../atoms";
@@ -97,7 +98,7 @@ export default function Feed() {
   const [ref, inView] = useInView();
   const [isPageNum, setPageNum] = useState(10);
   const navigate = useNavigate();
-
+  const MySwal = withReactContent(Swal);
   const Locate = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -136,7 +137,10 @@ export default function Feed() {
         setLoading(false);
       })
       .catch((err) => {
-        alert("서버 오류가 있어요...");
+        MySwal.fire({
+          title: <strong>원인모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
         navigate("/");
       });
   }, [inView]);

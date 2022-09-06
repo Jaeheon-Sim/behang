@@ -172,7 +172,7 @@ const Button = styled(motion.button)`
   height: 4vh;
   margin-left: 5px;
   cursor: pointer;
-  display: hidden ${(props) => props.first}; //props 활용
+  visibility: ${(props) => (props.first ? "hidden" : "visible")}; //props 활용
 `;
 const filterVari = {
   hover: (i) => ({

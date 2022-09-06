@@ -7,10 +7,12 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
 import { useRecoilValue, useSetRecoilState } from "recoil";
-import { isUserAtom } from "../atoms";
+import { isAccessTokenAtom, isRefreshTokenAtom, isUserAtom } from "../atoms";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 const Total = styled(motion.div)``;
-const Container = styled.div`
+const Container = styled(motion.div)`
   width: 85vw;
   margin: 5vh auto;
   display: flex;
@@ -26,7 +28,7 @@ const Container = styled.div`
   color: black;
 `;
 
-const Title = styled.div`
+const Title = styled(motion.div)`
   display: flex;
   justify-content: center;
   margin-bottom: 10px;
@@ -57,13 +59,98 @@ const Img = styled.img`
 `;
 
 const Flag = styled(FontAwesomeIcon)`
-  color: #ead23b;
+  color: ${(props) =>
+    props.cnt < 5 ? "#EF9800" : props.cnt < 9 ? "green" : "red"};
+  visibility: ${(props) => (props.cnt < 3 ? "hidden" : "visible")};
 `;
 
 export default function Maps() {
   const isUser = useRecoilValue(isUserAtom);
 
-  useEffect(() => {}, []);
+  const isAccessToken = useRecoilValue(isAccessTokenAtom);
+  const setToken = useSetRecoilState(isAccessTokenAtom);
+  const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
+  const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
+  const [record, setRecord] = useState([]);
+  const MySwal = withReactContent(Swal);
+  const [isLoading, setLoading] = useState(true);
+
+  const reIssue = () => {
+    fetch(`http://35.247.33.79:80/reissue`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        accessToken: isAccessToken,
+        refreshToken: isRefreshToken,
+      }),
+    })
+      .then((e) => e.json())
+      .then((data) => {
+        setToken(data.data.accessToken);
+        setRefreshToken(data.data.refreshToken);
+        onMap(data.data.accessToken);
+      })
+      .catch((err) => {
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
+      });
+  };
+
+  const onMap = (data) => {
+    if (data.type === "click") {
+      fetch(`http://35.247.33.79:80/history`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": isAccessToken,
+        },
+      })
+        .then((e) => e.json())
+        .then((res) => {
+          if (res.code === -9999) {
+            reIssue();
+          } else {
+            console.log(res);
+            setRecord(res.list);
+            setLoading(false);
+          }
+        })
+        .catch((err) => {
+          MySwal.fire({
+            title: <strong>원인모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          });
+        });
+    } else {
+      fetch(`http://35.247.33.79:80/history`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "X-AUTH-TOKEN": data,
+        },
+      })
+        .then((e) => e.json())
+        .then((res) => {
+          console.log(res);
+          setRecord(res.list);
+          setLoading(false);
+        })
+        .catch((err) => {
+          MySwal.fire({
+            title: <strong>원인모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          });
+        });
+    }
+  };
+
+  useEffect(() => {
+    onMap();
+  }, []);
 
   return (
     <>
@@ -86,12 +173,42 @@ export default function Maps() {
               <br />
               <Title>로그인을 하시면 이용이 가능해요!</Title>
             </>
+          ) : isLoading ? (
+            <>
+              <br />
+              <br />
+              <br />
+              <br /> <br />
+              <br />
+              <br />
+              <br />
+              <Title
+                initial={{ opacity: 1 }}
+                animate={{ opacity: 0 }}
+                transition={{
+                  ease: "easeInOut",
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  repeatDelay: 0.5,
+                }}
+              >
+                Loading...
+              </Title>
+            </>
           ) : (
             <>
               <Title>비행 기록</Title>
-              <MapBox>
+              <MapBox
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{
+                  ease: "easeInOut",
+                  duration: 0.5,
+                }}
+              >
                 <Img src={mapImg} />
                 <Flag
+                  cnt={record[16].numOfPlace}
                   style={{
                     position: "relative",
                     top: "-3.5vh",
@@ -100,6 +217,7 @@ export default function Maps() {
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[15].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "18.5vh",
@@ -109,30 +227,34 @@ export default function Maps() {
                 />
 
                 <Flag
+                  cnt={record[4].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "24.5vh",
-                    left: "27%",
+                    bottom: "22.5vh",
+                    left: "24%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[14].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "32.5vh",
-                    left: "27%",
+                    bottom: "28.5vh",
+                    left: "24%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[13].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "24.5vh",
+                    bottom: "25.5vh",
                     left: "33%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[5].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "23.9vh",
@@ -141,6 +263,7 @@ export default function Maps() {
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[6].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "29.5vh",
@@ -149,79 +272,89 @@ export default function Maps() {
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[3].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "35.5vh",
-                    left: "25%",
+                    bottom: "30.5vh",
+                    left: "24%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[12].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "42.5vh",
+                    bottom: "38.5vh",
                     left: "23%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[2].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "39.5vh",
-                    left: "-2%",
+                    bottom: "35.5vh",
+                    left: "1%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[7].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "41.5vh",
-                    left: "-14%",
-                  }}
-                  icon={faFlag}
-                />
-                <Flag
-                  style={{
-                    position: "relative",
-                    bottom: "42.5vh",
-                    left: "-28%",
-                  }}
-                  icon={faFlag}
-                />
-                <Flag
-                  style={{
-                    position: "relative",
-                    bottom: "45.5vh",
+                    bottom: "38.5vh",
                     left: "-10%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[11].numOfPlace}
                   style={{
                     position: "relative",
-                    bottom: "47.5vh",
+                    bottom: "40.5vh",
+                    left: "-25%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  cnt={record[10].numOfPlace}
+                  style={{
+                    position: "relative",
+                    bottom: "44.5vh",
+                    left: "-20%",
+                  }}
+                  icon={faFlag}
+                />
+                <Flag
+                  cnt={record[8].numOfPlace}
+                  style={{
+                    position: "relative",
+                    bottom: "49.5vh",
                     left: "-23%",
                   }}
                   icon={faFlag}
                 />
 
                 <Flag
+                  cnt={record[1].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "52.5vh",
-                    left: "-41%",
+                    left: "-40%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[0].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "53.5vh",
-                    left: "-39%",
+                    left: "-38%",
                   }}
                   icon={faFlag}
                 />
                 <Flag
+                  cnt={record[9].numOfPlace}
                   style={{
                     position: "relative",
                     bottom: "54.5vh",
@@ -230,10 +363,6 @@ export default function Maps() {
                   icon={faFlag}
                 />
               </MapBox>
-
-              {/* <MapBox>
-                <Mapp />
-              </MapBox> */}
             </>
           )}
         </Container>

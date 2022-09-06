@@ -254,6 +254,7 @@ export default function Revise(data) {
     mapX: state.place.mapX,
     mapY: state.place.mapY,
     phoneNumber: state.place.phoneNumber,
+    areaCode: state.place.areaCode,
     isOn: true,
   });
   const MySwal = withReactContent(Swal);
@@ -303,6 +304,7 @@ export default function Revise(data) {
       mapX: Number(e.mapx),
       mapY: Number(e.mapy),
       phoneNumber: String(e.tel),
+      areaCode: String(e.areacode),
     }));
     setModalOpen((prev) => !prev);
   };
@@ -387,11 +389,13 @@ export default function Revise(data) {
           body: JSON.stringify({
             place: {
               address: isLocate.addr,
+              areaCode: isLocate.areaCode,
               contentId: isLocate.contentId,
               mapX: isLocate.mapX,
               mapY: isLocate.mapY,
               name: isLocate.title,
               phoneNumber: isLocate.phoneNumber,
+              areaCode: isLocate.areaCode,
             },
             tag: {
               comfortablePubTransit: isPublic,
@@ -433,6 +437,7 @@ export default function Revise(data) {
           body: JSON.stringify({
             place: {
               address: isLocate.addr,
+              areaCode: isLocate.areaCode,
               contentId: isLocate.contentId,
               mapX: isLocate.mapX,
               mapY: isLocate.mapY,

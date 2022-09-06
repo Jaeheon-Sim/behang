@@ -270,6 +270,7 @@ export default function Upload() {
     mapX: 0,
     mapY: 0,
     phoneNumber: "",
+    areaCode: "",
     isOn: false,
   });
   const MySwal = withReactContent(Swal);
@@ -310,6 +311,7 @@ export default function Upload() {
   const onLocate = (e) => {
     console.log(e);
     setPageNum(10);
+
     setLocate((prev) => ({
       // ...prev,
       title: String(e.title),
@@ -319,6 +321,7 @@ export default function Upload() {
       mapX: Number(e.mapx),
       mapY: Number(e.mapy),
       phoneNumber: String(e.tel),
+      areaCode: String(e.areacode),
     }));
     setModalOpen((prev) => !prev);
   };
@@ -397,7 +400,7 @@ export default function Upload() {
   };
 
   const goFile = (data) => {
-    console.log(data);
+    console.log(isLocate);
     if (isLocate.isOn === false) {
       MySwal.fire({
         title: <strong>모든 정보를 입력해주세요!</strong>,
@@ -415,6 +418,7 @@ export default function Upload() {
             JSON.stringify({
               place: {
                 address: isLocate.addr,
+                areaCode: isLocate.areaCode,
                 contentId: isLocate.contentId,
                 mapX: isLocate.mapX,
                 mapY: isLocate.mapY,
@@ -444,6 +448,7 @@ export default function Upload() {
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log(data);
             if (data.code == -9999) {
               reIssue();
             } else {
@@ -502,7 +507,10 @@ export default function Upload() {
     setLocate(() => ({
       title: "",
       addr: "",
+      areaCode: "",
       isOn: false,
+      mapX: 0,
+      mapY: 0,
     }));
   };
 

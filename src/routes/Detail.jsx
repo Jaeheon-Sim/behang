@@ -35,7 +35,7 @@ const Title = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 4vh;
-  margin-bottom: 22vh;
+  margin-bottom: 26vh;
 `;
 
 const AniTab = styled(motion.div)`
@@ -62,7 +62,8 @@ const FeedBox = styled(motion.div)`
 const Img = styled(motion.img)`
   width: 60vh;
   height: auto;
-  max-height: 477px;
+  height: auto;
+  max-height: 380px;
   @media screen and (max-width: 500px) {
     display: none;
   }
@@ -166,7 +167,7 @@ export default function Detail() {
   };
 
   const getImg = (contentId) => {
-    fetch(`http://35.247.33.79:8080/posts/feed/place/${contentId}`, {
+    fetch(`http://35.247.33.79:80/posts/feed/place/${contentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -178,7 +179,10 @@ export default function Detail() {
         if (res.code === -1017) {
         } else {
           res.list.map((e) => {
-            setImgArr((prev) => [...prev, e.imageUrl]);
+            setImgArr((prev) => [
+              ...prev,
+              "http://35.247.33.79:80/" + e.imageUrl,
+            ]);
             // setLoading(false);
           });
         }

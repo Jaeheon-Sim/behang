@@ -231,7 +231,7 @@ export default function FeedDetail() {
     })
       .then((e) => e.json())
       .then((res) => {
-        if (res.code == -9999) {
+        if (res.code === -9999) {
           reIssue();
         } else {
           MySwal.fire({

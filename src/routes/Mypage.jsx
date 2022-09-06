@@ -13,9 +13,11 @@ import {
   isUserAtom,
   isAccessTokenAtom,
   isRefreshTokenAtom,
+  isKaKaoTokenAtom,
 } from "../atoms";
 import { useMatch, useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Total = styled(motion.div)``;
@@ -170,7 +172,7 @@ export default function Mypage() {
   const setUser = useSetRecoilState(isUserAtom);
   const setNick = useSetRecoilState(isNickNameAtom);
   const setProfileImg = useSetRecoilState(isProfileImgAtom);
-
+  const isKaKaoToken = useRecoilValue(isKaKaoTokenAtom);
   const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
   const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
 
@@ -180,19 +182,19 @@ export default function Mypage() {
   const [data, setData] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [isPageNum, setPageNum] = useState(10);
+  const MySwal = withReactContent(Swal);
 
   const logout = () => {
-    fetch(`http://35.247.33.79:80/logout`, {
+    fetch(`http://35.247.33.79:80/social/logout/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "X-AUTH-TOKEN": isAccessToken,
       },
+      body: JSON.stringify({ socialAccessToken: isKaKaoToken }),
     })
       .then((e) => e.json())
-      .then((res) => {
-        console.log(res);
-      });
+      .then((res) => {});
     setID("");
     setNick("");
     setToken("");
@@ -227,7 +229,10 @@ export default function Mypage() {
         Get(data.data.accessToken);
       })
       .catch((err) => {
-        alert(err);
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        });
       });
   };
 
@@ -245,7 +250,12 @@ export default function Mypage() {
         setPageNum((prev) => prev + 10);
         setLoading(true);
       })
-      .catch((err) => alert(err));
+      .catch((err) =>
+        MySwal.fire({
+          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          icon: "error",
+        })
+      );
   };
 
   useEffect(() => {
@@ -268,7 +278,12 @@ export default function Mypage() {
             setLoading(true);
           }
         })
-        .catch((err) => alert(err));
+        .catch((err) =>
+          MySwal.fire({
+            title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+            icon: "error",
+          })
+        );
     }
   }, []);
 

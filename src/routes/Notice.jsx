@@ -130,7 +130,7 @@ export default function Notice() {
         .then((data) => {
           if (data.code === -9999) {
             console.log(data);
-            // reIssue();
+            reIssue();
           } else {
             alert("탈퇴가 되었어요. 다시 만나요!");
             navigate("/");

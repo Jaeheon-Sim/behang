@@ -186,18 +186,18 @@ const Auth = () => {
     })
       .then((e) => e.json())
       .then((data) => {
-        if (data.success === true) {
-          login();
+        console.log(data);
+        if (data.code === 0) {
+          login(res);
+        } else if (data.code === -1006) {
+          login(res);
         } else {
-          if (data.msg === "이미 가입된 계정입니다. 로그인을 해주세요") {
-            login(res);
-          } else {
-            alert("원인 모를 오류입니다...다시 시도하세요!");
-            navigate("/");
-          }
+          alert("원인 모를 오류입니다...다시 시도하세요!");
+          navigate("/");
         }
       })
       .catch((err) => {
+        console.log(err);
         alert("원인 모를 오류입니다...다시 시도하세요!");
         navigate("/");
       });

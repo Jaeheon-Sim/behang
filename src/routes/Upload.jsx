@@ -795,7 +795,7 @@ export default function Upload() {
                               repeatDelay: 0.5,
                             }}
                           >
-                            Loading...
+                            조금만 기다려주세요!
                           </Title>
                         </SearchTab>
                       </>

@@ -502,7 +502,7 @@ export default function Revise(data) {
                 <AnimatePresence>
                   <FeedImg>
                     <Img
-                      src={"hhttp://34.171.129.137:80/" + isImg}
+                      src={"http://34.171.129.137:80/" + isImg}
                       alt="올바른 파일을 첨부하세요"
                     />
                   </FeedImg>
@@ -747,7 +747,7 @@ export default function Revise(data) {
                               repeatDelay: 0.5,
                             }}
                           >
-                            Loading...
+                            조금만 기다려주세요!
                           </Title>
                         </SearchTab>
                       </>

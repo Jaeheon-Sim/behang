@@ -168,7 +168,7 @@ export default function Feed() {
             exit={{ backgroundColor: "rgb(217, 217, 217)" }}
             style={{ justifyContent: "center" }}
           >
-            <Div>Loading...</Div>
+            <Div>조금만 기다려주세요!</Div>
           </Wrapper>
         ) : (
           <Wrapper>
@@ -203,7 +203,7 @@ export default function Feed() {
                 }}
                 style={{ width: "100%" }}
               >
-                <FinalDiv>Loading...</FinalDiv>
+                <FinalDiv>더 많은 장소를 불러오는 중..</FinalDiv>
               </FinalTab>
             ) : (
               <FinalTab>

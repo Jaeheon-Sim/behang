@@ -204,7 +204,7 @@ export default function Maps() {
                   repeatDelay: 0.5,
                 }}
               >
-                Loading...
+                조금만 기다려주세요!
               </Title>
             </>
           ) : (
@@ -214,7 +214,7 @@ export default function Maps() {
                   style={{ visibility: "hidden" }}
                   icon={faQuestion}
                 />
-                <Title>비행 기록</Title>
+                <Title>??</Title>
 
                 <FontAwesomeIcon
                   style={{ cursor: "pointer", marginTop: " 4vh" }}

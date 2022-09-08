@@ -418,7 +418,7 @@ export default function Mypage() {
                       repeatDelay: 0.5,
                     }}
                   >
-                    <div>Loading ...</div>
+                    <div>기록을 불러오는 중...</div>
                   </Div>
                 </Box>
               )}

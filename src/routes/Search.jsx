@@ -259,7 +259,7 @@ export default function Search() {
                       repeatDelay: 0.5,
                     }}
                   >
-                    Loading...
+                    조금만 기다려주세요!
                   </Title>
                 </SearchTab>
               </>
@@ -284,7 +284,7 @@ export default function Search() {
                         </HeartImg>
                         <HeartCount>1234123</HeartCount>
                       </HearBox> */}
-                      <Distance>21332.km </Distance>
+
                       <LocationBox>
                         <Location>{e.addr1}</Location>
                       </LocationBox>

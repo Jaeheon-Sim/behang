@@ -358,7 +358,7 @@ export default function FeedDetail() {
         })
         .catch((err) => {
           MySwal.fire({
-            title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+            title: <strong>이미 신고한 사진이에요.</strong>,
             icon: "error",
           });
         });
@@ -381,13 +381,13 @@ export default function FeedDetail() {
       })
       .catch((err) => {
         MySwal.fire({
-          title: <strong>원인 모를 에러가 발생했습니다.</strong>,
+          title: <strong>이미 신고한 사진이에요.</strong>,
           icon: "error",
         });
       });
   }, []);
 
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
@@ -416,7 +416,7 @@ export default function FeedDetail() {
             }}
             exit={{ backgroundColor: "rgb(217, 217, 217)" }}
           >
-            <Title style={{ margin: "0 auto" }}>Loading...</Title>
+            <Title style={{ margin: "0 auto" }}>잠시 기다려 주세요!</Title>
           </LoadContainer>
         ) : (
           <Container>

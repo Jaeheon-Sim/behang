@@ -224,7 +224,7 @@ const MoreDiv = styled(motion.div)`
 `;
 export default function Revise(data) {
   const { state } = useLocation();
-  console.log(state);
+  // console.log(state);
   const isUser = useRecoilValue(isUserAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const setAccessToken = useSetRecoilState(isAccessTokenAtom);
@@ -409,7 +409,7 @@ export default function Revise(data) {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            // console.log(data);
             if (data.code === -9999) {
               reIssue();
             } else {

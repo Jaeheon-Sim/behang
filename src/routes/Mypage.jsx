@@ -222,7 +222,7 @@ export default function Mypage() {
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setToken(data.data.accessToken);
         setRefreshToken(data.data.refreshToken);
 
@@ -270,7 +270,7 @@ export default function Mypage() {
         .then((e) => e.json())
         .then((res) => {
           if (res.code === -9999) {
-            console.log("reissue");
+            // console.log("reissue");
             reIssue();
           } else {
             setData(res.list);
@@ -286,7 +286,7 @@ export default function Mypage() {
         );
     }
   }, []);
-  console.log(isProfileImg);
+  // console.log(isProfileImg);
   return (
     <>
       <Helmet>

@@ -186,7 +186,7 @@ const Auth = () => {
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.code === 0) {
           login(res);
         } else if (data.code === -1006) {
@@ -197,7 +197,7 @@ const Auth = () => {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         alert("원인 모를 오류입니다...다시 시도하세요!");
         navigate("/");
       });

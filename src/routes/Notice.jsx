@@ -108,7 +108,7 @@ export default function Notice() {
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setToken(data.data.accessToken);
         setRefreshToken(data.data.refreshToken);
         onWithdraw(data.data.accessToken);
@@ -129,7 +129,7 @@ export default function Notice() {
         .then((e) => e.json())
         .then((data) => {
           if (data.code === -9999) {
-            console.log(data);
+            // console.log(data);
             reIssue();
           } else {
             alert("탈퇴가 되었어요. 다시 만나요!");

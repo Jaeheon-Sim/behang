@@ -123,7 +123,7 @@ export default function Maps() {
           if (res.code === -9999) {
             reIssue();
           } else {
-            console.log(res);
+            // console.log(res);
             setRecord(res.list);
             setLoading(false);
           }
@@ -144,7 +144,7 @@ export default function Maps() {
       })
         .then((e) => e.json())
         .then((res) => {
-          console.log(res);
+          // console.log(res);
           setRecord(res.list);
           setLoading(false);
         })
@@ -214,7 +214,7 @@ export default function Maps() {
                   style={{ visibility: "hidden" }}
                   icon={faQuestion}
                 />
-                <Title>??</Title>
+                <Title>비와 함께였던 곳들</Title>
 
                 <FontAwesomeIcon
                   style={{ cursor: "pointer", marginTop: " 4vh" }}
@@ -222,6 +222,7 @@ export default function Maps() {
                   onClick={() => {
                     MySwal.fire({
                       title: <strong>기록을 비행에 남겨보세요!</strong>,
+                      text: "여행지에 대한 사진을 3장이상 올리면...",
                       icon: "question",
                     });
                   }}

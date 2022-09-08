@@ -179,7 +179,7 @@ export default function Search() {
     setE(false);
     setSearch(e.target.value);
   };
-  console.log(isPageNum);
+  // console.log(isPageNum);
   return (
     <>
       <Helmet>
@@ -269,7 +269,7 @@ export default function Search() {
                   <ListBox
                     key={e.contentid}
                     onClick={() => {
-                      console.log(e);
+                      // console.log(e);
                       navigate(`/search/${e.contentid}`, {
                         state: e,
                       });

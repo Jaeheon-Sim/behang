@@ -176,7 +176,7 @@ export default function Detail() {
     })
       .then((e) => e.json())
       .then((res) => {
-        console.log(res);
+        // console.log(res);
         if (res.code === -1017) {
         } else {
           res.list.map((e) => {

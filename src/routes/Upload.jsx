@@ -309,7 +309,7 @@ export default function Upload() {
   };
 
   const onLocate = (e) => {
-    console.log(e);
+    // console.log(e);
     setPageNum(10);
 
     setLocate((prev) => ({
@@ -373,7 +373,7 @@ export default function Upload() {
   };
 
   const reIssue = () => {
-    console.log("reissue");
+    // console.log("reissue");
     fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
@@ -386,7 +386,7 @@ export default function Upload() {
     })
       .then((e) => e.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setAccessToken(data.data.accessToken);
         setRefreshToken(data.data.refreshToken);
         goFile(data.data.accessToken);
@@ -400,7 +400,7 @@ export default function Upload() {
   };
 
   const goFile = (data) => {
-    console.log(isLocate);
+    // console.log(isLocate);
     if (isLocate.isOn === false) {
       MySwal.fire({
         title: <strong>모든 정보를 입력해주세요!</strong>,
@@ -448,7 +448,7 @@ export default function Upload() {
         })
           .then((res) => res.json())
           .then((data) => {
-            console.log(data);
+            // console.log(data);
             if (data.code === -9999) {
               reIssue();
             } else {

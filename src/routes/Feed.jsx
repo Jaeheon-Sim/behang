@@ -144,7 +144,7 @@ export default function Feed() {
         navigate("/");
       });
   }, [inView]);
-  console.log(data);
+  // console.log(data);
   return (
     <>
       <Helmet>

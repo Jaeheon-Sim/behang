@@ -117,7 +117,7 @@ export default function Feed() {
     Locate();
 
     fetch(
-      `http://35.247.33.79:80/posts/feed/sort=Distance?page=0&size=${isPageNum}`,
+      `http://34.171.129.137:80/posts/feed/sort=Distance?page=0&size=${isPageNum}`,
       {
         method: "POST",
         headers: {
@@ -144,7 +144,7 @@ export default function Feed() {
         navigate("/");
       });
   }, [inView]);
-
+  console.log(data);
   return (
     <>
       <Helmet>
@@ -182,7 +182,7 @@ export default function Feed() {
                     >
                       <Img
                         alt="오류가 있어요."
-                        src={"http://35.247.33.79:80/" + e.imageUrl}
+                        src={"http://34.171.129.137:80/" + e.imageUrl}
                       />
                     </FeedBox>
                   </Links>

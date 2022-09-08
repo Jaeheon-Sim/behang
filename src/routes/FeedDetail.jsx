@@ -222,7 +222,7 @@ export default function FeedDetail() {
 
   const deltePost = () => {
     setFirst(true);
-    fetch(`http://35.247.33.79:80/posts/${data.postId}`, {
+    fetch(`http://34.171.129.137:80/posts/${data.postId}`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -251,7 +251,7 @@ export default function FeedDetail() {
   };
 
   const getImg = (contentId) => {
-    fetch(`http://35.247.33.79:8080/posts/feed/place/${contentId}`, {
+    fetch(`http://34.171.129.137:80/posts/feed/place/${contentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -274,7 +274,7 @@ export default function FeedDetail() {
   };
 
   const reIssue = () => {
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -301,7 +301,7 @@ export default function FeedDetail() {
   const report = (data) => {
     setFirst(true);
     if (data.type === "click") {
-      fetch(`http://35.247.33.79:80/report/${state.id}`, {
+      fetch(`http://34.171.129.137:80/report/${state.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -332,7 +332,7 @@ export default function FeedDetail() {
           });
         });
     } else {
-      fetch(`http://35.247.33.79:80/report/${state.id}`, {
+      fetch(`http://34.171.129.137:80/report/${state.id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -366,7 +366,7 @@ export default function FeedDetail() {
   };
 
   useEffect(() => {
-    fetch(`http://35.247.33.79:80/posts/${state.id}`, {
+    fetch(`http://34.171.129.137:80/posts/${state.id}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -387,7 +387,7 @@ export default function FeedDetail() {
       });
   }, []);
 
-  // console.log(visible);
+  console.log(data);
 
   return (
     <>
@@ -477,7 +477,7 @@ export default function FeedDetail() {
                 <RelaBox>
                   <AnimatePresence custom={back}>
                     <Img
-                      src={"http://35.247.33.79:80/" + imgArr[visible - 1]}
+                      src={"http://34.171.129.137:80/" + imgArr[visible - 1]}
                       custom={back}
                       variants={visVar}
                       initial="entry"

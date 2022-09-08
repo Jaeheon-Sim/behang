@@ -6,6 +6,7 @@ import { Map, MapMarker } from "react-kakao-maps-sdk";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { faFlag } from "@fortawesome/free-solid-svg-icons";
+import { faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { isAccessTokenAtom, isRefreshTokenAtom, isUserAtom } from "../atoms";
 import Swal from "sweetalert2";
@@ -64,6 +65,13 @@ const Flag = styled(FontAwesomeIcon)`
   visibility: ${(props) => (props.cnt < 3 ? "hidden" : "visible")};
 `;
 
+const TitleBox = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 80%;
+`;
+
 export default function Maps() {
   const isUser = useRecoilValue(isUserAtom);
 
@@ -72,11 +80,12 @@ export default function Maps() {
   const isRefreshToken = useRecoilValue(isRefreshTokenAtom);
   const setRefreshToken = useSetRecoilState(isRefreshTokenAtom);
   const [record, setRecord] = useState([]);
+
   const MySwal = withReactContent(Swal);
   const [isLoading, setLoading] = useState(true);
 
   const reIssue = () => {
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,8 +110,8 @@ export default function Maps() {
   };
 
   const onMap = (data) => {
-    if (data.type === "click") {
-      fetch(`http://35.247.33.79:80/history`, {
+    if (data === 1) {
+      fetch(`http://34.171.129.137:80/history`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -126,7 +135,7 @@ export default function Maps() {
           });
         });
     } else {
-      fetch(`http://35.247.33.79:80/history`, {
+      fetch(`http://34.171.129.137:80/history`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -149,7 +158,9 @@ export default function Maps() {
   };
 
   useEffect(() => {
-    onMap();
+    if (isUser) {
+      onMap(1);
+    }
   }, []);
 
   return (
@@ -159,6 +170,7 @@ export default function Maps() {
       </Helmet>
 
       <Header />
+
       <Total
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -197,7 +209,25 @@ export default function Maps() {
             </>
           ) : (
             <>
-              <Title>비행 기록</Title>
+              <TitleBox>
+                <FontAwesomeIcon
+                  style={{ visibility: "hidden" }}
+                  icon={faQuestion}
+                />
+                <Title>비행 기록</Title>
+
+                <FontAwesomeIcon
+                  style={{ cursor: "pointer", marginTop: " 4vh" }}
+                  icon={faQuestion}
+                  onClick={() => {
+                    MySwal.fire({
+                      title: <strong>기록을 비행에 남겨보세요!</strong>,
+                      icon: "question",
+                    });
+                  }}
+                />
+              </TitleBox>
+
               <MapBox
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -133,7 +133,7 @@ const Auth = () => {
   const getProfile = (token) => {
     // Kakao SDK API를 이용해 사용자 정보 획득
 
-    fetch(`http://35.247.33.79:80/users/profile/me`, {
+    fetch(`http://34.171.129.137:80/users/profile/me`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +175,7 @@ const Auth = () => {
   };
 
   const signUp = (res) => {
-    fetch(`http://35.247.33.79:80/social/signup/kakao`, {
+    fetch(`http://34.171.129.137:80/social/signup/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -204,7 +204,7 @@ const Auth = () => {
   };
 
   const login = (res) => {
-    fetch(`http://35.247.33.79:80/social/login/kakao`, {
+    fetch(`http://34.171.129.137:80/social/login/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

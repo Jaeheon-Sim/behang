@@ -29,6 +29,7 @@ const Container = styled(motion.div)`
   color: black;
   padding-top: 2vh;
   padding-bottom: 2vh;
+  overflow: hidden;
 `;
 
 const Title = styled.div`
@@ -154,9 +155,9 @@ export default function Detail() {
   // const state = useLocation();
   // console.log(state);
   const [imgArr, setImgArr] = useState([]);
-
+  const [not, setNot] = useState(false);
   const [visible, setVisible] = useState(1);
-  const [back, setBack] = useState(false);
+  const [back, setBack] = useState(true);
   const next = () => {
     setBack(false);
     setVisible((prev) => (prev === imgArr.length ? 1 : prev + 1));
@@ -167,7 +168,7 @@ export default function Detail() {
   };
 
   const getImg = (contentId) => {
-    fetch(`http://35.247.33.79:80/posts/feed/place/${contentId}`, {
+    fetch(`http://34.171.129.137:80/posts/feed/place/${contentId}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -181,22 +182,25 @@ export default function Detail() {
           res.list.map((e) => {
             setImgArr((prev) => [
               ...prev,
-              "http://35.247.33.79:80/" + e.imageUrl,
+              "http://34.171.129.137:80/" + e.imageUrl,
             ]);
             // setLoading(false);
           });
         }
       })
       .catch((err) => {
-        alert(err);
+        setNot(true);
       });
   };
 
   useEffect(() => {
-    setImgArr((prev) => [...prev, state.firstimage]);
+    if (state.firstimage !== "") {
+      setImgArr((prev) => [...prev, state.firstimage]);
+    }
+
     getImg(state.contentid);
   }, []);
-  console.log(imgArr);
+
   return (
     <>
       <Helmet>
@@ -245,9 +249,12 @@ export default function Detail() {
               {state.addr1} {state.addr2}
             </div>
             <div>{state.tel}</div>
+            <br />
+            {not ? <div>아직 해당 장소에 대한 기록이 없어요.</div> : null}
           </InfoTab>
-          {/* <TagTab>
-            <TagsBox>
+
+          <TagTab>
+            {/* <TagsBox>
               <Tag
                 variants={filterVari}
                 custom={true}
@@ -304,8 +311,8 @@ export default function Detail() {
               >
                 연인과 함께
               </Tag>
-            </TagsBox>
-          </TagTab> */}
+            </TagsBox> */}
+          </TagTab>
         </Container>
       </Total>
     </>

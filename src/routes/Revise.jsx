@@ -345,7 +345,7 @@ export default function Revise(data) {
   };
 
   const reIssue = () => {
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -380,7 +380,7 @@ export default function Revise(data) {
     } else {
       setUploading(true);
       if (data.type === "click") {
-        fetch(`http://35.247.33.79:80/posts/${state.postId}`, {
+        fetch(`http://34.171.129.137:80/posts/${state.postId}`, {
           method: "PATCH",
           headers: {
             "X-AUTH-TOKEN": isAccessToken,
@@ -428,7 +428,7 @@ export default function Revise(data) {
             setUploading(false);
           });
       } else {
-        fetch(`http://35.247.33.79:80/posts/${state.postId}`, {
+        fetch(`http://34.171.129.137:80/posts/${state.postId}`, {
           method: "PATCH",
           headers: {
             "X-AUTH-TOKEN": data,
@@ -502,7 +502,7 @@ export default function Revise(data) {
                 <AnimatePresence>
                   <FeedImg>
                     <Img
-                      src={"http://35.247.33.79:80/" + isImg}
+                      src={"hhttp://34.171.129.137:80/" + isImg}
                       alt="올바른 파일을 첨부하세요"
                     />
                   </FeedImg>

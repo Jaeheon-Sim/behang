@@ -374,7 +374,7 @@ export default function Upload() {
 
   const reIssue = () => {
     console.log("reissue");
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -439,7 +439,7 @@ export default function Upload() {
         )
       );
       if (data.type === "click") {
-        fetch(`http://35.247.33.79:80/posts`, {
+        fetch(`http://34.171.129.137:80/posts`, {
           method: "POST",
           headers: {
             "X-AUTH-TOKEN": isAccessToken,
@@ -449,7 +449,7 @@ export default function Upload() {
           .then((res) => res.json())
           .then((data) => {
             console.log(data);
-            if (data.code == -9999) {
+            if (data.code === -9999) {
               reIssue();
             } else {
               MySwal.fire({
@@ -468,7 +468,7 @@ export default function Upload() {
             setUploading(false);
           });
       } else {
-        fetch(`http://35.247.33.79:80/posts`, {
+        fetch(`http://34.171.129.137:80/posts`, {
           method: "POST",
           headers: {
             "X-AUTH-TOKEN": data,

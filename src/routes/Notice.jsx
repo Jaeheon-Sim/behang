@@ -96,7 +96,7 @@ export default function Notice() {
   const navigate = useNavigate();
   const MySwal = withReactContent(Swal);
   const reIssue = () => {
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -118,7 +118,7 @@ export default function Notice() {
 
   const onWithdraw = (data) => {
     if (data.type === "click") {
-      fetch(`http://35.247.33.79:80/social/withdrawal/kakao`, {
+      fetch(`http://34.171.129.137:80/social/withdrawal/kakao`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,10 +137,11 @@ export default function Notice() {
           }
         })
         .catch((err) => {
-          alert(err);
+          alert("탈퇴가 되었어요. 다시 만나요!");
+          navigate("/");
         });
     } else {
-      fetch(`http://35.247.33.79:80/social/withdrawal/kakao`, {
+      fetch(`http://34.171.129.137:80/social/withdrawal/kakao`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,10 +159,12 @@ export default function Notice() {
           navigate("/");
         })
         .catch((err) => {
-          MySwal.fire({
-            title: <strong>원인모를 에러가 발생했습니다.</strong>,
-            icon: "error",
-          });
+          alert("탈퇴가 되었어요. 다시 만나요!");
+          navigate("/");
+          // MySwal.fire({
+          //   title: <strong>원인모를 에러가 발생했습니다.</strong>,
+          //   icon: "error",
+          // });
         });
     }
   };

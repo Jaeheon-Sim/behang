@@ -185,7 +185,7 @@ export default function Mypage() {
   const MySwal = withReactContent(Swal);
 
   const logout = () => {
-    fetch(`http://35.247.33.79:80/social/logout/kakao`, {
+    fetch(`http://34.171.129.137:80/social/logout/kakao`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -210,7 +210,7 @@ export default function Mypage() {
   const revise = () => {};
 
   const reIssue = () => {
-    fetch(`http://35.247.33.79:80/reissue`, {
+    fetch(`http://34.171.129.137:80/reissue`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -237,7 +237,7 @@ export default function Mypage() {
   };
 
   const Get = (token) => {
-    fetch(`http://35.247.33.79:80/posts/feed/me?page=0&size=${isPageNum}`, {
+    fetch(`http://34.171.129.137:80/posts/feed/me?page=0&size=${isPageNum}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -260,7 +260,7 @@ export default function Mypage() {
 
   useEffect(() => {
     if (isUser) {
-      fetch(`http://35.247.33.79:80/posts/feed/me?page=0&size=${isPageNum}`, {
+      fetch(`http://34.171.129.137:80/posts/feed/me?page=0&size=${isPageNum}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -381,7 +381,7 @@ export default function Mypage() {
                             >
                               <Img
                                 alt="오류가 있어요."
-                                src={"http://35.247.33.79:80/" + e.imageUrl}
+                                src={"http://34.171.129.137:80/" + e.imageUrl}
                               />
                             </FeedBox>
                           </Links>

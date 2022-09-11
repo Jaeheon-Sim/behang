@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useState } from "react";
 
-import { isKaKaoTokenAtom, isUserAtom } from "./atoms";
+import { isCodeAtom, isKaKaoTokenAtom, isUserAtom } from "./atoms";
 import logo from "./images/logo.png";
 import { useSetRecoilState, useRecoilValue } from "recoil";
 import qs from "qs";
@@ -13,10 +13,9 @@ import {
   isRefreshTokenAtom,
 } from "./atoms";
 import { CLIENT_ID, REDIRECT_URI } from "./Key";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import styled from "styled-components";
-import Header from "./format/Header";
 
 const Div = styled(motion.div)`
   justify-content: flex-start;
@@ -127,8 +126,9 @@ const Auth = () => {
   const REST_API_KEY = CLIENT_ID;
   const CLIENT_SECRET = "98779abc80d6cbde549b1d3cf5ee583c";
   const navigate = useNavigate();
+  const code = useRecoilValue(isCodeAtom);
   // calllback으로 받은 인가코드
-  const code = new URL(window.location.href).searchParams.get("code");
+  // const code = new URL(window.location.href).searchParams.get("code");
 
   const getProfile = (token) => {
     // Kakao SDK API를 이용해 사용자 정보 획득

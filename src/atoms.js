@@ -60,3 +60,9 @@ export const isKaKaoTokenAtom = atom({
   default: "",
   effects_UNSTABLE: [persistAtom],
 });
+
+export const isCodeAtom = atom({
+  key: "codeToken",
+  default: "",
+  effects_UNSTABLE: [persistAtom],
+});

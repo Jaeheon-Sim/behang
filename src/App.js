@@ -10,10 +10,10 @@ function App() {
   return (
     <>
       {/* <ThemeProvider theme={isDark ? darkTheme : lightTheme}> */}
-      <BrowserRouter>
-        <GlobalStyle />
-        <Router />
-      </BrowserRouter>
+
+      <GlobalStyle />
+      <Router />
+
       {/* </ThemeProvider> */}
     </>
   );

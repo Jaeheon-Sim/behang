@@ -3,7 +3,7 @@ import styled from "styled-components";
 import logo from "../images/logo.png";
 import kakaologin from "../images/kakao_login_medium_wide.png";
 import axios from "axios";
-import KakaoLogin from "react-kakao-login";
+
 import { motion } from "framer-motion";
 import Feed from "../routes/Feed";
 import {
@@ -12,18 +12,13 @@ import {
   Outlet,
   useLocation,
   useParams,
+  Navigate,
 } from "react-router-dom";
-import { useSetRecoilState, useRecoilValue } from "recoil";
-import { isUserAtom } from "../atoms";
+import { useSetRecoilState, useRecoilValue, useRecoilState } from "recoil";
+import { isCodeAtom } from "../atoms";
 import { useEffect } from "react";
 import { CLIENT_ID, REDIRECT_URI, KAKAO_JSKEY } from "../Key";
 import Auth from "../Auth";
-import {
-  isUserIDAtom,
-  isNickNameAtom,
-  isProfileImgAtom,
-  isAccessTokenAtom,
-} from "../atoms";
 
 const Container = styled(motion.div)`
   width: 80vw;
@@ -78,17 +73,24 @@ const Links = styled(Link)`
 `;
 
 export default function Login() {
-  const userToken = useRecoilValue(isUserAtom);
-  const setUser = useSetRecoilState(isUserAtom);
-  const setAccessToken = useSetRecoilState(isAccessTokenAtom);
-  const navigate = useNavigate();
-  axios.defaults.withCredentials = true;
   // kakao login
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${CLIENT_ID}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+  const setCode = useSetRecoilState(isCodeAtom);
+  const navigate = useNavigate();
+  const code = new URL(window.location.href).searchParams.get("code");
 
-  const onClick = () => {
+  const onClick = (e) => {
     window.location.href = KAKAO_AUTH_URL;
   };
+
+  useEffect(() => {
+    if (code?.length > 1) {
+      console.log(code);
+      setCode(code);
+
+      navigate("/oauth/kakao/callback");
+    }
+  }, []);
 
   return (
     <>
@@ -100,11 +102,7 @@ export default function Login() {
         animate={{ backgroundColor: "rgba(240, 237, 237, 0.5)" }}
         transition={{ delayChildren: 0.5, staggerChildren: 0.2, duration: 2 }}
       >
-        <LoginButton
-        // initial={{ scale: 0, y: -100 }}
-        // animate={{ scale: 1, y: 0 }}
-        // transition={{ type: "spring", duration: 1.4, bounce: 0.5 }}
-        >
+        <LoginButton>
           <Img drag dragSnapToOrigin src={logo} alt="no" />
         </LoginButton>
         <Tab

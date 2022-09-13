@@ -132,7 +132,7 @@ export default function Feed() {
       .then((e) => e.json())
       .then((res) => {
         setExtraLoading(false);
-        setCoins(res.list);
+        setCoins(res.list.reverse());
         setPageNum((prev) => prev + 10);
         setLoading(false);
       })
@@ -144,7 +144,7 @@ export default function Feed() {
         navigate("/");
       });
   }, [inView]);
-  // console.log(data);
+
   return (
     <>
       <Helmet>

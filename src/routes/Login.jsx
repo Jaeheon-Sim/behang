@@ -85,7 +85,6 @@ export default function Login() {
 
   useEffect(() => {
     if (code?.length > 1) {
-      console.log(code);
       setCode(code);
 
       navigate("/oauth/kakao/callback");

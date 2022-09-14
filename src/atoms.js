@@ -6,63 +6,63 @@ const { persistAtom } = recoilPersist();
 export const isUserAtom = atom({
   key: "isUser",
   default: false,
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isXAtom = atom({
   key: "isX",
   default: 128.6922646449,
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isYAtom = atom({
   key: "isY",
   default: 35.9910080699,
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isUserIDAtom = atom({
   key: "isUserID",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isNickNameAtom = atom({
   key: "isNickNameID",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 export const isProfileImgAtom = atom({
   key: "isProfileImg",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isImgAtom = atom({
   key: "isImg",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isAccessTokenAtom = atom({
   key: "accesstoken",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 export const isRefreshTokenAtom = atom({
   key: "refreshtoken",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isKaKaoTokenAtom = atom({
   key: "kakaotoken",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });
 
 export const isCodeAtom = atom({
   key: "codeToken",
   default: "",
-  effects_UNSTABLE: [persistAtom],
+  storage: sessionStorage,
 });

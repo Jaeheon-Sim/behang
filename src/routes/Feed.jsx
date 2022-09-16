@@ -90,9 +90,7 @@ export default function Feed() {
   const isX = useRecoilValue(isXAtom);
   const setY = useSetRecoilState(isYAtom);
   const isY = useRecoilValue(isYAtom);
-  const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const [data, setCoins] = useState([]);
-  const [last, setLast] = useState(false);
   const [extraLoading, setExtraLoading] = useState(false);
   const [isLoading, setLoading] = useState(true);
   const [ref, inView] = useInView();
@@ -132,7 +130,7 @@ export default function Feed() {
       .then((e) => e.json())
       .then((res) => {
         setExtraLoading(false);
-        setCoins(res.list);
+        setCoins(res.list.reverse());
         setPageNum((prev) => prev + 10);
         setLoading(false);
       })
@@ -173,7 +171,7 @@ export default function Feed() {
         ) : (
           <Wrapper>
             <Container>
-              {data?.reverse().map((e) => {
+              {data?.map((e) => {
                 return (
                   <Links key={e.id} to={`/feed/${e.id}`} state={e}>
                     <FeedBox

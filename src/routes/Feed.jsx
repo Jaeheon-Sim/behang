@@ -132,7 +132,7 @@ export default function Feed() {
       .then((e) => e.json())
       .then((res) => {
         setExtraLoading(false);
-        setCoins(res.list.reverse());
+        setCoins(res.list);
         setPageNum((prev) => prev + 10);
         setLoading(false);
       })
@@ -173,7 +173,7 @@ export default function Feed() {
         ) : (
           <Wrapper>
             <Container>
-              {data?.map((e) => {
+              {data?.reverse().map((e) => {
                 return (
                   <Links key={e.id} to={`/feed/${e.id}`} state={e}>
                     <FeedBox

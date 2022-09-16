@@ -103,7 +103,7 @@ export default function Header() {
         <div>
           <HeaderTab>
             <HeaderImg src={logo} alt="no" />
-            <HeaderTitle>비 행</HeaderTitle>
+            <HeaderTitle>비슷한 여행은 없어, 비행</HeaderTitle>
           </HeaderTab>
         </div>
         <NavContainer>

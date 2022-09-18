@@ -111,6 +111,7 @@ export default function Feed() {
   };
 
   useEffect(() => {
+    console.log(1);
     setExtraLoading(true);
     Locate();
 
@@ -130,10 +131,13 @@ export default function Feed() {
       .then((e) => e.json())
       .then((res) => {
         setExtraLoading(false);
-        setCoins(res.list.reverse());
+        const Llist = res.list.reverse();
+
+        setCoins(Llist);
         setPageNum((prev) => prev + 10);
         setLoading(false);
       })
+      .then()
       .catch((err) => {
         MySwal.fire({
           title: <strong>원인모를 에러가 발생했습니다.</strong>,

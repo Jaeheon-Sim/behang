@@ -196,6 +196,7 @@ export default function FeedDetail() {
   const { state } = useLocation();
   // const state = useLocation();
   // console.log(state);
+  const isUser = useRecoilValue(isUserAtom);
   const isUserId = useRecoilValue(isUserIDAtom);
   const isAccessToken = useRecoilValue(isAccessTokenAtom);
   const setToken = useSetRecoilState(isAccessTokenAtom);
@@ -452,7 +453,7 @@ export default function FeedDetail() {
                     <div>삭제</div>
                   </Button>
                 </>
-              ) : (
+              ) : !isUser ? null : (
                 <Button
                   first={isFirst}
                   initial={{ scale: 0 }}

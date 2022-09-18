@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/behang/static/css/main.073c9b0a.css",
-    "main.js": "/behang/static/js/main.38cb3540.js",
+    "main.js": "/behang/static/js/main.d1172afc.js",
     "static/media/logo.png": "/behang/static/media/logo.049ccb0040cf900dd348.png",
     "static/media/비행 맵.png": "/behang/static/media/비행 맵.2a4852807c54efedcbb5.png",
     "index.html": "/behang/index.html",
     "main.073c9b0a.css.map": "/behang/static/css/main.073c9b0a.css.map",
-    "main.38cb3540.js.map": "/behang/static/js/main.38cb3540.js.map"
+    "main.d1172afc.js.map": "/behang/static/js/main.d1172afc.js.map"
   },
   "entrypoints": [
     "static/css/main.073c9b0a.css",
-    "static/js/main.38cb3540.js"
+    "static/js/main.d1172afc.js"
   ]
 }
